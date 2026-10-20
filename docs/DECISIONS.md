@@ -70,3 +70,7 @@ Every question the spec had to answer, and the answer chosen. Each links to the 
 37. **Can vendors pay for better scores?** No. Flat pricing per level, no pay-for-score, no suppression of flags, no early held-out access, ever. (§9)
 38. **Where does revenue come from?** Paid official evals, enterprise API for score history and comparisons, disclosed sponsored task categories (quarantined one quarter, sponsor never authors the rubric). (§9)
 39. **When does the website come?** Phase 2. The repo and spec are phase 1. (§10)
+
+## Harness tools
+
+40. **Does the standard harness include semantic code navigation?** Yes — `code.nav` (find definition/references, list/search symbols) backed by a language server, Python at launch. The standard profile models a well-equipped agent; every real coding agent navigates semantically, not by grep. The `bare` profile exists to isolate the raw model. (Darek's call, 2026-10-19: "whatever lets you work the best.")

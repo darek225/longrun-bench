@@ -50,6 +50,16 @@ CMD ["python", "-m", "harness.server"]
 - Text-mode browser (headless Chromium + readability extraction). One harness-level call = one agent step, but internally capped at 15 page loads to bound cost.
 - JavaScript-heavy pages: the browser waits up to 10s for network idle, then extracts. No CAPTCHA solving; if blocked, the observation says so and the agent must route around it (this is graded under error recovery).
 
+### code.nav
+- Semantic code navigation, backed by a language server (Serena-style, via LSP). Operations:
+  - `{"op": "find_definition", "symbol": str, "file": str}` → definition locations.
+  - `{"op": "find_references", "symbol": str, "file": str}` → all reference sites.
+  - `{"op": "list_symbols", "file": str}` → symbols defined in a file (functions, classes, methods).
+  - `{"op": "search_symbols", "query": str}` → symbols matching a name across the workspace.
+- One call = one step, same as every tool.
+- **Why it's in the standard harness:** the `standard` profile models a well-equipped agent, and every real coding agent navigates code semantically rather than by grep. Excluding it would measure "model + grep," which understates what deployed agents do. The `bare` profile exists to isolate the raw model.
+- Language support: Python at launch (the task bank is Python-first). Adding a language = adding its language server to the image; each addition is a MINOR harness version.
+
 ## 3. Budgets and termination
 
 - The server tracks steps and wall-clock. At budget, in-flight tool call is killed, `budget_exceeded` is logged, the run ends.

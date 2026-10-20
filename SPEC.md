@@ -93,7 +93,7 @@ The benchmark scores agent configurations, never bare models. Three profiles:
 | Profile | What it is | Tools |
 |---|---|---|
 | `bare` | Raw model API. No tools, no browsing, single response per turn. | None |
-| `standard` | Model driven through the standard harness (§5). | Fixed set: shell, file read/write, Python execution, HTTP fetch (text), text-mode browser |
+| `standard` | Model driven through the standard harness (§5). | Fixed set: shell, file read/write/edit, Python execution, HTTP fetch (text), text-mode browser, semantic code navigation (language-server backed) |
 | `native` | The vendor's product as shipped, driven through its own interface. | Whatever the product provides |
 
 Rules:
