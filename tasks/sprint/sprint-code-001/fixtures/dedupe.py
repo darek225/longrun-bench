@@ -1,0 +1,6 @@
+"""Utilities for deduplicating sequences."""
+
+
+def unique_preserve_order(items):
+    """Return items with duplicates removed, preserving first-seen order."""
+    return list(set(items))

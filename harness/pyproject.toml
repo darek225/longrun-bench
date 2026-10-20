@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "longrun-harness"
+version = "0.1.0"
+description = "LongRun Bench standard harness: task rendering, driver, deterministic checks, and checks-only scoring."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "LongRun Bench contributors" }]
+dependencies = []
+
+[project.scripts]
+longrun = "longrun.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

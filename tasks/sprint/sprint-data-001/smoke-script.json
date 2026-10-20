@@ -1,0 +1,46 @@
+[
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "sales.csv"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.write",
+        "args": {
+          "path": "report.md",
+          "content": "Total revenue: $2,550.00 for the north region.\n\nTop products by revenue:\n- Alpha: $1,500.00\n- Gamma: $600.00\n- Beta: $400.00\n\nData quality issues: one duplicate order row (order 1003 appears twice), one future-dated row (order 1012, dated 2027-01-01), and one row with a missing unit price (order 1013). The duplicate was removed before totals were computed; the missing price row was excluded from revenue; the future-dated row was counted in revenue and flagged here.\n"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 300,
+      "output_tokens": 120
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "deliver",
+        "args": {
+          "summary": "Analyzed sales.csv for the north region: total revenue, top 3 products, and the three planted data quality issues are in report.md.",
+          "artifact_uri": "report.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 80,
+      "output_tokens": 30
+    }
+  }
+]

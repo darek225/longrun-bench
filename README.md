@@ -20,7 +20,9 @@ Every existing AI benchmark measures single answers: one prompt, one response, o
 
 ## Status
 
-Phase 1: specification. The harness, seed tasks, and leaderboard site are not built yet. See `SPEC.md` §10 (Roadmap).
+Phase 2 is underway. First slice built (2026-10-20): the standard harness core (task rendering, driver, tools, deterministic checks, checks-only scoring, CLI) under `harness/`, plus three seed Sprint tasks under `tasks/sprint/`, all covered by 27 passing tests and scripted end-to-end smoke runs. See `docs/WORK_LOG.md` and `docs/TEST_LOG.md`.
+
+Still ahead in Phase 2: real provider adapters (BYO-key runner), the protocol server, the LLM judge and calibration set, the remaining seed tasks (85 total), and the leaderboard site. See `SPEC.md` §10 (Roadmap) and `docs/plan/`.
 
 ## Contributing
 
