@@ -15,6 +15,7 @@ This directory is the complete plan to take LongRun Bench from spec (Phase 1, do
 | `07-trust-and-identity.md` | Threat model, verification lottery, transcript privacy, dispute process, limits on org power |
 | `08-launch.md` | Positioning, competitive landscape, cold start plan, growth loops, kill risks |
 | `09-remaining-details.md` | Transcript schema, efficiency formula, version migration, Ultra ops, MVP participation, benchmark health metrics, legal |
+| `10-runner-flow.md` | The core loop: BYO API key → harness run → signed transcript → upload → scoreboard. Key handling rules, provider adapters, local models |
 
 ## Target repo layout (end of Phase 2)
 
