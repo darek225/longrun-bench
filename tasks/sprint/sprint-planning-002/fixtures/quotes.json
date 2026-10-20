@@ -1,0 +1,44 @@
+{
+  "businesses": [
+    {
+      "name": "SparkleCo",
+      "prices": {
+        "north_side": 120,
+        "downtown": 140,
+        "suburbs": 110
+      },
+      "response_hours": 6,
+      "rating": 4.7
+    },
+    {
+      "name": "MaidDay",
+      "prices": {
+        "north_side": 100,
+        "downtown": 130,
+        "suburbs": 95
+      },
+      "response_hours": 12,
+      "rating": 4.4
+    },
+    {
+      "name": "PureHome",
+      "prices": {
+        "north_side": 150,
+        "downtown": 150,
+        "suburbs": 140
+      },
+      "response_hours": 3,
+      "rating": 4.9
+    },
+    {
+      "name": "BrightNest",
+      "prices": {
+        "north_side": 110,
+        "downtown": 125,
+        "suburbs": 105
+      },
+      "response_hours": 24,
+      "rating": 4.6
+    }
+  ]
+}

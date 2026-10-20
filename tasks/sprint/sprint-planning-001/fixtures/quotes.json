@@ -1,0 +1,44 @@
+{
+  "businesses": [
+    {
+      "name": "GreenEdge",
+      "prices": {
+        "north_side": 45,
+        "downtown": 55,
+        "suburbs": 40
+      },
+      "response_hours": 4,
+      "rating": 4.8
+    },
+    {
+      "name": "TurfPro",
+      "prices": {
+        "north_side": 50,
+        "downtown": 50,
+        "suburbs": 50
+      },
+      "response_hours": 2,
+      "rating": 4.6
+    },
+    {
+      "name": "YardWorks",
+      "prices": {
+        "north_side": 60,
+        "downtown": 65,
+        "suburbs": 55
+      },
+      "response_hours": 24,
+      "rating": 4.9
+    },
+    {
+      "name": "SoloMow",
+      "prices": {
+        "north_side": 35,
+        "downtown": 45,
+        "suburbs": 30
+      },
+      "response_hours": 48,
+      "rating": 4.2
+    }
+  ]
+}

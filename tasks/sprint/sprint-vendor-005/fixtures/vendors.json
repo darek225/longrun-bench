@@ -1,0 +1,34 @@
+{
+  "email_marketing": [
+    {
+      "name": "Brevo",
+      "price": 9,
+      "features": "email campaigns, transactional email, CRM basics",
+      "best_for": "lowest cost"
+    },
+    {
+      "name": "Constant Contact",
+      "price": 12,
+      "features": "email editor, event tools, support",
+      "best_for": "guided support"
+    },
+    {
+      "name": "Mailchimp",
+      "price": 13,
+      "features": "campaigns, automations, audience tools",
+      "best_for": "brand familiarity"
+    },
+    {
+      "name": "Klaviyo",
+      "price": 20,
+      "features": "ecommerce flows, segmentation, SMS",
+      "best_for": "ecommerce depth"
+    },
+    {
+      "name": "ConvertKit",
+      "price": 29,
+      "features": "creator automations, landing pages, tagging",
+      "best_for": "creator workflows"
+    }
+  ]
+}

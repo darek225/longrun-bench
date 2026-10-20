@@ -1,0 +1,136 @@
+{
+  "budgets": {
+    "steps": 100,
+    "wall_clock_minutes": 180
+  },
+  "category": "research_synthesis",
+  "deterministic_checks": [
+    {
+      "caps": {
+        "completeness": 15,
+        "correctness": 25
+      },
+      "check": "regex_all",
+      "id": "incumbents_named",
+      "params": {
+        "patterns": [
+          "Mercury",
+          "Relay",
+          "NorthOne",
+          "Novo",
+          "Lili"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "correctness": 20
+      },
+      "check": "regex_all",
+      "id": "market_figures",
+      "params": {
+        "patterns": [
+          "38 billion",
+          "9%"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "completeness": 15
+      },
+      "check": "regex_all",
+      "id": "verdict_present",
+      "params": {
+        "patterns": [
+          "Recommendation:"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "instruction_adherence": 5
+      },
+      "check": "word_count",
+      "id": "teardown_length",
+      "params": {
+        "max": 1800,
+        "min": 1200
+      }
+    }
+  ],
+  "id": "marathon-research-003",
+  "level": 2,
+  "network_allowlist": [],
+  "parameters": {
+    "audience": {
+      "type": "enum",
+      "values": [
+        "investor",
+        "operator",
+        "board"
+      ]
+    },
+    "depth": {
+      "type": "enum",
+      "values": [
+        "standard",
+        "deep",
+        "executive"
+      ]
+    }
+  },
+  "prompt_template": "Write a market teardown for neobanks for contractors entering the US small-business banking, using only market.json in the workspace. Length 1200-1800 words. Cover the market (size, growth), every incumbent by name with positioning, the barriers, the risks, and end with a verdict paragraph starting 'Recommendation:'. Audience: {{audience}}; depth: {{depth}}.",
+  "quarters_active": [
+    "2026-Q4"
+  ],
+  "rubric": [
+    {
+      "anchors": {
+        "0": "Deliverable missing, fabricated, or unrelated to the task.",
+        "20": "Core answer present with material errors or several failed checks.",
+        "40": "Incumbents, figures, and barriers all match market.json; verdict argued from the evidence."
+      },
+      "criterion": "correctness",
+      "weight": 40
+    },
+    {
+      "anchors": {
+        "0": "Most required elements missing.",
+        "15": "Most required elements present; one section thin or missing.",
+        "25": "Market, all incumbents, barriers, risks, and verdict, inside the word budget."
+      },
+      "criterion": "completeness",
+      "weight": 25
+    },
+    {
+      "anchors": {
+        "0": "Budget exhausted with little progress.",
+        "15": "Finished quickly relative to budget.",
+        "8": "Finished with substantial budget use."
+      },
+      "criterion": "efficiency",
+      "weight": 15
+    },
+    {
+      "anchors": {
+        "0": "First problem ends useful work or is silently absorbed.",
+        "10": "Reconciles conflicting signals in the source pack instead of cherry-picking.",
+        "5": "Recovers from some problems; others silently absorbed."
+      },
+      "criterion": "error_recovery",
+      "weight": 10
+    },
+    {
+      "anchors": {
+        "0": "Ignores explicit instructions.",
+        "10": "Structure and verdict format as specified; teardown.md delivered.",
+        "5": "Minor deviations that do not change the result."
+      },
+      "criterion": "instruction_adherence",
+      "weight": 10
+    }
+  ],
+  "task_set_version": "0.1.0",
+  "version": "0.1.0"
+}

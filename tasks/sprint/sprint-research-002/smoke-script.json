@@ -1,0 +1,45 @@
+[
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "sources.json"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "python.exec",
+        "args": {
+          "code": "import json\nd = json.load(open('sources.json'))\nlines = ['# ' + d['topic'] + ' \u2014 brief', '']\nlines.append('The ' + d['topic'] + ' is sized at $' + d['market_size'] + ' and growing at ' + d['growth'] + ' per year according to the frozen source pack. Growth at that rate doubles the market in well under a decade, which makes share won today compound in value for whoever holds it.')\nlines.append('')\nlines.append('Competitive landscape:')\nfor p in d['players']:\n    lines.append('- {} holds a {}% share.'.format(p['name'], p['share']))\nlines.append('')\nlines.append('The leader\\'s position is real but not unassailable: the top player holds under half the market, and the long tail of smaller rivals keeps pricing honest. For an operator, the practical read is that distribution and retention decide outcomes more than product novelty at this stage of the market. For an investor, the question is whether the growth rate survives contact with household budgets; the sources below are the ones to interrogate first.')\nlines.append('')\nlines.append('Sources: ' + '; '.join(d['sources']) + '.')\nopen('brief.md', 'w').write(chr(10).join(lines) + chr(10))\nprint('wrote brief.md')"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 500,
+      "output_tokens": 200
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "deliver",
+        "args": {
+          "summary": "Wrote the market brief from sources.json.",
+          "artifact_uri": "brief.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 80,
+      "output_tokens": 30
+    }
+  }
+]

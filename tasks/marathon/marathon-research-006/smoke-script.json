@@ -1,0 +1,59 @@
+[
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "doc_a.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "doc_b.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "python.exec",
+        "args": {
+          "code": "a = open('doc_a.md').read()\nb = open('doc_b.md').read()\nlines = ['# Dossier: home services franchising', '']\nlines.append('## What the sources say')\nlines.append('Two source documents anchor this dossier. Fieldnotes Research sizes the home services franchising market at $4.1 billion using operator surveys and franchise disclosures, while MarketPulse reaches $4.6 billion using tax records and platform data. Both agree on the direction of the market and on consolidation as the main driver; they disagree on the level, and that disagreement is itself the most important fact in the pack because every downstream decision, from hiring to territory pricing, inherits whichever figure the reader quietly adopts.')\nlines.append('')\nlines.append('## Contradiction')\nlines.append('Contradiction: the two sources size the same market at $4.1 billion (Fieldnotes Research) and $4.6 billion (MarketPulse). The gap is methodological, not arithmetic: survey-based sizing misses categories that tax and platform records capture, particularly the smallest operators. Neither figure is wrong on its own terms, but they are not interchangeable, and any plan that cites one must say which and why. This dossier carries both figures forward rather than averaging them into a number neither source would defend.')\nlines.append('')\nlines.append('## Implications')\nlines.append('For planning, use the lower figure for revenue commitments and the higher figure only for market-share math, and revisit the choice when a third source lands. The consolidation driver both sources agree on matters more than the level dispute: share is moving toward scaled operators either way, so the strategic question is positioning inside the consolidation, not the exact size of the prize. Teams that internalize the range instead of a point estimate will make sturdier decisions under both versions of the truth.')\nlines.append('Reading the range honestly also changes how targets should be set. A team aiming at one percent of the conservative figure is committing to a number it can be held to; a team aiming at one percent of the larger figure is quietly committing to roughly a fifth more revenue with the same resources. Boards should therefore ask which denominator any market-share claim uses before debating whether the claim is ambitious or timid, because the same percentage target is two different plans depending on the source behind it.')\nlines.append('Finally, the disagreement is a reminder to price primary research before scaling spend. A modest survey or a payment-data pull would narrow this range for less than the cost of one mis-sized territory plan, and the dossier recommends commissioning exactly that before the next planning cycle locks its numbers.')\nlines.append('')\nlines.append('## Method note')\nlines.append('Survey and disclosure-based sizing, the method behind the lower figure, systematically undercounts the smallest operators, who neither answer surveys nor file franchise disclosures, while tax and platform records capture them but risk double-counting multi-category businesses. A careful reader therefore treats the two figures as bounds from different instruments rather than as competing measurements of one instrument, and any serious model of this market should carry the range explicitly instead of hiding it inside a single point estimate that pretends to a precision neither method can support.')\nlines.append('')\nlines.append('## What would change this picture')\nlines.append('A third source built on payment-processor data would arbitrate the level dispute directly, because card and ACH volumes see both the surveyed and the unsurveyed long tail exactly once. Until that exists, the honest position is the range. If a future edition of either current source revises toward the other, the methods note in that edition will say more about the true size than the headline figure itself, and this dossier should be refreshed at that point rather than patched quietly.')\nlines.append('')\nlines.append('## Bottom line')\nlines.append('The home services franchising market is growing and consolidating under either sizing. Cite Fieldnotes Research at $4.1 billion for conservative planning and MarketPulse at $4.6 billion for total-addressable-market framing, and never blend the two without naming the methods behind them.')\nopen('dossier.md', 'w').write(chr(10).join(lines) + chr(10))\nprint('wrote dossier.md', len(' '.join(lines).split()))"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 500,
+      "output_tokens": 200
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "deliver",
+        "args": {
+          "summary": "Wrote the dossier with the contradiction flagged.",
+          "artifact_uri": "dossier.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 80,
+      "output_tokens": 30
+    }
+  }
+]

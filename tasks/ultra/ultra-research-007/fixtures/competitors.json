@@ -1,0 +1,56 @@
+{
+  "market": "vertical farming",
+  "state": "Colorado",
+  "competitors": [
+    {
+      "name": "Plenty",
+      "tier": "premium",
+      "angle": "installer network depth"
+    },
+    {
+      "name": "AeroFarms",
+      "tier": "mid-market",
+      "angle": "brand recognition with homeowners"
+    },
+    {
+      "name": "Bowery Farming",
+      "tier": "value",
+      "angle": "battery chemistry and warranty terms"
+    },
+    {
+      "name": "AppHarvest",
+      "tier": "premium",
+      "angle": "utility partnership programs"
+    },
+    {
+      "name": "Kalera",
+      "tier": "mid-market",
+      "angle": "direct-to-consumer pricing"
+    },
+    {
+      "name": "Gotham Greens",
+      "tier": "value",
+      "angle": "regional service coverage"
+    },
+    {
+      "name": "BrightFarms",
+      "tier": "premium",
+      "angle": "financing offers"
+    },
+    {
+      "name": "Local Bounti",
+      "tier": "mid-market",
+      "angle": "software and monitoring platform"
+    },
+    {
+      "name": "Revol Greens",
+      "tier": "value",
+      "angle": "retail distribution"
+    },
+    {
+      "name": "80 Acres Farms",
+      "tier": "premium",
+      "angle": "commercial segment focus"
+    }
+  ]
+}

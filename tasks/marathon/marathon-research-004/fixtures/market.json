@@ -1,0 +1,48 @@
+{
+  "company_focus": "express car wash rollups",
+  "market": "US car wash services",
+  "market_size": "16 billion",
+  "growth": "4%",
+  "incumbents": [
+    {
+      "name": "Mister Car Wash",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Zips Car Wash",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Quick Quack",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Tommy's Express",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "WhiteWater Express",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    }
+  ],
+  "barriers": [
+    "customer acquisition cost",
+    "licensed labor scarcity",
+    "incumbent brand trust"
+  ]
+}

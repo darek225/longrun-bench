@@ -1,0 +1,44 @@
+{
+  "speakers": [
+    {
+      "name": "Priya Shah",
+      "topic": "Pipeline"
+    },
+    {
+      "name": "Tom Becker",
+      "topic": "Discovery"
+    },
+    {
+      "name": "Ana Ruiz",
+      "topic": "Negotiation"
+    },
+    {
+      "name": "Chris Novak",
+      "topic": "Forecasting"
+    },
+    {
+      "name": "Lee Park",
+      "topic": "Enablement"
+    },
+    {
+      "name": "Sam Ortiz",
+      "topic": "Partnerships"
+    }
+  ],
+  "rooms": [
+    {
+      "name": "Ballroom",
+      "fee": 300
+    },
+    {
+      "name": "Breakout 1",
+      "fee": 450
+    },
+    {
+      "name": "Breakout 2",
+      "fee": 250
+    }
+  ],
+  "catering_pp": 22,
+  "av_flat": 500
+}

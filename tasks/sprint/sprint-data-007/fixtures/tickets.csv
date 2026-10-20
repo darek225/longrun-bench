@@ -1,0 +1,14 @@
+id,queue,category,priority,resolved_h
+T1,support,login,high,2.0
+T2,support,login,normal,3.0
+T3,support,network,high,5.0
+T4,support,network,normal,-4.0
+T5,support,billing,low,1.5
+T6,support,,normal,2.5
+T7,support,network,normal,4.0
+T8,billing,refund,normal,2.0
+T9,billing,refund,high,2.0
+T10,billing,invoice,normal,6.0
+T11,billing,invoice,low,1.0
+T12,billing,chargeback,high,-1.0
+T13,billing,,normal,3.0

@@ -1,0 +1,44 @@
+{
+  "speakers": [
+    {
+      "name": "Jo Freeman",
+      "topic": "Moderation"
+    },
+    {
+      "name": "Kit Yamada",
+      "topic": "Events"
+    },
+    {
+      "name": "Rob Chen",
+      "topic": "Sponsorships"
+    },
+    {
+      "name": "Ivy Chen",
+      "topic": "Content"
+    },
+    {
+      "name": "Max Weber",
+      "topic": "Growth"
+    },
+    {
+      "name": "Nia Brooks",
+      "topic": "Accessibility"
+    }
+  ],
+  "rooms": [
+    {
+      "name": "Atrium",
+      "fee": 300
+    },
+    {
+      "name": "Studio A",
+      "fee": 450
+    },
+    {
+      "name": "Studio B",
+      "fee": 250
+    }
+  ],
+  "catering_pp": 22,
+  "av_flat": 500
+}

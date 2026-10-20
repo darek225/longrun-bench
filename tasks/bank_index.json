@@ -1,0 +1,847 @@
+[
+  {
+    "task_id": "sprint-data-001",
+    "level": 1,
+    "category": "data_analysis",
+    "dir": "sprint/sprint-data-001",
+    "pinned_params": {
+      "region": "north",
+      "top_n": 3
+    }
+  },
+  {
+    "task_id": "sprint-code-001",
+    "level": 1,
+    "category": "code_repair",
+    "dir": "sprint/sprint-code-001",
+    "pinned_params": {}
+  },
+  {
+    "task_id": "sprint-vendor-001",
+    "level": 1,
+    "category": "research_synthesis",
+    "dir": "sprint/sprint-vendor-001",
+    "pinned_params": {
+      "product": "crm",
+      "business_type": "dental_practice"
+    }
+  },
+  {
+    "task_id": "sprint-vendor-002",
+    "level": 1,
+    "category": "research_synthesis",
+    "dir": "sprint/sprint-vendor-002",
+    "pinned_params": {
+      "business_type": "dental_practice",
+      "focus": "lowest_cost"
+    }
+  },
+  {
+    "task_id": "sprint-vendor-003",
+    "level": 1,
+    "category": "research_synthesis",
+    "dir": "sprint/sprint-vendor-003",
+    "pinned_params": {
+      "business_type": "dental_practice",
+      "focus": "lowest_cost"
+    }
+  },
+  {
+    "task_id": "sprint-vendor-004",
+    "level": 1,
+    "category": "research_synthesis",
+    "dir": "sprint/sprint-vendor-004",
+    "pinned_params": {
+      "business_type": "dental_practice",
+      "focus": "lowest_cost"
+    }
+  },
+  {
+    "task_id": "sprint-vendor-005",
+    "level": 1,
+    "category": "research_synthesis",
+    "dir": "sprint/sprint-vendor-005",
+    "pinned_params": {
+      "business_type": "dental_practice",
+      "focus": "lowest_cost"
+    }
+  },
+  {
+    "task_id": "sprint-vendor-006",
+    "level": 1,
+    "category": "research_synthesis",
+    "dir": "sprint/sprint-vendor-006",
+    "pinned_params": {
+      "business_type": "dental_practice",
+      "focus": "lowest_cost"
+    }
+  },
+  {
+    "task_id": "sprint-code-002",
+    "level": 1,
+    "category": "code_repair",
+    "dir": "sprint/sprint-code-002",
+    "pinned_params": {
+      "bug_count": "three",
+      "theme": "edge-case"
+    }
+  },
+  {
+    "task_id": "sprint-code-003",
+    "level": 1,
+    "category": "code_repair",
+    "dir": "sprint/sprint-code-003",
+    "pinned_params": {
+      "bug_count": "three",
+      "theme": "edge-case"
+    }
+  },
+  {
+    "task_id": "sprint-code-004",
+    "level": 1,
+    "category": "code_repair",
+    "dir": "sprint/sprint-code-004",
+    "pinned_params": {
+      "bug_count": "three",
+      "theme": "edge-case"
+    }
+  },
+  {
+    "task_id": "sprint-code-005",
+    "level": 1,
+    "category": "code_repair",
+    "dir": "sprint/sprint-code-005",
+    "pinned_params": {
+      "bug_count": "three",
+      "theme": "edge-case"
+    }
+  },
+  {
+    "task_id": "sprint-code-006",
+    "level": 1,
+    "category": "code_repair",
+    "dir": "sprint/sprint-code-006",
+    "pinned_params": {
+      "input_flavor": "production-like",
+      "codebase": "internal tools"
+    }
+  },
+  {
+    "task_id": "sprint-code-007",
+    "level": 1,
+    "category": "code_repair",
+    "dir": "sprint/sprint-code-007",
+    "pinned_params": {
+      "input_flavor": "production-like",
+      "codebase": "internal tools"
+    }
+  },
+  {
+    "task_id": "sprint-code-008",
+    "level": 1,
+    "category": "code_repair",
+    "dir": "sprint/sprint-code-008",
+    "pinned_params": {
+      "input_flavor": "production-like",
+      "codebase": "internal tools"
+    }
+  },
+  {
+    "task_id": "sprint-code-009",
+    "level": 1,
+    "category": "code_repair",
+    "dir": "sprint/sprint-code-009",
+    "pinned_params": {
+      "input_flavor": "production-like",
+      "codebase": "internal tools"
+    }
+  },
+  {
+    "task_id": "sprint-data-002",
+    "level": 1,
+    "category": "data_analysis",
+    "dir": "sprint/sprint-data-002",
+    "pinned_params": {
+      "region": "north",
+      "top_n": 3
+    }
+  },
+  {
+    "task_id": "sprint-data-003",
+    "level": 1,
+    "category": "data_analysis",
+    "dir": "sprint/sprint-data-003",
+    "pinned_params": {
+      "region": "north",
+      "top_n": 3
+    }
+  },
+  {
+    "task_id": "sprint-data-004",
+    "level": 1,
+    "category": "data_analysis",
+    "dir": "sprint/sprint-data-004",
+    "pinned_params": {
+      "segment": "retail",
+      "top_n": 3
+    }
+  },
+  {
+    "task_id": "sprint-data-005",
+    "level": 1,
+    "category": "data_analysis",
+    "dir": "sprint/sprint-data-005",
+    "pinned_params": {
+      "warehouse": "A",
+      "top_n": 3
+    }
+  },
+  {
+    "task_id": "sprint-data-006",
+    "level": 1,
+    "category": "data_analysis",
+    "dir": "sprint/sprint-data-006",
+    "pinned_params": {
+      "month": "aug",
+      "top_n": 3
+    }
+  },
+  {
+    "task_id": "sprint-data-007",
+    "level": 1,
+    "category": "data_analysis",
+    "dir": "sprint/sprint-data-007",
+    "pinned_params": {
+      "queue": "support",
+      "top_n": 3
+    }
+  },
+  {
+    "task_id": "sprint-planning-001",
+    "level": 1,
+    "category": "planning",
+    "dir": "sprint/sprint-planning-001",
+    "pinned_params": {
+      "zone": "north_side",
+      "urgency": "standard"
+    }
+  },
+  {
+    "task_id": "sprint-planning-002",
+    "level": 1,
+    "category": "planning",
+    "dir": "sprint/sprint-planning-002",
+    "pinned_params": {
+      "zone": "north_side",
+      "urgency": "standard"
+    }
+  },
+  {
+    "task_id": "sprint-planning-003",
+    "level": 1,
+    "category": "planning",
+    "dir": "sprint/sprint-planning-003",
+    "pinned_params": {
+      "zone": "north_side",
+      "urgency": "standard"
+    }
+  },
+  {
+    "task_id": "sprint-planning-004",
+    "level": 1,
+    "category": "planning",
+    "dir": "sprint/sprint-planning-004",
+    "pinned_params": {
+      "zone": "north_side",
+      "urgency": "standard"
+    }
+  },
+  {
+    "task_id": "sprint-planning-005",
+    "level": 1,
+    "category": "planning",
+    "dir": "sprint/sprint-planning-005",
+    "pinned_params": {
+      "zone": "north_side",
+      "urgency": "standard"
+    }
+  },
+  {
+    "task_id": "sprint-web-001",
+    "level": 1,
+    "category": "web_research",
+    "dir": "sprint/sprint-web-001",
+    "pinned_params": {
+      "brand_focus": "RoboVac",
+      "output_format": "csv"
+    }
+  },
+  {
+    "task_id": "sprint-web-002",
+    "level": 1,
+    "category": "web_research",
+    "dir": "sprint/sprint-web-002",
+    "pinned_params": {
+      "brand_focus": "PureAir",
+      "output_format": "csv"
+    }
+  },
+  {
+    "task_id": "sprint-web-003",
+    "level": 1,
+    "category": "web_research",
+    "dir": "sprint/sprint-web-003",
+    "pinned_params": {
+      "brand_focus": "BaristaOne",
+      "output_format": "csv"
+    }
+  },
+  {
+    "task_id": "sprint-web-004",
+    "level": 1,
+    "category": "web_research",
+    "dir": "sprint/sprint-web-004",
+    "pinned_params": {
+      "brand_focus": "DrillDriver",
+      "output_format": "csv"
+    }
+  },
+  {
+    "task_id": "sprint-web-005",
+    "level": 1,
+    "category": "web_research",
+    "dir": "sprint/sprint-web-005",
+    "pinned_params": {
+      "brand_focus": "SlimBook",
+      "output_format": "csv"
+    }
+  },
+  {
+    "task_id": "sprint-research-001",
+    "level": 1,
+    "category": "research_synthesis",
+    "dir": "sprint/sprint-research-001",
+    "pinned_params": {
+      "audience": "investor",
+      "angle": "opportunity"
+    }
+  },
+  {
+    "task_id": "sprint-research-002",
+    "level": 1,
+    "category": "research_synthesis",
+    "dir": "sprint/sprint-research-002",
+    "pinned_params": {
+      "audience": "investor",
+      "angle": "opportunity"
+    }
+  },
+  {
+    "task_id": "sprint-research-003",
+    "level": 1,
+    "category": "research_synthesis",
+    "dir": "sprint/sprint-research-003",
+    "pinned_params": {
+      "audience": "investor",
+      "angle": "opportunity"
+    }
+  },
+  {
+    "task_id": "sprint-research-004",
+    "level": 1,
+    "category": "research_synthesis",
+    "dir": "sprint/sprint-research-004",
+    "pinned_params": {
+      "audience": "investor",
+      "angle": "opportunity"
+    }
+  },
+  {
+    "task_id": "sprint-research-005",
+    "level": 1,
+    "category": "research_synthesis",
+    "dir": "sprint/sprint-research-005",
+    "pinned_params": {
+      "audience": "investor",
+      "angle": "opportunity"
+    }
+  },
+  {
+    "task_id": "sprint-planning-006",
+    "level": 1,
+    "category": "planning",
+    "dir": "sprint/sprint-planning-006",
+    "pinned_params": {
+      "package": "plus",
+      "team_size": 12
+    }
+  },
+  {
+    "task_id": "sprint-planning-007",
+    "level": 1,
+    "category": "planning",
+    "dir": "sprint/sprint-planning-007",
+    "pinned_params": {
+      "package": "plus",
+      "team_size": 12
+    }
+  },
+  {
+    "task_id": "sprint-planning-008",
+    "level": 1,
+    "category": "planning",
+    "dir": "sprint/sprint-planning-008",
+    "pinned_params": {
+      "package": "plus",
+      "team_size": 12
+    }
+  },
+  {
+    "task_id": "marathon-research-001",
+    "level": 2,
+    "category": "research_synthesis",
+    "dir": "marathon/marathon-research-001",
+    "pinned_params": {
+      "audience": "investor",
+      "depth": "standard"
+    }
+  },
+  {
+    "task_id": "marathon-research-002",
+    "level": 2,
+    "category": "research_synthesis",
+    "dir": "marathon/marathon-research-002",
+    "pinned_params": {
+      "audience": "investor",
+      "depth": "standard"
+    }
+  },
+  {
+    "task_id": "marathon-research-003",
+    "level": 2,
+    "category": "research_synthesis",
+    "dir": "marathon/marathon-research-003",
+    "pinned_params": {
+      "audience": "investor",
+      "depth": "standard"
+    }
+  },
+  {
+    "task_id": "marathon-research-004",
+    "level": 2,
+    "category": "research_synthesis",
+    "dir": "marathon/marathon-research-004",
+    "pinned_params": {
+      "audience": "investor",
+      "depth": "standard"
+    }
+  },
+  {
+    "task_id": "marathon-research-005",
+    "level": 2,
+    "category": "research_synthesis",
+    "dir": "marathon/marathon-research-005",
+    "pinned_params": {
+      "audience": "investor",
+      "depth": "standard"
+    }
+  },
+  {
+    "task_id": "marathon-planning-001",
+    "level": 2,
+    "category": "planning",
+    "dir": "marathon/marathon-planning-001",
+    "pinned_params": {
+      "team_size": 6,
+      "hotel_tier": "mid"
+    }
+  },
+  {
+    "task_id": "marathon-planning-002",
+    "level": 2,
+    "category": "planning",
+    "dir": "marathon/marathon-planning-002",
+    "pinned_params": {
+      "team_size": 6,
+      "hotel_tier": "mid"
+    }
+  },
+  {
+    "task_id": "marathon-planning-003",
+    "level": 2,
+    "category": "planning",
+    "dir": "marathon/marathon-planning-003",
+    "pinned_params": {
+      "team_size": 6,
+      "hotel_tier": "mid"
+    }
+  },
+  {
+    "task_id": "marathon-planning-004",
+    "level": 2,
+    "category": "planning",
+    "dir": "marathon/marathon-planning-004",
+    "pinned_params": {
+      "team_size": 6,
+      "hotel_tier": "mid"
+    }
+  },
+  {
+    "task_id": "marathon-code-001",
+    "level": 2,
+    "category": "code_build",
+    "dir": "marathon/marathon-code-001",
+    "pinned_params": {
+      "stack": "python stdlib",
+      "scope": "full spec"
+    }
+  },
+  {
+    "task_id": "marathon-code-002",
+    "level": 2,
+    "category": "code_build",
+    "dir": "marathon/marathon-code-002",
+    "pinned_params": {
+      "stack": "python stdlib",
+      "scope": "full spec"
+    }
+  },
+  {
+    "task_id": "marathon-code-003",
+    "level": 2,
+    "category": "code_build",
+    "dir": "marathon/marathon-code-003",
+    "pinned_params": {
+      "stack": "python stdlib",
+      "scope": "full spec"
+    }
+  },
+  {
+    "task_id": "marathon-code-004",
+    "level": 2,
+    "category": "code_build",
+    "dir": "marathon/marathon-code-004",
+    "pinned_params": {
+      "stack": "python stdlib",
+      "scope": "full spec"
+    }
+  },
+  {
+    "task_id": "marathon-code-005",
+    "level": 2,
+    "category": "code_build",
+    "dir": "marathon/marathon-code-005",
+    "pinned_params": {
+      "stack": "python stdlib",
+      "scope": "full spec"
+    }
+  },
+  {
+    "task_id": "marathon-code-006",
+    "level": 2,
+    "category": "code_build",
+    "dir": "marathon/marathon-code-006",
+    "pinned_params": {
+      "stack": "python stdlib",
+      "scope": "full spec"
+    }
+  },
+  {
+    "task_id": "marathon-code-007",
+    "level": 2,
+    "category": "code_build",
+    "dir": "marathon/marathon-code-007",
+    "pinned_params": {
+      "stack": "python stdlib",
+      "scope": "full spec"
+    }
+  },
+  {
+    "task_id": "marathon-web-001",
+    "level": 2,
+    "category": "web_research",
+    "dir": "marathon/marathon-web-001",
+    "pinned_params": {
+      "brand_focus": "TorqueMax",
+      "output_format": "csv"
+    }
+  },
+  {
+    "task_id": "marathon-web-002",
+    "level": 2,
+    "category": "web_research",
+    "dir": "marathon/marathon-web-002",
+    "pinned_params": {
+      "brand_focus": "TrailBlazer",
+      "output_format": "csv"
+    }
+  },
+  {
+    "task_id": "marathon-web-003",
+    "level": 2,
+    "category": "web_research",
+    "dir": "marathon/marathon-web-003",
+    "pinned_params": {
+      "brand_focus": "DustBot",
+      "output_format": "csv"
+    }
+  },
+  {
+    "task_id": "marathon-data-001",
+    "level": 2,
+    "category": "data_analysis",
+    "dir": "marathon/marathon-data-001",
+    "pinned_params": {
+      "region": "north",
+      "top_n": 3
+    }
+  },
+  {
+    "task_id": "marathon-data-002",
+    "level": 2,
+    "category": "data_analysis",
+    "dir": "marathon/marathon-data-002",
+    "pinned_params": {
+      "category": "all",
+      "view": "summary"
+    }
+  },
+  {
+    "task_id": "marathon-data-003",
+    "level": 2,
+    "category": "data_analysis",
+    "dir": "marathon/marathon-data-003",
+    "pinned_params": {
+      "plan": "pro",
+      "view": "summary"
+    }
+  },
+  {
+    "task_id": "marathon-research-006",
+    "level": 2,
+    "category": "research_synthesis",
+    "dir": "marathon/marathon-research-006",
+    "pinned_params": {
+      "audience": "operator",
+      "angle": "risk"
+    }
+  },
+  {
+    "task_id": "marathon-research-007",
+    "level": 2,
+    "category": "research_synthesis",
+    "dir": "marathon/marathon-research-007",
+    "pinned_params": {
+      "audience": "operator",
+      "angle": "risk"
+    }
+  },
+  {
+    "task_id": "marathon-research-008",
+    "level": 2,
+    "category": "research_synthesis",
+    "dir": "marathon/marathon-research-008",
+    "pinned_params": {
+      "audience": "operator",
+      "angle": "risk"
+    }
+  },
+  {
+    "task_id": "marathon-planning-005",
+    "level": 2,
+    "category": "planning",
+    "dir": "marathon/marathon-planning-005",
+    "pinned_params": {
+      "attendees": 50,
+      "track": "single"
+    }
+  },
+  {
+    "task_id": "marathon-planning-006",
+    "level": 2,
+    "category": "planning",
+    "dir": "marathon/marathon-planning-006",
+    "pinned_params": {
+      "attendees": 50,
+      "track": "single"
+    }
+  },
+  {
+    "task_id": "marathon-planning-007",
+    "level": 2,
+    "category": "planning",
+    "dir": "marathon/marathon-planning-007",
+    "pinned_params": {
+      "attendees": 50,
+      "track": "single"
+    }
+  },
+  {
+    "task_id": "marathon-web-004",
+    "level": 2,
+    "category": "web_research",
+    "dir": "marathon/marathon-web-004",
+    "pinned_params": {
+      "snapshot": "2026-10 capture",
+      "depth": "full"
+    }
+  },
+  {
+    "task_id": "marathon-web-005",
+    "level": 2,
+    "category": "web_research",
+    "dir": "marathon/marathon-web-005",
+    "pinned_params": {
+      "snapshot": "2026-10 capture",
+      "depth": "full"
+    }
+  },
+  {
+    "task_id": "ultra-research-001",
+    "level": 3,
+    "category": "research_synthesis",
+    "dir": "ultra/ultra-research-001",
+    "pinned_params": {
+      "region_focus": "single metro first",
+      "posture": "measured"
+    }
+  },
+  {
+    "task_id": "ultra-research-002",
+    "level": 3,
+    "category": "research_synthesis",
+    "dir": "ultra/ultra-research-002",
+    "pinned_params": {
+      "region_focus": "single metro first",
+      "posture": "measured"
+    }
+  },
+  {
+    "task_id": "ultra-research-003",
+    "level": 3,
+    "category": "research_synthesis",
+    "dir": "ultra/ultra-research-003",
+    "pinned_params": {
+      "region_focus": "single metro first",
+      "posture": "measured"
+    }
+  },
+  {
+    "task_id": "ultra-research-006",
+    "level": 3,
+    "category": "research_synthesis",
+    "dir": "ultra/ultra-research-006",
+    "pinned_params": {
+      "region_focus": "single metro first",
+      "posture": "measured"
+    }
+  },
+  {
+    "task_id": "ultra-research-007",
+    "level": 3,
+    "category": "research_synthesis",
+    "dir": "ultra/ultra-research-007",
+    "pinned_params": {
+      "region_focus": "single metro first",
+      "posture": "measured"
+    }
+  },
+  {
+    "task_id": "ultra-planning-001",
+    "level": 3,
+    "category": "planning",
+    "dir": "ultra/ultra-planning-001",
+    "pinned_params": {
+      "scenario": "revised"
+    }
+  },
+  {
+    "task_id": "ultra-planning-002",
+    "level": 3,
+    "category": "planning",
+    "dir": "ultra/ultra-planning-002",
+    "pinned_params": {
+      "scenario": "revised"
+    }
+  },
+  {
+    "task_id": "ultra-data-001",
+    "level": 3,
+    "category": "data_analysis",
+    "dir": "ultra/ultra-data-001",
+    "pinned_params": {
+      "quarter": "final",
+      "book": "primary"
+    }
+  },
+  {
+    "task_id": "ultra-data-002",
+    "level": 3,
+    "category": "data_analysis",
+    "dir": "ultra/ultra-data-002",
+    "pinned_params": {
+      "quarter": "final",
+      "book": "primary"
+    }
+  },
+  {
+    "task_id": "ultra-research-004",
+    "level": 3,
+    "category": "research_synthesis",
+    "dir": "ultra/ultra-research-004",
+    "pinned_params": {
+      "round": "final",
+      "committee": "standard"
+    }
+  },
+  {
+    "task_id": "ultra-research-005",
+    "level": 3,
+    "category": "research_synthesis",
+    "dir": "ultra/ultra-research-005",
+    "pinned_params": {
+      "round": "final",
+      "committee": "standard"
+    }
+  },
+  {
+    "task_id": "ultra-code-001",
+    "level": 3,
+    "category": "code_build",
+    "dir": "ultra/ultra-code-001",
+    "pinned_params": {
+      "stack": "python stdlib",
+      "scope": "full spec"
+    }
+  },
+  {
+    "task_id": "ultra-code-002",
+    "level": 3,
+    "category": "code_build",
+    "dir": "ultra/ultra-code-002",
+    "pinned_params": {
+      "stack": "python stdlib",
+      "scope": "full spec"
+    }
+  },
+  {
+    "task_id": "ultra-code-003",
+    "level": 3,
+    "category": "code_build",
+    "dir": "ultra/ultra-code-003",
+    "pinned_params": {
+      "stack": "python stdlib",
+      "scope": "full spec"
+    }
+  },
+  {
+    "task_id": "ultra-code-004",
+    "level": 3,
+    "category": "code_build",
+    "dir": "ultra/ultra-code-004",
+    "pinned_params": {
+      "stack": "python stdlib",
+      "scope": "full spec"
+    }
+  }
+]

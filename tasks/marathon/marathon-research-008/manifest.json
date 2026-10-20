@@ -1,0 +1,134 @@
+{
+  "budgets": {
+    "steps": 100,
+    "wall_clock_minutes": 180
+  },
+  "category": "research_synthesis",
+  "deterministic_checks": [
+    {
+      "caps": {
+        "completeness": 15,
+        "correctness": 25
+      },
+      "check": "regex_all",
+      "id": "sources_named",
+      "params": {
+        "patterns": [
+          "Housing Policy Institute",
+          "CityData Review"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "correctness": 20
+      },
+      "check": "regex_all",
+      "id": "both_figures_present",
+      "params": {
+        "patterns": [
+          "2.2 billion",
+          "2.9 billion"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "completeness": 15
+      },
+      "check": "file_contains",
+      "id": "contradiction_flagged",
+      "params": {
+        "path": "dossier.md",
+        "patterns": [
+          "Contradiction"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "instruction_adherence": 5
+      },
+      "check": "word_count",
+      "id": "dossier_length",
+      "params": {
+        "max": 1500,
+        "min": 600
+      }
+    }
+  ],
+  "id": "marathon-research-008",
+  "level": 2,
+  "network_allowlist": [],
+  "parameters": {
+    "angle": {
+      "type": "enum",
+      "values": [
+        "opportunity",
+        "risk",
+        "pricing"
+      ]
+    },
+    "audience": {
+      "type": "enum",
+      "values": [
+        "investor",
+        "operator",
+        "partner"
+      ]
+    }
+  },
+  "prompt_template": "Write a dossier on short-term rental regulation from doc_a.md and doc_b.md in the workspace (600-1500 words). Name both sources, present both market figures, and include a section titled 'Contradiction' explaining the disagreement and how a planner should handle it. Audience: {{audience}}; angle: {{angle}}.",
+  "quarters_active": [
+    "2026-Q4"
+  ],
+  "rubric": [
+    {
+      "anchors": {
+        "0": "Deliverable missing, fabricated, or unrelated to the task.",
+        "20": "Core answer present with material errors or several failed checks.",
+        "40": "Both sources, both figures, and the contradiction characterized accurately."
+      },
+      "criterion": "correctness",
+      "weight": 40
+    },
+    {
+      "anchors": {
+        "0": "Most required elements missing.",
+        "15": "Most required elements present; one section thin or missing.",
+        "25": "Sources, figures, contradiction section, and implications complete."
+      },
+      "criterion": "completeness",
+      "weight": 25
+    },
+    {
+      "anchors": {
+        "0": "Budget exhausted with little progress.",
+        "15": "Finished quickly relative to budget.",
+        "8": "Finished with substantial budget use."
+      },
+      "criterion": "efficiency",
+      "weight": 15
+    },
+    {
+      "anchors": {
+        "0": "First problem ends useful work or is silently absorbed.",
+        "10": "Flags the contradiction explicitly instead of silently picking one figure.",
+        "5": "Recovers from some problems; others silently absorbed."
+      },
+      "criterion": "error_recovery",
+      "weight": 10
+    },
+    {
+      "anchors": {
+        "0": "Ignores explicit instructions.",
+        "10": "Structure and length as specified; dossier.md delivered.",
+        "5": "Minor deviations that do not change the result."
+      },
+      "criterion": "instruction_adherence",
+      "weight": 10
+    }
+  ],
+  "task_set_version": "0.1.0",
+  "version": "0.1.0"
+}

@@ -1,0 +1,48 @@
+{
+  "company_focus": "neobanks for contractors",
+  "market": "US small-business banking",
+  "market_size": "38 billion",
+  "growth": "9%",
+  "incumbents": [
+    {
+      "name": "Mercury",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Relay",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "NorthOne",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Novo",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Lili",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    }
+  ],
+  "barriers": [
+    "customer acquisition cost",
+    "licensed labor scarcity",
+    "incumbent brand trust"
+  ]
+}

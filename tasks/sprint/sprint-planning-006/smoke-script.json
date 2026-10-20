@@ -1,0 +1,45 @@
+[
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "options.json"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "python.exec",
+        "args": {
+          "code": "import json\nd = json.load(open('options.json'))\nvenue = d['venues'][1]\nactivity = d['activities'][1]\nmeal = d['meals'][1]\nteam = 12\npp = venue['price_pp'] + activity['price_pp'] + meal['price_pp']\ntotal = pp * team\nlines = ['One-day team offsite in Austin (plus package, 12 people):', '']\nlines.append('- Venue: {} at ${} per person'.format(venue['name'], venue['price_pp']))\nlines.append('- Activity: {} at ${} per person'.format(activity['name'], activity['price_pp']))\nlines.append('- Meal: {} at ${} per person'.format(meal['name'], meal['price_pp']))\nlines.append('')\nlines.append('Per-person subtotal: ${}. Total for the team: ${}. The plus package balances a proper venue with a memorable activity without paying premium-tier prices; book the venue first since it is the only piece with real capacity risk, then lock the activity and meal once headcount is confirmed a week out.'.format(pp, total))\nopen('plan.md', 'w').write(chr(10).join(lines) + chr(10))\nprint('wrote plan.md')"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 500,
+      "output_tokens": 200
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "deliver",
+        "args": {
+          "summary": "Planned the plus-package offsite for 12 and wrote plan.md.",
+          "artifact_uri": "plan.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 80,
+      "output_tokens": 30
+    }
+  }
+]

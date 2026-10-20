@@ -1,0 +1,23 @@
+{
+  "topic": "US meal kit market",
+  "market_size": "6.3 billion",
+  "growth": "5%",
+  "players": [
+    {
+      "name": "HelloFresh",
+      "share": 42
+    },
+    {
+      "name": "Blue Apron",
+      "share": 18
+    },
+    {
+      "name": "Home Chef",
+      "share": 12
+    }
+  ],
+  "sources": [
+    "company earnings reports",
+    "USDA food expenditure data"
+  ]
+}

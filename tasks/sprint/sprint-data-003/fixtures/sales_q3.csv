@@ -1,0 +1,15 @@
+order_id,date,region,product_id,product,quantity,unit_price,discount
+3001,2026-07-05,north,P1,Alpha,10,100,0
+3002,2026-07-06,north,P2,Beta,8,50,10%
+3003,2026-07-07,north,P3,Gamma,3,200,0.15
+3004,2026-07-08,north,P1,Alpha,-2,100,0
+3005,2026-07-09,north,P9,Beta,5,50,0
+3006,2026-07-10,north,P4,Delta,4,25,0
+3007,2026-07-05,south,P2,Beta,12,50,0
+3008,2026-07-06,south,P1,Alpha,4,100,20%
+3009,2026-07-07,south,P3,Gamma,2,200,0
+3010,2026-07-08,south,P4,Delta,-1,25,0
+3011,2026-07-05,west,P3,Gamma,4,200,10%
+3012,2026-07-06,west,P1,Alpha,2,100,0
+3013,2026-07-07,west,P2,Beta,3,50,0.2
+3014,2026-07-08,west,P4,Delta,6,25,0

@@ -1,0 +1,45 @@
+[
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "tickets.csv"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "python.exec",
+        "args": {
+          "code": "import csv\nfrom collections import defaultdict\nrows = list(csv.DictReader(open('tickets.csv')))\nhours = defaultdict(float)\nvalid = 0\nfor r in rows:\n    if r['queue'] != 'support':\n        continue\n    valid += 1\n    if float(r['resolved_h']) < 0:\n        continue\n    cat = r['category'] if r['category'] else 'unknown'\n    hours[cat] += float(r['resolved_h'])\ntop = sorted(hours.items(), key=lambda kv: -kv[1])[:3]\nlines = ['Total tickets: {} in the support queue (including flagged rows).'.format(valid), '', 'Top categories by total resolution hours:']\nfor name, val in top:\n    lines.append('- {}: {:.1f} hours'.format(name, val))\nlines.append('')\nlines.append('Data quality issues: one ticket carries a negative resolution time, which is a data error; it was excluded from the hour totals and flagged. One ticket has a missing category and was bucketed as unknown rather than dropped, so queue volume stays honest while the taxonomy gap is visible to the support operations owner for cleanup.')\nopen('report.md', 'w').write(chr(10).join(lines) + chr(10))\nprint('wrote report.md')"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 500,
+      "output_tokens": 200
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "deliver",
+        "args": {
+          "summary": "Computed the report from tickets.csv under the stated rules.",
+          "artifact_uri": "report.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 80,
+      "output_tokens": 30
+    }
+  }
+]

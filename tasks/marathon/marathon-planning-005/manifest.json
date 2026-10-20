@@ -1,0 +1,151 @@
+{
+  "budgets": {
+    "steps": 100,
+    "wall_clock_minutes": 180
+  },
+  "category": "planning",
+  "derived_params": [
+    {
+      "key": "{{attendees}}",
+      "map": {
+        "100": {
+          "total": 3700.0
+        },
+        "50": {
+          "total": 2600.0
+        }
+      },
+      "name": "expected"
+    }
+  ],
+  "deterministic_checks": [
+    {
+      "caps": {
+        "completeness": 15,
+        "correctness": 25
+      },
+      "check": "regex_all",
+      "id": "speakers_scheduled",
+      "params": {
+        "patterns": [
+          "Ada Byron",
+          "Grace Hopper",
+          "Alan Kay",
+          "Barbara Liskov",
+          "Edsger Dijkstra",
+          "Margaret Hamilton"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "completeness": 15
+      },
+      "check": "regex_all",
+      "id": "rooms_used",
+      "params": {
+        "patterns": [
+          "Main Hall",
+          "Workshop A",
+          "Lab Room"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "correctness": 20
+      },
+      "check": "numeric_within",
+      "id": "budget_total",
+      "params": {
+        "label": "total",
+        "tolerance": 1.0,
+        "value": "{{expected.total}}"
+      }
+    },
+    {
+      "caps": {
+        "instruction_adherence": 5
+      },
+      "check": "word_count",
+      "id": "schedule_length",
+      "params": {
+        "max": 600,
+        "min": 150
+      }
+    }
+  ],
+  "id": "marathon-planning-005",
+  "level": 2,
+  "network_allowlist": [],
+  "parameters": {
+    "attendees": {
+      "type": "enum",
+      "values": [
+        50,
+        100
+      ]
+    },
+    "track": {
+      "type": "enum",
+      "values": [
+        "single",
+        "mixed",
+        "open"
+      ]
+    }
+  },
+  "prompt_template": "Build the one-day schedule for a developer conference from event.json: sort speakers alphabetically, assign rooms round-robin in listed order, alternate morning/afternoon slots starting with morning. Budget: catering per person times {{attendees}} attendees, plus all room fees, plus the flat AV charge. Write schedule.md with one line per speaker and the budget printed as 'Total: $X'.",
+  "quarters_active": [
+    "2026-Q4"
+  ],
+  "rubric": [
+    {
+      "anchors": {
+        "0": "Deliverable missing, fabricated, or unrelated to the task.",
+        "20": "Core answer present with material errors or several failed checks.",
+        "40": "Assignment rule followed exactly and the budget total is arithmetically exact."
+      },
+      "criterion": "correctness",
+      "weight": 40
+    },
+    {
+      "anchors": {
+        "0": "Most required elements missing.",
+        "15": "Most required elements present; one section thin or missing.",
+        "25": "Every speaker and room present with the budget breakdown."
+      },
+      "criterion": "completeness",
+      "weight": 25
+    },
+    {
+      "anchors": {
+        "0": "Budget exhausted with little progress.",
+        "15": "Finished quickly relative to budget.",
+        "8": "Finished with substantial budget use."
+      },
+      "criterion": "efficiency",
+      "weight": 15
+    },
+    {
+      "anchors": {
+        "0": "First problem ends useful work or is silently absorbed.",
+        "10": "Applies the deterministic assignment rule instead of inventing a schedule.",
+        "5": "Recovers from some problems; others silently absorbed."
+      },
+      "criterion": "error_recovery",
+      "weight": 10
+    },
+    {
+      "anchors": {
+        "0": "Ignores explicit instructions.",
+        "10": "Total format as specified; schedule.md delivered.",
+        "5": "Minor deviations that do not change the result."
+      },
+      "criterion": "instruction_adherence",
+      "weight": 10
+    }
+  ],
+  "task_set_version": "0.1.0",
+  "version": "0.1.0"
+}

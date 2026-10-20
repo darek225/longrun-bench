@@ -1,0 +1,44 @@
+{
+  "venues": [
+    {
+      "name": "Honky Tonk Hall",
+      "price_pp": 45
+    },
+    {
+      "name": "Riverfront Space",
+      "price_pp": 75
+    },
+    {
+      "name": "Historic Mansion",
+      "price_pp": 110
+    }
+  ],
+  "activities": [
+    {
+      "name": "Distillery tour",
+      "price_pp": 30
+    },
+    {
+      "name": "Songwriting session",
+      "price_pp": 40
+    },
+    {
+      "name": "River cruise",
+      "price_pp": 50
+    }
+  ],
+  "meals": [
+    {
+      "name": "Hot chicken bar",
+      "price_pp": 20
+    },
+    {
+      "name": "Southern buffet",
+      "price_pp": 26
+    },
+    {
+      "name": "Fine dining",
+      "price_pp": 65
+    }
+  ]
+}

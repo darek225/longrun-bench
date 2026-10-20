@@ -1,0 +1,90 @@
+[
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "parse_csv_line.py"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.write",
+        "args": {
+          "path": "parse_csv_line.py",
+          "content": "\"\"\"Parse one CSV line into fields.\"\"\"\n\nimport csv\nimport io\n\n\ndef parse_line(line):\n    rows = list(csv.reader(io.StringIO(line)))\n    return rows[0] if rows else []\n"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 300,
+      "output_tokens": 150
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.write",
+        "args": {
+          "path": "tests/test_regression.py",
+          "content": "from parse_csv_line import parse_line\n\n\ndef test_regression_quoted_comma_and_spaces():\n    assert parse_line('x,\"y, z\",w') == [\"x\", \"y, z\", \"w\"]\n"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 300,
+      "output_tokens": 150
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "shell.exec",
+        "args": {
+          "command": "python3 -m pytest -q tests"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 150,
+      "output_tokens": 60
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.write",
+        "args": {
+          "path": "summary.md",
+          "content": "Crash report: parse_line split on every comma, so a quoted field containing a comma was torn into pieces and the field count came out wrong. Fix: delegate parsing to the csv module, which understands quoting. Added a regression test covering a quoted field with a comma and a space. The original suite plus the new regression test pass.\n"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 300,
+      "output_tokens": 150
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "deliver",
+        "args": {
+          "summary": "Fixed the crash in parse_csv_line.py, added a regression test, suite green, summary.md delivered.",
+          "artifact_uri": "summary.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 80,
+      "output_tokens": 30
+    }
+  }
+]

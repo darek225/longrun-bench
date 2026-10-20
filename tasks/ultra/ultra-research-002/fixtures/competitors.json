@@ -1,0 +1,56 @@
+{
+  "market": "public EV charging",
+  "state": "Florida",
+  "competitors": [
+    {
+      "name": "ChargePoint",
+      "tier": "premium",
+      "angle": "installer network depth"
+    },
+    {
+      "name": "Blink",
+      "tier": "mid-market",
+      "angle": "brand recognition with homeowners"
+    },
+    {
+      "name": "EVgo",
+      "tier": "value",
+      "angle": "battery chemistry and warranty terms"
+    },
+    {
+      "name": "Electrify America",
+      "tier": "premium",
+      "angle": "utility partnership programs"
+    },
+    {
+      "name": "Tesla Supercharger",
+      "tier": "mid-market",
+      "angle": "direct-to-consumer pricing"
+    },
+    {
+      "name": "ABB E-mobility",
+      "tier": "value",
+      "angle": "regional service coverage"
+    },
+    {
+      "name": "FLO",
+      "tier": "premium",
+      "angle": "financing offers"
+    },
+    {
+      "name": "Siemens",
+      "tier": "mid-market",
+      "angle": "software and monitoring platform"
+    },
+    {
+      "name": "Wallbox",
+      "tier": "value",
+      "angle": "retail distribution"
+    },
+    {
+      "name": "Enel X Way",
+      "tier": "premium",
+      "angle": "commercial segment focus"
+    }
+  ]
+}

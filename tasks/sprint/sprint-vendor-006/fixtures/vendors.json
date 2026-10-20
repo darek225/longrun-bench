@@ -1,0 +1,34 @@
+{
+  "commercial_insurance": [
+    {
+      "name": "Next Insurance",
+      "price": 19,
+      "features": "online quotes, general liability, fast binding",
+      "best_for": "fastest online quote"
+    },
+    {
+      "name": "Hiscox",
+      "price": 22,
+      "features": "general liability, professional liability, online purchase",
+      "best_for": "online purchase"
+    },
+    {
+      "name": "biBERK",
+      "price": 25,
+      "features": "workers comp, general liability, small business focus",
+      "best_for": "small business focus"
+    },
+    {
+      "name": "Hartford",
+      "price": 40,
+      "features": "broad commercial lines, agent network",
+      "best_for": "agent support"
+    },
+    {
+      "name": "Travelers",
+      "price": 55,
+      "features": "broad commercial lines, risk control services",
+      "best_for": "risk control depth"
+    }
+  ]
+}

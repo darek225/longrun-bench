@@ -1,0 +1,39 @@
+{
+  "flights": [
+    {
+      "airline": "SkyAir",
+      "price": 210,
+      "url": "flights.example/sky210"
+    },
+    {
+      "airline": "United Skies",
+      "price": 265,
+      "url": "flights.example/us265"
+    },
+    {
+      "airline": "BudgetAir",
+      "price": 175,
+      "url": "flights.example/ba175"
+    }
+  ],
+  "hotels": [
+    {
+      "name": "Lakeside Hotel",
+      "nightly": 210,
+      "tier": "mid",
+      "url": "hotels.example/lh210"
+    },
+    {
+      "name": "The Palmer",
+      "nightly": 320,
+      "tier": "upscale",
+      "url": "hotels.example/tp320"
+    },
+    {
+      "name": "Loop Lodge",
+      "nightly": 150,
+      "tier": "mid",
+      "url": "hotels.example/ll150"
+    }
+  ]
+}

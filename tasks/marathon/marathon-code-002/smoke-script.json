@@ -1,0 +1,89 @@
+[
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "SPEC_FEATURE.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "audit_log.py"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.write",
+        "args": {
+          "path": "audit_log.py",
+          "content": "\"\"\"Append-only audit log with a sha256 hash chain (see SPEC_FEATURE.md).\"\"\"\n\nimport hashlib\nimport json\nimport os\n\n\nclass AuditLog:\n    def __init__(self, path):\n        self.path = path\n\n    def _entries(self):\n        if not os.path.exists(self.path):\n            return []\n        out = []\n        with open(self.path) as fh:\n            for line in fh:\n                if line.strip():\n                    out.append(json.loads(line))\n        return out\n\n    def append(self, actor, action, details=None):\n        entries = self._entries()\n        prev = entries[-1][\"hash\"] if entries else \"GENESIS\"\n        payload = {\"actor\": actor, \"action\": action, \"details\": details or {}, \"prev\": prev}\n        payload[\"hash\"] = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()\n        with open(self.path, \"a\") as fh:\n            fh.write(json.dumps(payload) + \"\\n\")\n        return payload[\"hash\"]\n\n    def verify(self):\n        prev = \"GENESIS\"\n        for entry in self._entries():\n            if entry[\"prev\"] != prev:\n                return False\n            check = dict(entry)\n            digest = check.pop(\"hash\")\n            if hashlib.sha256(json.dumps(check, sort_keys=True).encode()).hexdigest() != digest:\n                return False\n            prev = digest\n        return True\n\n    def query(self, actor=None):\n        return [e for e in self._entries() if actor is None or e[\"actor\"] == actor]\n"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 300,
+      "output_tokens": 150
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "shell.exec",
+        "args": {
+          "command": "python3 -m pytest -q tests"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 150,
+      "output_tokens": 60
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.write",
+        "args": {
+          "path": "summary.md",
+          "content": "Implemented an append-only audit log: each entry carries the previous entry's sha256 hash forming a chain, verify replays and recomputes every hash so tampering with any historical entry is detected, and query filters by actor. The full acceptance suite passes, including the tamper case.\n"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 300,
+      "output_tokens": 150
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "deliver",
+        "args": {
+          "summary": "Implemented audit_log.py to spec; acceptance suite green; summary.md delivered.",
+          "artifact_uri": "summary.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 80,
+      "output_tokens": 30
+    }
+  }
+]

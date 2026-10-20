@@ -1,0 +1,45 @@
+[
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "specs.html"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "python.exec",
+        "args": {
+          "code": "import re\nhtml = open('specs.html').read()\nrows = re.findall(r'<tr><td>(.*?)</td><td>\\$(.*?)</td><td>(.*?)</td><td>(.*?)</td></tr>', html)\nlines = ['model,price,spec,weight,source']\nfor name, price, sval, weight in rows:\n    lines.append('{},\"${}\",{},{},specs.html'.format(name, price, sval, weight))\nopen('specs.csv', 'w').write(chr(10).join(lines) + chr(10))\nprint('extracted', len(rows), 'models')"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 500,
+      "output_tokens": 200
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "deliver",
+        "args": {
+          "summary": "Extracted all five models into specs.csv.",
+          "artifact_uri": "specs.csv"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 80,
+      "output_tokens": 30
+    }
+  }
+]

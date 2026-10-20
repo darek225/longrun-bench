@@ -1,0 +1,118 @@
+{
+  "budgets": {
+    "steps": 20,
+    "wall_clock_minutes": 15
+  },
+  "category": "code_repair",
+  "deterministic_checks": [
+    {
+      "caps": {
+        "completeness": 10,
+        "correctness": 10
+      },
+      "check": "pytest_pass",
+      "id": "tests_pass",
+      "params": {
+        "test_path": "tests"
+      }
+    },
+    {
+      "caps": {
+        "correctness": 20
+      },
+      "check": "file_contains",
+      "id": "module_intact",
+      "params": {
+        "path": "inventory_api.py",
+        "patterns": [
+          "def "
+        ]
+      }
+    },
+    {
+      "caps": {
+        "completeness": 20
+      },
+      "check": "word_count",
+      "id": "summary_length",
+      "params": {
+        "max": 300,
+        "min": 30
+      }
+    }
+  ],
+  "id": "sprint-code-005",
+  "level": 1,
+  "network_allowlist": [],
+  "parameters": {
+    "bug_count": {
+      "type": "enum",
+      "values": [
+        "three",
+        "3",
+        "several"
+      ]
+    },
+    "theme": {
+      "type": "enum",
+      "values": [
+        "edge-case",
+        "boundary",
+        "regression"
+      ]
+    }
+  },
+  "prompt_template": "The workspace contains inventory_api.py with a failing test suite in tests/. There are {{bug_count}} planted bugs; the {{theme}} cases expose them. Fix inventory_api.py only; do not modify the tests. When the suite passes, write summary.md describing each bug and its fix, then deliver summary.md.",
+  "quarters_active": [
+    "2026-Q4"
+  ],
+  "rubric": [
+    {
+      "anchors": {
+        "0": "Deliverable missing, fabricated, or unrelated to the task.",
+        "20": "Core answer present with material errors or several failed checks.",
+        "40": "Full suite passes; every planted bug fixed at its root cause."
+      },
+      "criterion": "correctness",
+      "weight": 40
+    },
+    {
+      "anchors": {
+        "0": "Most required elements missing.",
+        "15": "Most required elements present; one section thin or missing.",
+        "25": "Suite green and summary explains every bug and fix."
+      },
+      "criterion": "completeness",
+      "weight": 25
+    },
+    {
+      "anchors": {
+        "0": "Budget exhausted with little progress.",
+        "15": "Finished quickly relative to budget.",
+        "8": "Finished with substantial budget use."
+      },
+      "criterion": "efficiency",
+      "weight": 15
+    },
+    {
+      "anchors": {
+        "0": "First problem ends useful work or is silently absorbed.",
+        "10": "Reads the failures and diagnoses root causes instead of shotgun edits.",
+        "5": "Recovers from some problems; others silently absorbed."
+      },
+      "criterion": "error_recovery",
+      "weight": 10
+    },
+    {
+      "anchors": {
+        "0": "Ignores explicit instructions.",
+        "10": "Only the module changed; tests untouched; summary.md delivered.",
+        "5": "Minor deviations that do not change the result."
+      },
+      "criterion": "instruction_adherence",
+      "weight": 10
+    }
+  ],
+  "task_set_version": "0.1.0",
+  "version": "0.1.0"
+}

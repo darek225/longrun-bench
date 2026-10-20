@@ -1,0 +1,48 @@
+{
+  "company_focus": "regional HVAC chains",
+  "market": "US HVAC services",
+  "market_size": "210 billion",
+  "growth": "5%",
+  "incumbents": [
+    {
+      "name": "Apex Heating",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "CoolPro Services",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "AirFlow Group",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "ComfortFirst",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Polar Mechanical",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    }
+  ],
+  "barriers": [
+    "customer acquisition cost",
+    "licensed labor scarcity",
+    "incumbent brand trust"
+  ]
+}

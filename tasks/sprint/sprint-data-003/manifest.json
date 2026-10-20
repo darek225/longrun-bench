@@ -1,0 +1,181 @@
+{
+  "budgets": {
+    "steps": 20,
+    "wall_clock_minutes": 15
+  },
+  "category": "data_analysis",
+  "derived_params": [
+    {
+      "key": "{{region}}|{{top_n}}",
+      "map": {
+        "north|2": {
+          "top_products": [
+            "Alpha",
+            "Gamma"
+          ],
+          "total_revenue": 1770.0
+        },
+        "north|3": {
+          "top_products": [
+            "Alpha",
+            "Gamma",
+            "Beta"
+          ],
+          "total_revenue": 1770.0
+        },
+        "south|2": {
+          "top_products": [
+            "Beta",
+            "Gamma"
+          ],
+          "total_revenue": 1295.0
+        },
+        "south|3": {
+          "top_products": [
+            "Beta",
+            "Gamma",
+            "Alpha"
+          ],
+          "total_revenue": 1295.0
+        },
+        "west|2": {
+          "top_products": [
+            "Gamma",
+            "Alpha"
+          ],
+          "total_revenue": 1190.0
+        },
+        "west|3": {
+          "top_products": [
+            "Gamma",
+            "Alpha",
+            "Delta"
+          ],
+          "total_revenue": 1190.0
+        }
+      },
+      "name": "expected"
+    }
+  ],
+  "deterministic_checks": [
+    {
+      "caps": {
+        "completeness": 15,
+        "correctness": 25
+      },
+      "check": "regex_all",
+      "id": "top_products_named",
+      "params": {
+        "patterns": "{{expected.top_products}}"
+      }
+    },
+    {
+      "caps": {
+        "correctness": 20
+      },
+      "check": "numeric_within",
+      "id": "total_revenue_correct",
+      "params": {
+        "label": "total revenue",
+        "tolerance": 1.5,
+        "value": "{{expected.total_revenue}}"
+      }
+    },
+    {
+      "caps": {
+        "completeness": 15
+      },
+      "check": "regex_all",
+      "id": "anomalies_named",
+      "params": {
+        "patterns": [
+          "return",
+          "discount",
+          "mismatch"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "instruction_adherence": 5
+      },
+      "check": "word_count",
+      "id": "report_length",
+      "params": {
+        "max": 500,
+        "min": 60
+      }
+    }
+  ],
+  "id": "sprint-data-003",
+  "level": 1,
+  "network_allowlist": [],
+  "parameters": {
+    "region": {
+      "type": "enum",
+      "values": [
+        "north",
+        "south",
+        "west"
+      ]
+    },
+    "top_n": {
+      "max": 3,
+      "min": 2,
+      "type": "integer"
+    }
+  },
+  "prompt_template": "Analyze sales_q3.csv in the workspace. Rules: negative quantities are returns and count as negative revenue; the discount column mixes percent strings like 10% and decimals like 0.15, normalize before applying; rows whose product_id does not match the canonical map (P1 Alpha, P2 Beta, P3 Gamma, P4 Delta) are excluded. For the {{region}} region, write report.md with the total revenue, the top {{top_n}} products by revenue, and the data quality issues (return rows, discount formats, product mismatch).",
+  "quarters_active": [
+    "2026-Q4"
+  ],
+  "rubric": [
+    {
+      "anchors": {
+        "0": "Deliverable missing, fabricated, or unrelated to the task.",
+        "20": "Core answer present with material errors or several failed checks.",
+        "40": "Revenue and top products match ground truth for the drawn instance under the stated rules."
+      },
+      "criterion": "correctness",
+      "weight": 40
+    },
+    {
+      "anchors": {
+        "0": "Most required elements missing.",
+        "15": "Most required elements present; one section thin or missing.",
+        "25": "Revenue, full top-N list, and every planted anomaly class named."
+      },
+      "criterion": "completeness",
+      "weight": 25
+    },
+    {
+      "anchors": {
+        "0": "Budget exhausted with little progress.",
+        "15": "Finished quickly relative to budget.",
+        "8": "Finished with substantial budget use."
+      },
+      "criterion": "efficiency",
+      "weight": 15
+    },
+    {
+      "anchors": {
+        "0": "First problem ends useful work or is silently absorbed.",
+        "10": "Notices and correctly handles every planted data problem instead of absorbing it.",
+        "5": "Recovers from some problems; others silently absorbed."
+      },
+      "criterion": "error_recovery",
+      "weight": 10
+    },
+    {
+      "anchors": {
+        "0": "Ignores explicit instructions.",
+        "10": "Follows the stated computation rules exactly; report.md delivered.",
+        "5": "Minor deviations that do not change the result."
+      },
+      "criterion": "instruction_adherence",
+      "weight": 10
+    }
+  ],
+  "task_set_version": "0.1.0",
+  "version": "0.1.0"
+}

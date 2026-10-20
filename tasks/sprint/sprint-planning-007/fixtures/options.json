@@ -1,0 +1,44 @@
+{
+  "venues": [
+    {
+      "name": "Mountain Lodge",
+      "price_pp": 55
+    },
+    {
+      "name": "City Hub",
+      "price_pp": 70
+    },
+    {
+      "name": "Garden Terrace",
+      "price_pp": 95
+    }
+  ],
+  "activities": [
+    {
+      "name": "Brewery tour",
+      "price_pp": 28
+    },
+    {
+      "name": "Escape room",
+      "price_pp": 32
+    },
+    {
+      "name": "Hiking guide",
+      "price_pp": 35
+    }
+  ],
+  "meals": [
+    {
+      "name": "Deli spread",
+      "price_pp": 16
+    },
+    {
+      "name": "Bistro lunch",
+      "price_pp": 28
+    },
+    {
+      "name": "Farm dinner",
+      "price_pp": 60
+    }
+  ]
+}

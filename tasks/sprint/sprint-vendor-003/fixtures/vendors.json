@@ -1,0 +1,34 @@
+{
+  "payroll_software": [
+    {
+      "name": "ADP Run",
+      "price": 29,
+      "features": "payroll runs, tax filing, HR basics",
+      "best_for": "established provider"
+    },
+    {
+      "name": "Rippling",
+      "price": 35,
+      "features": "payroll plus IT and HR automation",
+      "best_for": "automation depth"
+    },
+    {
+      "name": "Paychex",
+      "price": 39,
+      "features": "payroll, tax services, HR support",
+      "best_for": "supported service"
+    },
+    {
+      "name": "QuickBooks Payroll",
+      "price": 45,
+      "features": "payroll integrated with QuickBooks accounting",
+      "best_for": "QuickBooks users"
+    },
+    {
+      "name": "Gusto",
+      "price": 49,
+      "features": "payroll, benefits, onboarding",
+      "best_for": "easiest onboarding"
+    }
+  ]
+}

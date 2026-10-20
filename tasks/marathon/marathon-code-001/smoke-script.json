@@ -1,0 +1,89 @@
+[
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "SPEC_FEATURE.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "rate_limiter.py"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.write",
+        "args": {
+          "path": "rate_limiter.py",
+          "content": "\"\"\"Sliding-window rate limiter (docs in SPEC_FEATURE.md).\"\"\"\n\nimport time\nfrom collections import defaultdict, deque\n\n\nclass SlidingWindowLimiter:\n    def __init__(self, limit, window_seconds):\n        self.limit = limit\n        self.window = window_seconds\n        self.events = defaultdict(deque)\n\n    def _prune(self, key, now):\n        q = self.events[key]\n        cutoff = now - self.window\n        while q and q[0] <= cutoff:\n            q.popleft()\n        return q\n\n    def allow(self, key, now=None):\n        now = time.time() if now is None else now\n        q = self._prune(key, now)\n        if len(q) < self.limit:\n            q.append(now)\n            return True\n        return False\n\n    def remaining(self, key, now=None):\n        now = time.time() if now is None else now\n        q = self._prune(key, now)\n        return max(0, self.limit - len(q))\n"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 300,
+      "output_tokens": 150
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "shell.exec",
+        "args": {
+          "command": "python3 -m pytest -q tests"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 150,
+      "output_tokens": 60
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.write",
+        "args": {
+          "path": "summary.md",
+          "content": "Implemented a sliding-window rate limiter: per-key event queues pruned against the window on every call, allow records only when under the limit, remaining reports the free slots. All acceptance tests pass, including window expiry and per-key isolation cases.\n"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 300,
+      "output_tokens": 150
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "deliver",
+        "args": {
+          "summary": "Implemented rate_limiter.py to spec; acceptance suite green; summary.md delivered.",
+          "artifact_uri": "summary.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 80,
+      "output_tokens": 30
+    }
+  }
+]

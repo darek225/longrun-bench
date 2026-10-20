@@ -1,0 +1,135 @@
+{
+  "budgets": {
+    "steps": 500,
+    "wall_clock_minutes": 1440
+  },
+  "category": "research_synthesis",
+  "deterministic_checks": [
+    {
+      "caps": {
+        "completeness": 15
+      },
+      "check": "file_exists",
+      "id": "matrix_exists",
+      "params": {
+        "path": "matrix.csv"
+      }
+    },
+    {
+      "caps": {
+        "correctness": 25
+      },
+      "check": "file_contains",
+      "id": "matrix_values",
+      "params": {
+        "path": "matrix.csv",
+        "patterns": [
+          "Vendor A",
+          "Vendor B",
+          "Vendor C",
+          "7.70",
+          "7.80",
+          "7.60"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "correctness": 20
+      },
+      "check": "regex_all",
+      "id": "winner_named",
+      "params": {
+        "patterns": [
+          "Vendor B"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "correctness": 20
+      },
+      "check": "numeric_within",
+      "id": "winning_score",
+      "params": {
+        "label": "winning score",
+        "tolerance": 0.05,
+        "value": 7.8
+      }
+    }
+  ],
+  "id": "ultra-research-005",
+  "level": 3,
+  "network_allowlist": [],
+  "parameters": {
+    "committee": {
+      "type": "enum",
+      "values": [
+        "standard",
+        "expanded",
+        "executive"
+      ]
+    },
+    "round": {
+      "type": "enum",
+      "values": [
+        "final",
+        "rerun",
+        "audit"
+      ]
+    }
+  },
+  "prompt_template": "Run the procurement for cloud hosting: apply the weights in scores.json (published in rfp.md) to each vendor's criterion scores, write the scoring matrix to matrix.csv (columns vendor, weighted_total, one row per vendor), and write memo.md naming the winner with 'Winning score: X.XX'. Round weighted totals to 2 decimals. Round: {{round}}; committee: {{committee}}.",
+  "quarters_active": [
+    "2026-Q4"
+  ],
+  "rubric": [
+    {
+      "anchors": {
+        "0": "Deliverable missing, fabricated, or unrelated to the task.",
+        "20": "Core answer present with material errors or several failed checks.",
+        "40": "Weighted totals computed exactly per the published weights; winner correct."
+      },
+      "criterion": "correctness",
+      "weight": 40
+    },
+    {
+      "anchors": {
+        "0": "Most required elements missing.",
+        "15": "Most required elements present; one section thin or missing.",
+        "25": "Full matrix plus a reasoned award memo."
+      },
+      "criterion": "completeness",
+      "weight": 25
+    },
+    {
+      "anchors": {
+        "0": "Budget exhausted with little progress.",
+        "15": "Finished quickly relative to budget.",
+        "8": "Finished with substantial budget use."
+      },
+      "criterion": "efficiency",
+      "weight": 15
+    },
+    {
+      "anchors": {
+        "0": "First problem ends useful work or is silently absorbed.",
+        "10": "Follows the published scoring instead of substituting judgment.",
+        "5": "Recovers from some problems; others silently absorbed."
+      },
+      "criterion": "error_recovery",
+      "weight": 10
+    },
+    {
+      "anchors": {
+        "0": "Ignores explicit instructions.",
+        "10": "matrix.csv and memo.md both delivered; winner named in the memo.",
+        "5": "Minor deviations that do not change the result."
+      },
+      "criterion": "instruction_adherence",
+      "weight": 10
+    }
+  ],
+  "task_set_version": "0.1.0",
+  "version": "0.1.0"
+}

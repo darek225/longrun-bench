@@ -1,0 +1,39 @@
+{
+  "flights": [
+    {
+      "airline": "SkyAir",
+      "price": 180,
+      "url": "flights.example/sky180"
+    },
+    {
+      "airline": "PeachAir",
+      "price": 220,
+      "url": "flights.example/pa220"
+    },
+    {
+      "airline": "BudgetAir",
+      "price": 150,
+      "url": "flights.example/ba150"
+    }
+  ],
+  "hotels": [
+    {
+      "name": "Peachtree Suites",
+      "nightly": 160,
+      "tier": "mid",
+      "url": "hotels.example/ps160"
+    },
+    {
+      "name": "The Georgian",
+      "nightly": 280,
+      "tier": "upscale",
+      "url": "hotels.example/tg280"
+    },
+    {
+      "name": "Midtown Lodge",
+      "nightly": 130,
+      "tier": "mid",
+      "url": "hotels.example/ml130"
+    }
+  ]
+}

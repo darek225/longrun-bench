@@ -1,0 +1,56 @@
+{
+  "market": "heat pump installation",
+  "state": "Georgia",
+  "competitors": [
+    {
+      "name": "Trane",
+      "tier": "premium",
+      "angle": "installer network depth"
+    },
+    {
+      "name": "Carrier",
+      "tier": "mid-market",
+      "angle": "brand recognition with homeowners"
+    },
+    {
+      "name": "Lennox",
+      "tier": "value",
+      "angle": "battery chemistry and warranty terms"
+    },
+    {
+      "name": "Rheem",
+      "tier": "premium",
+      "angle": "utility partnership programs"
+    },
+    {
+      "name": "Goodman",
+      "tier": "mid-market",
+      "angle": "direct-to-consumer pricing"
+    },
+    {
+      "name": "Mitsubishi Electric",
+      "tier": "value",
+      "angle": "regional service coverage"
+    },
+    {
+      "name": "Daikin",
+      "tier": "premium",
+      "angle": "financing offers"
+    },
+    {
+      "name": "Bosch",
+      "tier": "mid-market",
+      "angle": "software and monitoring platform"
+    },
+    {
+      "name": "LG",
+      "tier": "value",
+      "angle": "retail distribution"
+    },
+    {
+      "name": "Fujitsu",
+      "tier": "premium",
+      "angle": "commercial segment focus"
+    }
+  ]
+}

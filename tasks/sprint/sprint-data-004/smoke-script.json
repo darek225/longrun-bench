@@ -1,0 +1,45 @@
+[
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "invoices.csv"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "python.exec",
+        "args": {
+          "code": "import csv\nfrom collections import defaultdict\nrows = list(csv.DictReader(open('invoices.csv')))\nseen = set()\nkept = []\nfor r in rows:\n    if r['invoice_id'] in seen:\n        continue\n    seen.add(r['invoice_id'])\n    kept.append(r)\nbilled = defaultdict(float)\ntax = 0.0\nfor r in kept:\n    if r['segment'] != 'retail':\n        continue\n    amount = float(r['amount'])\n    billed[r['client']] += amount\n    if r['tax_rate'] != '':\n        tax += amount * float(r['tax_rate'])\ntop = sorted(billed.items(), key=lambda kv: -kv[1])[:3]\ntotal = sum(billed.values())\nlines = ['Total revenue: ${:,.2f} billed for the retail segment.'.format(total), 'Total tax: ${:,.2f}.'.format(tax), '', 'Top clients by billed amount:']\nfor name, val in top:\n    lines.append('- {}: ${:,.2f}'.format(name, val))\nlines.append('')\nlines.append('Data quality issues: one duplicate invoice row was removed before totals, one negative credit note was included as negative billed revenue, and rows with a missing tax rate were excluded from the tax total and flagged here for the billing owner to correct in the source system records.')\nopen('report.md', 'w').write(chr(10).join(lines) + chr(10))\nprint('wrote report.md')"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 500,
+      "output_tokens": 200
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "deliver",
+        "args": {
+          "summary": "Computed the report from invoices.csv under the stated rules.",
+          "artifact_uri": "report.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 80,
+      "output_tokens": 30
+    }
+  }
+]

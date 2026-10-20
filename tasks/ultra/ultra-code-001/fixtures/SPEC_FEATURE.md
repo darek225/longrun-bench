@@ -1,0 +1,3 @@
+# Spec: team invitations (sqlite)
+
+Functions: `init_db(path)` creates tables teams(id, name) and members(team_id, email, status, token) and returns a connection. `create_team(conn, name)` returns the team id. `invite_member(conn, team_id, email)` inserts an 'invited' member with a random hex token and returns the token. `accept_invite(conn, token)` flips an invited member to 'active' and returns True; unknown or already-accepted tokens return False. `list_members(conn, team_id, status=None)` returns member emails sorted, optionally filtered by status. Work in stages and keep memory.md updated.

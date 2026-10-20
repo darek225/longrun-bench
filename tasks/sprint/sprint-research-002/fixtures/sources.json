@@ -1,0 +1,23 @@
+{
+  "topic": "US home cleaning services market",
+  "market_size": "18.5 billion",
+  "growth": "6%",
+  "players": [
+    {
+      "name": "Molly Maid",
+      "share": 9
+    },
+    {
+      "name": "Merry Maids",
+      "share": 8
+    },
+    {
+      "name": "The Cleaning Authority",
+      "share": 5
+    }
+  ],
+  "sources": [
+    "IBISWorld cleaning services report",
+    "BLS occupational outlook"
+  ]
+}

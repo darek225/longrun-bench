@@ -1,0 +1,12 @@
+date,month,channel,sessions,conversions
+2026-08-01,aug,organic,1000,40
+2026-08-01,aug,organic,200,8
+2026-08-02,aug,paid,800,40
+2026-08-03,aug,social,500,10
+2026-08-04,aug,email,300,21
+2026-08-05,aug,paid,100,150
+2026-09-01,sep,organic,900,36
+2026-09-02,sep,paid,700,28
+2026-09-03,sep,social,600,30
+2026-09-04,sep,email,200,8
+2026-09-05,sep,social,100,5

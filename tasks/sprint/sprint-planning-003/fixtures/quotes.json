@@ -1,0 +1,44 @@
+{
+  "businesses": [
+    {
+      "name": "CoolAir",
+      "prices": {
+        "north_side": 89,
+        "downtown": 99,
+        "suburbs": 79
+      },
+      "response_hours": 2,
+      "rating": 4.8
+    },
+    {
+      "name": "FrostLine",
+      "prices": {
+        "north_side": 95,
+        "downtown": 95,
+        "suburbs": 95
+      },
+      "response_hours": 5,
+      "rating": 4.5
+    },
+    {
+      "name": "AirMedic",
+      "prices": {
+        "north_side": 120,
+        "downtown": 110,
+        "suburbs": 105
+      },
+      "response_hours": 1,
+      "rating": 4.3
+    },
+    {
+      "name": "ClimatePro",
+      "prices": {
+        "north_side": 105,
+        "downtown": 115,
+        "suburbs": 100
+      },
+      "response_hours": 8,
+      "rating": 4.9
+    }
+  ]
+}

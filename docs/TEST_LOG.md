@@ -37,3 +37,10 @@ Environment: dev VM, Python 3, pytest 9.1.1, harness installed via `PYTHONPATH=h
 - Runner: pricing estimate for anthropic/claude-opus-5.5 at 100 steps = $0.80-$3.20 (matches hand computation); redaction catches sk-, xai-, AIza, ghp_, bearer, and PEM shapes; submission signatures verify and tampering with the claimed total fails verification; `run` without a key exits 1 before step 1.
 - Protocol server: scripted run over HTTP returns 201, reaches done with score >95, transcript retrievable; external-mode run waits in `running`, accepts a deliverable, and is graded by the server (score >95 on the vendor-brief fixture).
 - Judge: a stub judge awarding 40/40 correctness is capped to 20 by failed checks; MockJudge separates the good data-task report (98+) from the broken one by >30 points; non-JSON judge output is rejected; calibration machinery reports agreement rate and mean bias.
+
+## 2026-10-20 — Phase 2 slice 5 verification (task bank sweep)
+
+- Generator run: `python3 tasks/generate_bank.py` → 85 tasks, level counts {Sprint: 40, Marathon: 30, Ultra: 15}, no duplicate IDs.
+- Full sweep: `python3 tasks/validate_bank.py` → **85/85 tasks pass**: every scripted solver passes all of its task's deterministic checks on the pinned instance, and every garbage-deliverable control fails at least one check. Per-task detail in `tasks/PROGRESS.md`.
+- First sweep was 58/85; all 27 failures were diagnosed individually (10 solver word-count shortfalls, 1 `numeric_within` label collision with "subtotal", plus smaller variants) and fixed in the generator — never by weakening a check to fit a solver, and never by editing generated output by hand. Fixes regenerated the whole bank.
+- Harness suite after slice 5: **51 passed** (unchanged; the bank is data, not harness code).

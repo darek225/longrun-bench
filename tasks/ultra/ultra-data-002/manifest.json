@@ -1,0 +1,144 @@
+{
+  "budgets": {
+    "steps": 500,
+    "wall_clock_minutes": 1440
+  },
+  "category": "data_analysis",
+  "deterministic_checks": [
+    {
+      "caps": {
+        "correctness": 20
+      },
+      "check": "numeric_within",
+      "id": "january_total",
+      "params": {
+        "label": "january total",
+        "tolerance": 1.0,
+        "value": 1300.0
+      }
+    },
+    {
+      "caps": {
+        "correctness": 20
+      },
+      "check": "numeric_within",
+      "id": "february_total",
+      "params": {
+        "label": "february total",
+        "tolerance": 1.0,
+        "value": 1800.0
+      }
+    },
+    {
+      "caps": {
+        "correctness": 20
+      },
+      "check": "numeric_within",
+      "id": "march_total",
+      "params": {
+        "label": "march total",
+        "tolerance": 1.0,
+        "value": 2100.0
+      }
+    },
+    {
+      "caps": {
+        "correctness": 25
+      },
+      "check": "numeric_within",
+      "id": "quarter_total",
+      "params": {
+        "label": "quarter total",
+        "tolerance": 1.0,
+        "value": 5200.0
+      }
+    },
+    {
+      "caps": {
+        "completeness": 15
+      },
+      "check": "regex_all",
+      "id": "corrections_applied",
+      "params": {
+        "patterns": [
+          "J1",
+          "M1"
+        ]
+      }
+    }
+  ],
+  "id": "ultra-data-002",
+  "level": 3,
+  "network_allowlist": [],
+  "parameters": {
+    "book": {
+      "type": "enum",
+      "values": [
+        "primary",
+        "consolidated",
+        "management"
+      ]
+    },
+    "quarter": {
+      "type": "enum",
+      "values": [
+        "current",
+        "audit rerun",
+        "final"
+      ]
+    }
+  },
+  "prompt_template": "Close the quarter from the three monthly files (january.csv, february.csv, march.csv) plus corrections.csv. Each correction replaces the booked amount for its order. Write ledger.md printing each month as '<Month> total: $X' and 'Quarter total: $X', naming every corrected order. Keep a memory.md of the close steps. Quarter: {{quarter}}; book: {{book}}.",
+  "quarters_active": [
+    "2026-Q4"
+  ],
+  "rubric": [
+    {
+      "anchors": {
+        "0": "Deliverable missing, fabricated, or unrelated to the task.",
+        "20": "Core answer present with material errors or several failed checks.",
+        "40": "Every month total and the quarter total match the corrected ground truth."
+      },
+      "criterion": "correctness",
+      "weight": 40
+    },
+    {
+      "anchors": {
+        "0": "Most required elements missing.",
+        "15": "Most required elements present; one section thin or missing.",
+        "25": "All months, quarter total, and every correction named."
+      },
+      "criterion": "completeness",
+      "weight": 25
+    },
+    {
+      "anchors": {
+        "0": "Budget exhausted with little progress.",
+        "15": "Finished quickly relative to budget.",
+        "8": "Finished with substantial budget use."
+      },
+      "criterion": "efficiency",
+      "weight": 15
+    },
+    {
+      "anchors": {
+        "0": "First problem ends useful work or is silently absorbed.",
+        "10": "Applies the correction batch instead of closing on stale figures.",
+        "5": "Recovers from some problems; others silently absorbed."
+      },
+      "criterion": "error_recovery",
+      "weight": 10
+    },
+    {
+      "anchors": {
+        "0": "Ignores explicit instructions.",
+        "10": "memory.md maintained; ledger.md delivered.",
+        "5": "Minor deviations that do not change the result."
+      },
+      "criterion": "instruction_adherence",
+      "weight": 10
+    }
+  ],
+  "task_set_version": "0.1.0",
+  "version": "0.1.0"
+}

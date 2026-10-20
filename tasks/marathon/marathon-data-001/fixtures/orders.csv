@@ -1,0 +1,10 @@
+order_id,region,product,qty,price
+N1,north,Alpha,10,100
+N2,north,Beta,8,50
+N3,north,Gamma,3,200
+S1,south,Beta,11,50
+S2,south,Alpha,5,100
+S3,south,Delta,4,25
+W1,west,Gamma,5,200
+W2,west,Alpha,3,100
+W3,west,Beta,5,50

@@ -1,0 +1,44 @@
+{
+  "businesses": [
+    {
+      "name": "SwiftMove",
+      "prices": {
+        "north_side": 600,
+        "downtown": 700,
+        "suburbs": 550
+      },
+      "response_hours": 12,
+      "rating": 4.7
+    },
+    {
+      "name": "BoxAndGo",
+      "prices": {
+        "north_side": 550,
+        "downtown": 650,
+        "suburbs": 500
+      },
+      "response_hours": 24,
+      "rating": 4.3
+    },
+    {
+      "name": "HeavyLifters",
+      "prices": {
+        "north_side": 800,
+        "downtown": 850,
+        "suburbs": 750
+      },
+      "response_hours": 6,
+      "rating": 4.9
+    },
+    {
+      "name": "CityMove",
+      "prices": {
+        "north_side": 650,
+        "downtown": 600,
+        "suburbs": 580
+      },
+      "response_hours": 10,
+      "rating": 4.6
+    }
+  ]
+}

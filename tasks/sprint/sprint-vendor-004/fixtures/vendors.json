@@ -1,0 +1,34 @@
+{
+  "business_voip": [
+    {
+      "name": "Ooma",
+      "price": 20,
+      "features": "virtual receptionist, unlimited calling",
+      "best_for": "lowest cost"
+    },
+    {
+      "name": "Dialpad",
+      "price": 25,
+      "features": "AI transcription, unlimited calling",
+      "best_for": "AI call features"
+    },
+    {
+      "name": "Nextiva",
+      "price": 26,
+      "features": "unified communications, call analytics",
+      "best_for": "analytics"
+    },
+    {
+      "name": "8x8",
+      "price": 28,
+      "features": "global calling, contact center options",
+      "best_for": "international calling"
+    },
+    {
+      "name": "RingCentral",
+      "price": 30,
+      "features": "unlimited calling, video meetings, integrations",
+      "best_for": "most integrations"
+    }
+  ]
+}

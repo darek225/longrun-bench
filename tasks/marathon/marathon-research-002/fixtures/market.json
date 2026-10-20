@@ -1,0 +1,48 @@
+{
+  "company_focus": "pet insurance challengers",
+  "market": "US pet insurance",
+  "market_size": "5.2 billion",
+  "growth": "11%",
+  "incumbents": [
+    {
+      "name": "Trupanion",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Healthy Paws",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Embrace",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Spot Insurance",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Figo",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    }
+  ],
+  "barriers": [
+    "customer acquisition cost",
+    "licensed labor scarcity",
+    "incumbent brand trust"
+  ]
+}

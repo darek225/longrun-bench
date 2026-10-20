@@ -1,0 +1,39 @@
+{
+  "flights": [
+    {
+      "airline": "CoastAir",
+      "price": 330,
+      "url": "flights.example/ca330"
+    },
+    {
+      "airline": "JetWest",
+      "price": 290,
+      "url": "flights.example/jw290"
+    },
+    {
+      "airline": "BudgetAir",
+      "price": 260,
+      "url": "flights.example/ba260"
+    }
+  ],
+  "hotels": [
+    {
+      "name": "Marina Bay Hotel",
+      "nightly": 230,
+      "tier": "mid",
+      "url": "hotels.example/mb230"
+    },
+    {
+      "name": "Gaslamp Grand",
+      "nightly": 310,
+      "tier": "upscale",
+      "url": "hotels.example/gg310"
+    },
+    {
+      "name": "Mission Inn",
+      "nightly": 170,
+      "tier": "mid",
+      "url": "hotels.example/mi170"
+    }
+  ]
+}

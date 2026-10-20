@@ -1,0 +1,34 @@
+{
+  "project_management": [
+    {
+      "name": "ClickUp",
+      "price": 7,
+      "features": "tasks, docs, goals, time tracking",
+      "best_for": "lowest cost full feature set"
+    },
+    {
+      "name": "Notion",
+      "price": 10,
+      "features": "docs, wikis, lightweight project tracking",
+      "best_for": "doc-centric teams"
+    },
+    {
+      "name": "Asana",
+      "price": 11,
+      "features": "task management, timelines, workload views",
+      "best_for": "structured project tracking"
+    },
+    {
+      "name": "Jira",
+      "price": 8,
+      "features": "issue tracking, sprints, dev workflows",
+      "best_for": "software teams"
+    },
+    {
+      "name": "Monday",
+      "price": 14,
+      "features": "visual boards, automations, dashboards",
+      "best_for": "visual planning"
+    }
+  ]
+}

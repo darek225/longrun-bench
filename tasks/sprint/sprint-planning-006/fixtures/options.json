@@ -1,0 +1,44 @@
+{
+  "venues": [
+    {
+      "name": "Ranch House",
+      "price_pp": 40
+    },
+    {
+      "name": "Downtown Loft",
+      "price_pp": 65
+    },
+    {
+      "name": "Lakeside Pavilion",
+      "price_pp": 90
+    }
+  ],
+  "activities": [
+    {
+      "name": "BBQ class",
+      "price_pp": 25
+    },
+    {
+      "name": "Live music session",
+      "price_pp": 30
+    },
+    {
+      "name": "Kayak tour",
+      "price_pp": 45
+    }
+  ],
+  "meals": [
+    {
+      "name": "Food truck",
+      "price_pp": 18
+    },
+    {
+      "name": "Taco bar",
+      "price_pp": 24
+    },
+    {
+      "name": "Steakhouse",
+      "price_pp": 55
+    }
+  ]
+}

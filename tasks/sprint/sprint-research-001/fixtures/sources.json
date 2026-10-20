@@ -1,0 +1,23 @@
+{
+  "topic": "US pet insurance market",
+  "market_size": "5.2 billion",
+  "growth": "11%",
+  "players": [
+    {
+      "name": "Trupanion",
+      "share": 28
+    },
+    {
+      "name": "Healthy Paws",
+      "share": 18
+    },
+    {
+      "name": "Nationwide Pet",
+      "share": 15
+    }
+  ],
+  "sources": [
+    "NAIC pet insurance report",
+    "AVMA pet ownership statistics"
+  ]
+}

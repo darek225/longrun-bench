@@ -1,0 +1,89 @@
+[
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "SPEC_FEATURE.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "search_index.py"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.write",
+        "args": {
+          "path": "search_index.py",
+          "content": "\"\"\"Tiny full-text search index (see SPEC_FEATURE.md).\"\"\"\n\nimport re\nfrom collections import defaultdict\n\n\ndef _terms(text):\n    return re.findall(r\"[a-z0-9]+\", text.lower())\n\n\nclass SearchIndex:\n    def __init__(self):\n        self.docs = {}\n        self.index = defaultdict(set)\n\n    def add(self, doc_id, text):\n        self.docs[doc_id] = text\n        for term in set(_terms(text)):\n            self.index[term].add(doc_id)\n\n    def search(self, query, limit=10, offset=0):\n        terms = _terms(query)\n        if not terms:\n            return []\n        candidates = None\n        for term in terms:\n            ids = self.index.get(term, set())\n            candidates = set(ids) if candidates is None else candidates & ids\n        scored = []\n        for doc_id in candidates or []:\n            words = _terms(self.docs[doc_id])\n            score = sum(words.count(t) for t in terms)\n            scored.append((doc_id, score))\n        scored.sort(key=lambda kv: (-kv[1], kv[0]))\n        return [doc_id for doc_id, _ in scored[offset:offset + limit]]\n"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 300,
+      "output_tokens": 150
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "shell.exec",
+        "args": {
+          "command": "python3 -m pytest -q tests"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 150,
+      "output_tokens": 60
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.write",
+        "args": {
+          "path": "summary.md",
+          "content": "Implemented a small full-text search index: inverted index over lowercase alphanumeric tokens, AND semantics across query terms, ranking by summed term frequency with doc_id tie-breaks, and offset/limit pagination. All acceptance tests pass, including ranking and pagination cases.\n"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 300,
+      "output_tokens": 150
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "deliver",
+        "args": {
+          "summary": "Implemented search_index.py to spec; acceptance suite green; summary.md delivered.",
+          "artifact_uri": "summary.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 80,
+      "output_tokens": 30
+    }
+  }
+]

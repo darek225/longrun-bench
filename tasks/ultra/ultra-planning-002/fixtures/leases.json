@@ -1,0 +1,16 @@
+{
+  "leases": [
+    {
+      "name": "Suite 100",
+      "monthly": 2600
+    },
+    {
+      "name": "Suite 200",
+      "monthly": 3100
+    },
+    {
+      "name": "Suite 300",
+      "monthly": 3600
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "movers": [
+    {
+      "name": "SwiftMove",
+      "price": 3900
+    },
+    {
+      "name": "CityMove",
+      "price": 4400
+    },
+    {
+      "name": "HeavyLifters",
+      "price": 5100
+    }
+  ]
+}

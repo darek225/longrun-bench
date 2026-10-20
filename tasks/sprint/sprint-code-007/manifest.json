@@ -1,0 +1,115 @@
+{
+  "budgets": {
+    "steps": 20,
+    "wall_clock_minutes": 15
+  },
+  "category": "code_repair",
+  "deterministic_checks": [
+    {
+      "caps": {
+        "completeness": 10,
+        "correctness": 10
+      },
+      "check": "pytest_pass",
+      "id": "tests_pass",
+      "params": {
+        "test_path": "tests"
+      }
+    },
+    {
+      "caps": {
+        "completeness": 15
+      },
+      "check": "file_exists",
+      "id": "regression_test_added",
+      "params": {
+        "path": "tests/test_regression.py"
+      }
+    },
+    {
+      "caps": {
+        "completeness": 20
+      },
+      "check": "word_count",
+      "id": "summary_length",
+      "params": {
+        "max": 300,
+        "min": 30
+      }
+    }
+  ],
+  "id": "sprint-code-007",
+  "level": 1,
+  "network_allowlist": [],
+  "parameters": {
+    "codebase": {
+      "type": "enum",
+      "values": [
+        "internal tools",
+        "client utilities",
+        "open source mirror"
+      ]
+    },
+    "input_flavor": {
+      "type": "enum",
+      "values": [
+        "production-like",
+        "adversarial",
+        "minimal"
+      ]
+    }
+  },
+  "prompt_template": "The workspace contains summarize_log.py, which crashes on blank lines in the log. The failing tests in tests/ show the crash. Fix summarize_log.py, add a regression test at tests/test_regression.py that would have caught the crash, write summary.md describing the crash and the fix, then deliver summary.md. Input flavor: {{input_flavor}}; codebase: {{codebase}}.",
+  "quarters_active": [
+    "2026-Q4"
+  ],
+  "rubric": [
+    {
+      "anchors": {
+        "0": "Deliverable missing, fabricated, or unrelated to the task.",
+        "20": "Core answer present with material errors or several failed checks.",
+        "40": "Crash fixed at the root cause; full suite including the new regression test passes."
+      },
+      "criterion": "correctness",
+      "weight": 40
+    },
+    {
+      "anchors": {
+        "0": "Most required elements missing.",
+        "15": "Most required elements present; one section thin or missing.",
+        "25": "Fix, regression test, and summary all present."
+      },
+      "criterion": "completeness",
+      "weight": 25
+    },
+    {
+      "anchors": {
+        "0": "Budget exhausted with little progress.",
+        "15": "Finished quickly relative to budget.",
+        "8": "Finished with substantial budget use."
+      },
+      "criterion": "efficiency",
+      "weight": 15
+    },
+    {
+      "anchors": {
+        "0": "First problem ends useful work or is silently absorbed.",
+        "10": "Reproduces the crash from the failing test before fixing it.",
+        "5": "Recovers from some problems; others silently absorbed."
+      },
+      "criterion": "error_recovery",
+      "weight": 10
+    },
+    {
+      "anchors": {
+        "0": "Ignores explicit instructions.",
+        "10": "Regression test added at the required path; summary.md delivered.",
+        "5": "Minor deviations that do not change the result."
+      },
+      "criterion": "instruction_adherence",
+      "weight": 10
+    }
+  ],
+  "task_set_version": "0.1.0",
+  "version": "0.1.0"
+}

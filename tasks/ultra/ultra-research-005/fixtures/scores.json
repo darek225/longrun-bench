@@ -1,0 +1,33 @@
+{
+  "weights": {
+    "price": 50,
+    "features": 30,
+    "support": 20
+  },
+  "vendors": [
+    {
+      "name": "Vendor A",
+      "scores": {
+        "price": 9,
+        "features": 6,
+        "support": 7
+      }
+    },
+    {
+      "name": "Vendor B",
+      "scores": {
+        "price": 7,
+        "features": 9,
+        "support": 8
+      }
+    },
+    {
+      "name": "Vendor C",
+      "scores": {
+        "price": 8,
+        "features": 8,
+        "support": 6
+      }
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "businesses": [
+    {
+      "name": "FlowRight",
+      "prices": {
+        "north_side": 75,
+        "downtown": 85,
+        "suburbs": 70
+      },
+      "response_hours": 3,
+      "rating": 4.7
+    },
+    {
+      "name": "PipePro",
+      "prices": {
+        "north_side": 80,
+        "downtown": 80,
+        "suburbs": 80
+      },
+      "response_hours": 6,
+      "rating": 4.6
+    },
+    {
+      "name": "DrainKing",
+      "prices": {
+        "north_side": 65,
+        "downtown": 75,
+        "suburbs": 60
+      },
+      "response_hours": 24,
+      "rating": 4.1
+    },
+    {
+      "name": "AquaFix",
+      "prices": {
+        "north_side": 90,
+        "downtown": 95,
+        "suburbs": 85
+      },
+      "response_hours": 2,
+      "rating": 4.8
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+[
+  {
+    "tool_calls": [
+      {
+        "name": "file.read",
+        "args": {
+          "path": "summarize_log.py"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 120,
+      "output_tokens": 40
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.write",
+        "args": {
+          "path": "summarize_log.py",
+          "content": "\"\"\"Summarize log lines as (level, message) pairs.\"\"\"\n\n\ndef summarize(lines):\n    out = []\n    for line in lines:\n        if not line.strip():\n            continue\n        parts = line.split(' ', 1)\n        out.append((parts[0], parts[1] if len(parts) > 1 else ''))\n    return out\n"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 300,
+      "output_tokens": 150
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.write",
+        "args": {
+          "path": "tests/test_regression.py",
+          "content": "from summarize_log import summarize\n\n\ndef test_regression_only_blank_lines():\n    assert summarize([\"\", \"   \"]) == []\n"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 300,
+      "output_tokens": 150
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "shell.exec",
+        "args": {
+          "command": "python3 -m pytest -q tests"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 150,
+      "output_tokens": 60
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "file.write",
+        "args": {
+          "path": "summary.md",
+          "content": "Crash report: summarize indexed parts[1] on every line, so a blank line (which splits into a single empty piece) raised IndexError and killed the run. Fix: skip blank lines and tolerate a missing message part. Added a regression test with only blank lines. The original suite and the regression test pass.\n"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 300,
+      "output_tokens": 150
+    }
+  },
+  {
+    "tool_calls": [
+      {
+        "name": "deliver",
+        "args": {
+          "summary": "Fixed the crash in summarize_log.py, added a regression test, suite green, summary.md delivered.",
+          "artifact_uri": "summary.md"
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 80,
+      "output_tokens": 30
+    }
+  }
+]

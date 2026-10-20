@@ -1,0 +1,23 @@
+{
+  "topic": "US wedding venues market",
+  "market_size": "8.7 billion",
+  "growth": "4%",
+  "players": [
+    {
+      "name": "Zola Venues",
+      "share": 12
+    },
+    {
+      "name": "WeddingWire",
+      "share": 10
+    },
+    {
+      "name": "Independent venues",
+      "share": 58
+    }
+  ],
+  "sources": [
+    "The Knot real weddings study",
+    "IBISWorld wedding services report"
+  ]
+}

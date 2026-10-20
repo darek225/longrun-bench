@@ -1,0 +1,146 @@
+{
+  "budgets": {
+    "steps": 100,
+    "wall_clock_minutes": 180
+  },
+  "category": "data_analysis",
+  "derived_params": [
+    {
+      "key": "{{category}}",
+      "map": {
+        "all": {
+          "reorder_value": 1000.0,
+          "stockouts": [
+            "S1",
+            "S3",
+            "S4"
+          ]
+        },
+        "electronics": {
+          "reorder_value": 500.0,
+          "stockouts": [
+            "S1",
+            "S3"
+          ]
+        },
+        "tools": {
+          "reorder_value": 500.0,
+          "stockouts": [
+            "S4"
+          ]
+        }
+      },
+      "name": "expected"
+    }
+  ],
+  "deterministic_checks": [
+    {
+      "caps": {
+        "completeness": 15,
+        "correctness": 25
+      },
+      "check": "regex_all",
+      "id": "stockouts_named",
+      "params": {
+        "patterns": "{{expected.stockouts}}"
+      }
+    },
+    {
+      "caps": {
+        "correctness": 20
+      },
+      "check": "numeric_within",
+      "id": "reorder_value_correct",
+      "params": {
+        "label": "reorder value",
+        "tolerance": 1.0,
+        "value": "{{expected.reorder_value}}"
+      }
+    },
+    {
+      "caps": {
+        "instruction_adherence": 5
+      },
+      "check": "word_count",
+      "id": "report_length",
+      "params": {
+        "max": 500,
+        "min": 80
+      }
+    }
+  ],
+  "id": "marathon-data-002",
+  "level": 2,
+  "network_allowlist": [],
+  "parameters": {
+    "category": {
+      "type": "enum",
+      "values": [
+        "all",
+        "electronics",
+        "tools"
+      ]
+    },
+    "view": {
+      "type": "enum",
+      "values": [
+        "summary",
+        "detail",
+        "executive"
+      ]
+    }
+  },
+  "prompt_template": "Compare sales.csv (units sold) with inventory.csv (stock on hand, unit cost) per SKU. A stockout is demand above stock; the reorder value prices the unfulfilled units at unit cost. For category {{category}}, write report.md naming every stockout SKU and the reorder value printed as 'Reorder value: $X', with a method note. View: {{view}}.",
+  "quarters_active": [
+    "2026-Q4"
+  ],
+  "rubric": [
+    {
+      "anchors": {
+        "0": "Deliverable missing, fabricated, or unrelated to the task.",
+        "20": "Core answer present with material errors or several failed checks.",
+        "40": "Stockout set and reorder value match the joined ground truth for the category."
+      },
+      "criterion": "correctness",
+      "weight": 40
+    },
+    {
+      "anchors": {
+        "0": "Most required elements missing.",
+        "15": "Most required elements present; one section thin or missing.",
+        "25": "All stockouts named with the exact reorder value and a method note."
+      },
+      "criterion": "completeness",
+      "weight": 25
+    },
+    {
+      "anchors": {
+        "0": "Budget exhausted with little progress.",
+        "15": "Finished quickly relative to budget.",
+        "8": "Finished with substantial budget use."
+      },
+      "criterion": "efficiency",
+      "weight": 15
+    },
+    {
+      "anchors": {
+        "0": "First problem ends useful work or is silently absorbed.",
+        "10": "Reasons about unfulfilled units only, not gross demand.",
+        "5": "Recovers from some problems; others silently absorbed."
+      },
+      "criterion": "error_recovery",
+      "weight": 10
+    },
+    {
+      "anchors": {
+        "0": "Ignores explicit instructions.",
+        "10": "Format followed; report.md delivered.",
+        "5": "Minor deviations that do not change the result."
+      },
+      "criterion": "instruction_adherence",
+      "weight": 10
+    }
+  ],
+  "task_set_version": "0.1.0",
+  "version": "0.1.0"
+}

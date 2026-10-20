@@ -1,0 +1,44 @@
+{
+  "speakers": [
+    {
+      "name": "Ada Byron",
+      "topic": "Compilers"
+    },
+    {
+      "name": "Grace Hopper",
+      "topic": "Debugging"
+    },
+    {
+      "name": "Alan Kay",
+      "topic": "Interfaces"
+    },
+    {
+      "name": "Barbara Liskov",
+      "topic": "Types"
+    },
+    {
+      "name": "Edsger Dijkstra",
+      "topic": "Algorithms"
+    },
+    {
+      "name": "Margaret Hamilton",
+      "topic": "Reliability"
+    }
+  ],
+  "rooms": [
+    {
+      "name": "Main Hall",
+      "fee": 300
+    },
+    {
+      "name": "Workshop A",
+      "fee": 450
+    },
+    {
+      "name": "Lab Room",
+      "fee": 250
+    }
+  ],
+  "catering_pp": 22,
+  "av_flat": 500
+}

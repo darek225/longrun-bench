@@ -1,0 +1,48 @@
+{
+  "company_focus": "hybrid-work coworking operators",
+  "market": "US flexible office",
+  "market_size": "11 billion",
+  "growth": "7%",
+  "incumbents": [
+    {
+      "name": "Industrious",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Convene",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Expansive",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Spaces",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    },
+    {
+      "name": "Knotel",
+      "positioning": "premium full-service positioning",
+      "price_tier": "high",
+      "strength": "brand trust and service network density",
+      "weakness": "slow digital experience"
+    }
+  ],
+  "barriers": [
+    "customer acquisition cost",
+    "licensed labor scarcity",
+    "incumbent brand trust"
+  ]
+}

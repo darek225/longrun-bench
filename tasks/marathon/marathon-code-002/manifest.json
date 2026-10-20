@@ -1,0 +1,105 @@
+{
+  "budgets": {
+    "steps": 100,
+    "wall_clock_minutes": 180
+  },
+  "category": "code_build",
+  "deterministic_checks": [
+    {
+      "caps": {
+        "completeness": 10,
+        "correctness": 10
+      },
+      "check": "pytest_pass",
+      "id": "acceptance_tests_pass",
+      "params": {
+        "test_path": "tests"
+      }
+    },
+    {
+      "caps": {
+        "completeness": 20
+      },
+      "check": "word_count",
+      "id": "summary_present",
+      "params": {
+        "max": 400,
+        "min": 30
+      }
+    }
+  ],
+  "id": "marathon-code-002",
+  "level": 2,
+  "network_allowlist": [],
+  "parameters": {
+    "scope": {
+      "type": "enum",
+      "values": [
+        "full spec",
+        "complete implementation",
+        "all acceptance tests"
+      ]
+    },
+    "stack": {
+      "type": "enum",
+      "values": [
+        "python stdlib",
+        "stdlib only",
+        "pure python"
+      ]
+    }
+  },
+  "prompt_template": "Implement audit_log.py to SPEC_FEATURE.md in the workspace so the acceptance suite in tests/ passes. Do not modify the tests. Write summary.md and deliver it. Stack: {{stack}}; scope: {{scope}}.",
+  "quarters_active": [
+    "2026-Q4"
+  ],
+  "rubric": [
+    {
+      "anchors": {
+        "0": "Deliverable missing, fabricated, or unrelated to the task.",
+        "20": "Core answer present with material errors or several failed checks.",
+        "40": "The full acceptance suite passes against the implementation."
+      },
+      "criterion": "correctness",
+      "weight": 40
+    },
+    {
+      "anchors": {
+        "0": "Most required elements missing.",
+        "15": "Most required elements present; one section thin or missing.",
+        "25": "Implementation plus summary; every spec behavior covered."
+      },
+      "criterion": "completeness",
+      "weight": 25
+    },
+    {
+      "anchors": {
+        "0": "Budget exhausted with little progress.",
+        "15": "Finished quickly relative to budget.",
+        "8": "Finished with substantial budget use."
+      },
+      "criterion": "efficiency",
+      "weight": 15
+    },
+    {
+      "anchors": {
+        "0": "First problem ends useful work or is silently absorbed.",
+        "10": "Reads failures and iterates instead of guessing APIs.",
+        "5": "Recovers from some problems; others silently absorbed."
+      },
+      "criterion": "error_recovery",
+      "weight": 10
+    },
+    {
+      "anchors": {
+        "0": "Ignores explicit instructions.",
+        "10": "Spec followed exactly; summary.md delivered; tests unmodified.",
+        "5": "Minor deviations that do not change the result."
+      },
+      "criterion": "instruction_adherence",
+      "weight": 10
+    }
+  ],
+  "task_set_version": "0.1.0",
+  "version": "0.1.0"
+}

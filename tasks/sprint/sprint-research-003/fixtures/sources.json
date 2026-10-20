@@ -1,0 +1,23 @@
+{
+  "topic": "US public EV charging market",
+  "market_size": "12.4 billion",
+  "growth": "23%",
+  "players": [
+    {
+      "name": "ChargePoint",
+      "share": 31
+    },
+    {
+      "name": "Tesla Supercharger",
+      "share": 28
+    },
+    {
+      "name": "Blink",
+      "share": 9
+    }
+  ],
+  "sources": [
+    "DOE AFDC station counts",
+    "NEVI program filings"
+  ]
+}

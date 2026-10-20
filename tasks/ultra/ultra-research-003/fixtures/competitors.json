@@ -1,0 +1,56 @@
+{
+  "market": "residential solar",
+  "state": "Arizona",
+  "competitors": [
+    {
+      "name": "SunPower",
+      "tier": "premium",
+      "angle": "installer network depth"
+    },
+    {
+      "name": "Tesla Solar",
+      "tier": "mid-market",
+      "angle": "brand recognition with homeowners"
+    },
+    {
+      "name": "Sunrun",
+      "tier": "value",
+      "angle": "battery chemistry and warranty terms"
+    },
+    {
+      "name": "Vivint Solar",
+      "tier": "premium",
+      "angle": "utility partnership programs"
+    },
+    {
+      "name": "Freedom Solar",
+      "tier": "mid-market",
+      "angle": "direct-to-consumer pricing"
+    },
+    {
+      "name": "Elevation Solar",
+      "tier": "value",
+      "angle": "regional service coverage"
+    },
+    {
+      "name": "Harmon Solar",
+      "tier": "premium",
+      "angle": "financing offers"
+    },
+    {
+      "name": "Solar Topps",
+      "tier": "mid-market",
+      "angle": "software and monitoring platform"
+    },
+    {
+      "name": "Semper Solaris",
+      "tier": "value",
+      "angle": "retail distribution"
+    },
+    {
+      "name": "Palmetto",
+      "tier": "premium",
+      "angle": "commercial segment focus"
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "budgets": {
+    "steps": 20,
+    "wall_clock_minutes": 15
+  },
+  "category": "planning",
+  "derived_params": [
+    {
+      "key": "{{package}}|{{team_size}}",
+      "map": {
+        "basic|12": {
+          "picks": [
+            "Ranch House",
+            "BBQ class",
+            "Food truck"
+          ],
+          "total": 996.0
+        },
+        "basic|20": {
+          "picks": [
+            "Ranch House",
+            "BBQ class",
+            "Food truck"
+          ],
+          "total": 1660.0
+        },
+        "basic|8": {
+          "picks": [
+            "Ranch House",
+            "BBQ class",
+            "Food truck"
+          ],
+          "total": 664.0
+        },
+        "plus|12": {
+          "picks": [
+            "Downtown Loft",
+            "Live music session",
+            "Taco bar"
+          ],
+          "total": 1428.0
+        },
+        "plus|20": {
+          "picks": [
+            "Downtown Loft",
+            "Live music session",
+            "Taco bar"
+          ],
+          "total": 2380.0
+        },
+        "plus|8": {
+          "picks": [
+            "Downtown Loft",
+            "Live music session",
+            "Taco bar"
+          ],
+          "total": 952.0
+        },
+        "premium|12": {
+          "picks": [
+            "Lakeside Pavilion",
+            "Kayak tour",
+            "Steakhouse"
+          ],
+          "total": 2280.0
+        },
+        "premium|20": {
+          "picks": [
+            "Lakeside Pavilion",
+            "Kayak tour",
+            "Steakhouse"
+          ],
+          "total": 3800.0
+        },
+        "premium|8": {
+          "picks": [
+            "Lakeside Pavilion",
+            "Kayak tour",
+            "Steakhouse"
+          ],
+          "total": 1520.0
+        }
+      },
+      "name": "expected"
+    }
+  ],
+  "deterministic_checks": [
+    {
+      "caps": {
+        "completeness": 15,
+        "correctness": 25
+      },
+      "check": "regex_all",
+      "id": "picks_named",
+      "params": {
+        "patterns": "{{expected.picks}}"
+      }
+    },
+    {
+      "caps": {
+        "correctness": 20
+      },
+      "check": "numeric_within",
+      "id": "total_correct",
+      "params": {
+        "label": "total for the team",
+        "tolerance": 1.0,
+        "value": "{{expected.total}}"
+      }
+    },
+    {
+      "caps": {
+        "instruction_adherence": 5
+      },
+      "check": "word_count",
+      "id": "plan_length",
+      "params": {
+        "max": 300,
+        "min": 60
+      }
+    }
+  ],
+  "id": "sprint-planning-006",
+  "level": 1,
+  "network_allowlist": [],
+  "parameters": {
+    "package": {
+      "type": "enum",
+      "values": [
+        "basic",
+        "plus",
+        "premium"
+      ]
+    },
+    "team_size": {
+      "type": "enum",
+      "values": [
+        8,
+        12,
+        20
+      ]
+    }
+  },
+  "prompt_template": "Plan a one-day team offsite in Austin using options.json. The {{package}} package picks, in each category sorted by price, the option at the package tier (basic = cheapest, plus = middle, premium = priciest). For a team of {{team_size}}, write plan.md naming the venue, activity, and meal picks with per-person prices, and print the team total as 'Total for the team: $X'.",
+  "quarters_active": [
+    "2026-Q4"
+  ],
+  "rubric": [
+    {
+      "anchors": {
+        "0": "Deliverable missing, fabricated, or unrelated to the task.",
+        "20": "Core answer present with material errors or several failed checks.",
+        "40": "Picks match the package tier rule and the team total is arithmetically exact."
+      },
+      "criterion": "correctness",
+      "weight": 40
+    },
+    {
+      "anchors": {
+        "0": "Most required elements missing.",
+        "15": "Most required elements present; one section thin or missing.",
+        "25": "Venue, activity, meal, per-person prices, and total all present."
+      },
+      "criterion": "completeness",
+      "weight": 25
+    },
+    {
+      "anchors": {
+        "0": "Budget exhausted with little progress.",
+        "15": "Finished quickly relative to budget.",
+        "8": "Finished with substantial budget use."
+      },
+      "criterion": "efficiency",
+      "weight": 15
+    },
+    {
+      "anchors": {
+        "0": "First problem ends useful work or is silently absorbed.",
+        "10": "Applies the tier rule per category instead of mixing tiers.",
+        "5": "Recovers from some problems; others silently absorbed."
+      },
+      "criterion": "error_recovery",
+      "weight": 10
+    },
+    {
+      "anchors": {
+        "0": "Ignores explicit instructions.",
+        "10": "Total printed in the required format; plan.md delivered.",
+        "5": "Minor deviations that do not change the result."
+      },
+      "criterion": "instruction_adherence",
+      "weight": 10
+    }
+  ],
+  "task_set_version": "0.1.0",
+  "version": "0.1.0"
+}

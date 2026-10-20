@@ -1,0 +1,39 @@
+{
+  "flights": [
+    {
+      "airline": "SkyAir",
+      "price": 240,
+      "url": "flights.example/sky240"
+    },
+    {
+      "airline": "JetWest",
+      "price": 310,
+      "url": "flights.example/jw310"
+    },
+    {
+      "airline": "BudgetAir",
+      "price": 190,
+      "url": "flights.example/ba190"
+    }
+  ],
+  "hotels": [
+    {
+      "name": "Downtown Suites",
+      "nightly": 180,
+      "tier": "mid",
+      "url": "hotels.example/ds180"
+    },
+    {
+      "name": "Grand Austin",
+      "nightly": 260,
+      "tier": "upscale",
+      "url": "hotels.example/ga260"
+    },
+    {
+      "name": "Airport Inn",
+      "nightly": 120,
+      "tier": "mid",
+      "url": "hotels.example/ai120"
+    }
+  ]
+}

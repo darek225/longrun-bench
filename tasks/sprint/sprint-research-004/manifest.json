@@ -1,0 +1,148 @@
+{
+  "budgets": {
+    "steps": 20,
+    "wall_clock_minutes": 15
+  },
+  "category": "research_synthesis",
+  "deterministic_checks": [
+    {
+      "caps": {
+        "correctness": 25
+      },
+      "check": "regex_all",
+      "id": "key_figures",
+      "params": {
+        "patterns": [
+          "8.7 billion",
+          "4%"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "completeness": 15,
+        "correctness": 20
+      },
+      "check": "regex_all",
+      "id": "players_named",
+      "params": {
+        "patterns": [
+          "Zola Venues",
+          "WeddingWire",
+          "Independent venues"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "completeness": 15
+      },
+      "check": "regex_all",
+      "id": "sources_cited",
+      "params": {
+        "patterns": [
+          "The Knot real weddings study",
+          "IBISWorld wedding services report"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "instruction_adherence": 5
+      },
+      "check": "banned_phrases",
+      "id": "no_filler",
+      "params": {
+        "phrases": [
+          "lorem",
+          "as an ai"
+        ]
+      }
+    },
+    {
+      "caps": {
+        "instruction_adherence": 5
+      },
+      "check": "word_count",
+      "id": "brief_length",
+      "params": {
+        "max": 350,
+        "min": 150
+      }
+    }
+  ],
+  "id": "sprint-research-004",
+  "level": 1,
+  "network_allowlist": [],
+  "parameters": {
+    "angle": {
+      "type": "enum",
+      "values": [
+        "opportunity",
+        "competition",
+        "pricing"
+      ]
+    },
+    "audience": {
+      "type": "enum",
+      "values": [
+        "investor",
+        "operator",
+        "partner"
+      ]
+    }
+  },
+  "prompt_template": "Using only sources.json in the workspace, write a brief on the US wedding venues market for a {{audience}}. Angle: {{angle}}. The brief must state the market size and growth rate, name every player with its share, and cite both sources by name. 150-350 words. Write brief.md and deliver it.",
+  "quarters_active": [
+    "2026-Q4"
+  ],
+  "rubric": [
+    {
+      "anchors": {
+        "0": "Deliverable missing, fabricated, or unrelated to the task.",
+        "20": "Core answer present with material errors or several failed checks.",
+        "40": "Market size, growth, players, and shares all match sources.json exactly."
+      },
+      "criterion": "correctness",
+      "weight": 40
+    },
+    {
+      "anchors": {
+        "0": "Most required elements missing.",
+        "15": "Most required elements present; one section thin or missing.",
+        "25": "Figures, all players, and both sources cited, within the word budget."
+      },
+      "criterion": "completeness",
+      "weight": 25
+    },
+    {
+      "anchors": {
+        "0": "Budget exhausted with little progress.",
+        "15": "Finished quickly relative to budget.",
+        "8": "Finished with substantial budget use."
+      },
+      "criterion": "efficiency",
+      "weight": 15
+    },
+    {
+      "anchors": {
+        "0": "First problem ends useful work or is silently absorbed.",
+        "10": "Stays inside the frozen sources instead of inventing outside facts.",
+        "5": "Recovers from some problems; others silently absorbed."
+      },
+      "criterion": "error_recovery",
+      "weight": 10
+    },
+    {
+      "anchors": {
+        "0": "Ignores explicit instructions.",
+        "10": "Word budget and citations respected; brief.md delivered.",
+        "5": "Minor deviations that do not change the result."
+      },
+      "criterion": "instruction_adherence",
+      "weight": 10
+    }
+  ],
+  "task_set_version": "0.1.0",
+  "version": "0.1.0"
+}

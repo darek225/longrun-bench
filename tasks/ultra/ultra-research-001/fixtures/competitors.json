@@ -1,0 +1,56 @@
+{
+  "market": "home battery storage",
+  "state": "Texas",
+  "competitors": [
+    {
+      "name": "Tesla Powerwall",
+      "tier": "premium",
+      "angle": "installer network depth"
+    },
+    {
+      "name": "Enphase",
+      "tier": "mid-market",
+      "angle": "brand recognition with homeowners"
+    },
+    {
+      "name": "Generac",
+      "tier": "value",
+      "angle": "battery chemistry and warranty terms"
+    },
+    {
+      "name": "FranklinWH",
+      "tier": "premium",
+      "angle": "utility partnership programs"
+    },
+    {
+      "name": "Sonnen",
+      "tier": "mid-market",
+      "angle": "direct-to-consumer pricing"
+    },
+    {
+      "name": "LG Chem RESU",
+      "tier": "value",
+      "angle": "regional service coverage"
+    },
+    {
+      "name": "Panasonic EverVolt",
+      "tier": "premium",
+      "angle": "financing offers"
+    },
+    {
+      "name": "Bluetti",
+      "tier": "mid-market",
+      "angle": "software and monitoring platform"
+    },
+    {
+      "name": "EcoFlow",
+      "tier": "value",
+      "angle": "retail distribution"
+    },
+    {
+      "name": "Jackery",
+      "tier": "premium",
+      "angle": "commercial segment focus"
+    }
+  ]
+}
