@@ -1,0 +1,1 @@
+{"providers":{"anthropic/claude-opus-5.5":{"input_per_mtok":4.0,"output_per_mtok":20.0,"source":"https://anthropic.com/pricing"},"openai/gpt-6":{"input_per_mtok":10.0,"output_per_mtok":50.0,"source":"https://openai.com/pricing"}},"updated":"2026-10-20"}

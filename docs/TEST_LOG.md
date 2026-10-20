@@ -29,3 +29,11 @@ Environment: dev VM, Python 3, pytest 9.1.1, harness installed via `PYTHONPATH=h
 - Adversarial malformed-call agent: burns the step budget and ends `budget` cleanly, no hang.
 - Silent model (empty responses): ends `error` after 3 strikes, 0 steps consumed.
 - Persistent provider errors: ends `error` after exactly 3 `model_error` events.
+
+## 2026-10-20 — Phase 2 slices 2-4 verification
+
+- Full suite: **51 passed** (`cd harness && python -m pytest`), up from 27.
+- Adapters: OpenAI/Anthropic/Google rendering and response parsing verified against fake transports (tool-call id pairing, strict role alternation for Anthropic, functionCall parsing for Google); missing-key errors name the env var; malformed argument JSON degrades to a driver validation error, not a crash.
+- Runner: pricing estimate for anthropic/claude-opus-5.5 at 100 steps = $0.80-$3.20 (matches hand computation); redaction catches sk-, xai-, AIza, ghp_, bearer, and PEM shapes; submission signatures verify and tampering with the claimed total fails verification; `run` without a key exits 1 before step 1.
+- Protocol server: scripted run over HTTP returns 201, reaches done with score >95, transcript retrievable; external-mode run waits in `running`, accepts a deliverable, and is graded by the server (score >95 on the vendor-brief fixture).
+- Judge: a stub judge awarding 40/40 correctness is capped to 20 by failed checks; MockJudge separates the good data-task report (98+) from the broken one by >30 points; non-JSON judge output is rejected; calibration machinery reports agreement rate and mean bias.

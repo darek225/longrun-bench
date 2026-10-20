@@ -258,6 +258,9 @@ class Driver:
                 steps += 1
                 name = str(call.get("name", ""))
                 args = call.get("args", {}) if isinstance(call.get("args", {}), dict) else {}
+                # Record the call itself so provider adapters can render a valid
+                # conversation (tool results must follow their tool call).
+                history.append({"role": "assistant", "tool_call": {"name": name, "args": args}})
 
                 if not warned and steps >= int(instance.budgets.steps * 0.8):
                     warned = True

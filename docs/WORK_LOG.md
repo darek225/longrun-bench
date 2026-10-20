@@ -20,12 +20,16 @@ Built:
   - `sprint-vendor-001` (research_synthesis): offline vendor comparison against a `vendors.json` fixture with per-product derived catalogs.
 - `harness/tests/` — 27 tests (manifest, checks, tools, driver conformance, scoring). Every check in the seed tasks has been seen to fail on a broken deliverable (see `docs/TEST_LOG.md`).
 
+## 2026-10-20 — Phase 2 slices 2-4: runner, protocol server, judge
+
+- **Slice 2 (runner, `docs/plan/10-runner-flow.md`):** provider adapters (`adapters.py`): OpenAI-compatible (covers OpenAI/DeepSeek/xAI/Together/local endpoints), Anthropic, and Google AI, behind a `provider/model` factory; keys read from the environment at call time only, never logged or uploaded; 429 backoff per the plan. The driver now records assistant tool-call entries in history so provider APIs receive valid conversations. `pricing.py` + `harness/pricing.json` (pre-run estimate, post-run actuals), `redact.py` (key-shaped string redaction for transcripts), `signing.py` (submission manifest: transcript hash + score claim + sha256/HMAC signature; the upload payload contains hashes only). CLI gains `run` (fails before step 1 without a key), `redact`, and `upload`; every run now also writes `submission.json`.
+- **Slice 3 (protocol server, `docs/plan/01-harness.md` §5):** `server.py` implements POST /run, GET /run/{id}/status, GET /run/{id}/transcript, POST /run/{id}/deliver over stdlib HTTP. Scripted/model modes run the driver server-side; external mode is the native/bare path: the run waits for a delivered artifact and the server grades it with the standard checks (vendor-reported scores are ignored, per spec).
+- **Slice 4 (judge, `docs/plan/03-judge.md`):** `judge.py` with the exact v1 judge prompt in `harness/judge/prompt.md`; the judge scores the fuzzy criteria, efficiency stays the deterministic spec formula, and check caps are enforced server-side over judge scores. Flags pass through; the 5%-of-run-tokens judge cost rule is computed and reported. `MockJudge` (clearly labeled test double) exercises the pipeline; `run_calibration` computes ±5 agreement and bias against hand-graded entries. CLI gains `grade` (with `--mock-judge` for pipeline testing).
+
 Deliberately not in this slice (later Phase 2 work, in plan order):
 
-- Real provider adapters and the BYO-key runner flow (`docs/plan/10-runner-flow.md`) — only the scripted adapter exists.
-- The `/run` protocol server for native/bare submissions.
-- `browser.task` implementation.
-- The LLM judge and calibration set (`docs/plan/03-judge.md`).
+- `browser.task` implementation (still an explicit not-implemented result).
+- Judge calibration set with real human grades (machinery built in slice 4; the 30-transcript human panel is an external step).
 - The remaining ~82 tasks (`docs/plan/14-task-generation.md`) and trial-grading/discrimination passes.
 - The leaderboard site and ingestion API (`docs/plan/04-leaderboard.md`).
 - Docker image build verification: the Dockerfile follows the plan, but this dev VM cannot run a Docker daemon, so the image build is unverified until run on a Docker-capable machine.
