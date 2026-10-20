@@ -295,16 +295,60 @@ def cmd_redact(args: argparse.Namespace) -> int:
     return 0
 
 
+def build_bundle(run_dir: str | Path) -> dict[str, Any]:
+    """Assemble the upload bundle the leaderboard replays (docs/plan/04 §2).
+
+    The signed submission manifest carries hashes and the score claim; the
+    bundle adds the run record, the raw transcript, and the workspace files
+    so the server can replay the deterministic checks itself. API keys are
+    never part of any of these artifacts.
+    """
+    run_dir = Path(run_dir)
+    submission = json.loads((run_dir / "submission.json").read_text(encoding="utf-8"))
+    run_record = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+    transcript = (run_dir / "transcript.jsonl").read_text(encoding="utf-8")
+    workspace = run_dir / "workspace"
+    workspace_files: dict[str, str] = {}
+    if workspace.exists():
+        for path in sorted(workspace.rglob("*")):
+            if not path.is_file():
+                continue
+            rel = path.relative_to(workspace).as_posix()
+            if "__pycache__" in rel or ".pytest_cache" in rel or path.suffix in (".pyc", ".db", ".sqlite"):
+                continue
+            if path.stat().st_size > 200_000:
+                continue
+            try:
+                workspace_files[rel] = path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                continue
+    deliverable_rel = None
+    deliverable = run_record.get("deliverable") or {}
+    if deliverable.get("artifact_path") and workspace.exists():
+        try:
+            deliverable_rel = Path(str(deliverable["artifact_path"])).relative_to(workspace.resolve()).as_posix()
+        except ValueError:
+            deliverable_rel = str(deliverable.get("artifact_uri", "")) or None
+    return {
+        "submission": submission,
+        "run_record": run_record,
+        "transcript": transcript,
+        "workspace_files": workspace_files,
+        "deliverable_rel": deliverable_rel,
+    }
+
+
 def cmd_upload(args: argparse.Namespace) -> int:
     submission_path = Path(args.dir) / "submission.json"
     if not submission_path.exists():
         _print_json({"ok": False, "error": f"no submission.json in {args.dir} (run a task first)"})
         return 1
-    submission = json.loads(submission_path.read_text(encoding="utf-8"))
+    bundle = build_bundle(args.dir)
+    payload: Any = {"board": args.board, "runs": [bundle]}
     url = args.api.rstrip("/") + "/api/scores/submit"
     request = urllib.request.Request(
         url,
-        data=json.dumps(submission).encode("utf-8"),
+        data=json.dumps(payload).encode("utf-8"),
         method="POST",
         headers={"Content-Type": "application/json"},
     )
@@ -381,9 +425,10 @@ def build_parser() -> argparse.ArgumentParser:
     redact.add_argument("--out", required=True)
     redact.set_defaults(func=cmd_redact)
 
-    upload = sub.add_parser("upload", help="upload a submission.json to the leaderboard API")
+    upload = sub.add_parser("upload", help="upload a run bundle to the leaderboard API for check replay")
     upload.add_argument("--dir", required=True)
     upload.add_argument("--api", default="http://localhost:8787")
+    upload.add_argument("--board", default="community", choices=["official", "community"])
     upload.set_defaults(func=cmd_upload)
 
     return parser

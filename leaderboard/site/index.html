@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LongRun Bench — Leaderboard</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 960px; padding: 0 1rem; color: #1a1a1a; }
+  nav a { margin-right: 1rem; }
+  table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+  th, td { border-bottom: 1px solid #ddd; padding: 0.4rem 0.6rem; text-align: left; }
+  .flag { color: #b3001b; font-weight: 600; }
+  .meta { color: #555; font-size: 0.9em; }
+  select { margin-right: 0.5rem; }
+  pre { background: #f6f6f6; padding: 1rem; overflow-x: auto; }
+  textarea { width: 100%; height: 10rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>LongRun Bench</h1>
+  <nav>
+    <a href="#/">Board</a>
+    <a href="#/tasks">Tasks</a>
+    <a href="#/methodology">Methodology</a>
+    <a href="#/disputes">Disputes</a>
+    <a href="#/submit">Submit</a>
+  </nav>
+</header>
+<main id="app">Loading…</main>
+<script>
+const app = document.getElementById('app');
+const LEVELS = ['sprint', 'marathon', 'ultra'];
+const PROFILES = ['bare', 'standard', 'native'];
+
+async function api(path) {
+  const res = await fetch(path);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+function gapCell(row) {
+  if (row.gen_gap === null || row.gen_gap === undefined) return '<span class="meta">n/a</span>';
+  const flag = row.gap_flag ? ' <span class="flag">gap flag</span>' : '';
+  return row.gen_gap.toFixed(1) + flag;
+}
+
+async function renderBoard(params) {
+  const profile = params.get('profile') || 'standard';
+  const level = params.get('level') || 'marathon';
+  const board = params.get('board') || 'community';
+  const sel = (name, values, cur) => `<select onchange="nav('${name}', this.value)">${values.map(v => `<option ${v===cur?'selected':''}>${v}</option>`).join('')}</select>`;
+  app.innerHTML = `<h2>Board</h2>
+    <div>${sel('profile', PROFILES, profile)}${sel('level', LEVELS, level)}${sel('board', ['community','official'], board)}</div>
+    <div id="rows">Loading…</div>`;
+  window._boardParams = {profile, level, board};
+  const data = await api(`/api/scores?profile=${profile}&level=${level}&board=${board}`);
+  const rows = data.scores.map((r, i) => `<tr><td>${i+1}</td><td>${r.agent_name}</td><td>${r.model}</td>
+    <td>${r.mean_score.toFixed(2)} <span class="meta">± ${(r.ci_high - r.mean_score).toFixed(2)}</span></td>
+    <td>${gapCell(r)}</td><td>${r.tier}${r.status !== 'provisional' ? ' / ' + r.status : ''}${r.provisional ? ' <span class="meta">(provisional)</span>' : ''}</td>
+    <td>${r.created_at}</td><td><a href="#/score/${r.id}">breakdown</a></td></tr>`).join('');
+  document.getElementById('rows').innerHTML = data.scores.length
+    ? `<table><tr><th>#</th><th>Agent</th><th>Model</th><th>Score</th><th>Gen gap</th><th>Tier</th><th>Date</th><th></th></tr>${rows}</table>`
+    : '<p>No scores yet for this view. Be the first to submit.</p>';
+}
+
+function nav(name, value) {
+  const p = new URLSearchParams(window._boardParams || {});
+  p.set(name, value);
+  location.hash = '#/?' + p.toString();
+}
+
+async function renderScore(id) {
+  const s = await api('/api/scores/' + id);
+  const tasks = s.task_scores.map(t => `<tr><td>${t.task_id}</td><td>${t.mean_score.toFixed(2)}</td><td>${t.n_runs}</td></tr>`).join('');
+  const runs = s.run_manifests.map(r => `<tr><td>${r.task_id}</td><td>${r.seed}</td><td>${r.claimed_total}</td><td>${r.replayed_total}</td><td><code>${r.transcript_sha256.slice(0, 19)}…</code></td></tr>`).join('');
+  app.innerHTML = `<h2>${s.agent_name} (${s.model})</h2>
+    <p>${s.profile} / ${s.level} / task set ${s.task_set} / board ${s.board} / tier ${s.tier} / status ${s.status}${s.gap_flag ? ' <span class="flag">generalization gap flag</span>' : ''}</p>
+    <p>Mean ${s.mean_score.toFixed(2)} (95% CI ${s.ci_low.toFixed(2)} to ${s.ci_high.toFixed(2)}), median ${s.median_score.toFixed(2)}, ${s.n_tasks} tasks, ${s.n_runs} runs.</p>
+    <h3>Per-task</h3><table><tr><th>Task</th><th>Mean</th><th>Runs</th></tr>${tasks}</table>
+    <h3>Runs (server-replayed)</h3><table><tr><th>Task</th><th>Seed</th><th>Claimed</th><th>Replayed</th><th>Transcript</th></tr>${runs}</table>`;
+}
+
+async function renderTasks() {
+  const data = await api('/api/tasks');
+  const rows = data.tasks.map(t => `<tr><td>${t.task_id}</td><td>${['','sprint','marathon','ultra'][t.level] || t.level}</td><td>${t.category}</td></tr>`).join('');
+  app.innerHTML = `<h2>Task bank</h2><p class="meta">${data.tasks.length} tasks. Instances are parameterized; the bank shows tasks and rubrics, never drawn instances.</p>
+    <table><tr><th>Task</th><th>Level</th><th>Category</th></tr>${rows}</table>`;
+}
+
+function renderMethodology() {
+  app.innerHTML = `<h2>Methodology</h2>
+    <p>LongRun Bench scores long, multi-step agent runs against rubrics: correctness 40, completeness 25, efficiency 15, error recovery 10, instruction adherence 10. Profiles (bare, standard, native) are never compared across. Levels are Sprint, Marathon, and Ultra.</p>
+    <p>Scores are never trusted from the submitter. The ingestion API verifies the signed submission, then replays the deterministic checks from the run bundle with the same checker code as the harness, and rejects on any mismatch.</p>
+    <p>Verification is by reproduction: two independent re-runs landing inside the reported 95% confidence interval mark a score verified; two outside mark it disputed, with transcripts public.</p>
+    <p>The generalization gap is the mean on recently added tasks minus the mean on older tasks. New tasks are the canary, so no secret held-out set is needed. Gap flags render unconditionally.</p>
+    <p>Full spec: see SPEC.md in the repository.</p>`;
+}
+
+async function renderDisputes() {
+  const data = await api('/api/disputes');
+  const rows = data.disputes.map(d => `<tr><td>${d.id.slice(0, 8)}</td><td>${d.score_id.slice(0, 8)}</td><td>${d.status}</td><td>${d.reason || ''}</td><td>${d.resolution || ''}</td></tr>`).join('');
+  app.innerHTML = `<h2>Disputes</h2>${data.disputes.length ? `<table><tr><th>Id</th><th>Score</th><th>Status</th><th>Reason</th><th>Resolution</th></tr>${rows}</table>` : '<p>No disputes on record.</p>'}`;
+}
+
+function renderSubmit() {
+  app.innerHTML = `<h2>Submit a run</h2>
+    <p>Run a task with the open harness, then upload the run directory:</p>
+    <pre>longrun run tasks/sprint/sprint-data-001 --model anthropic/claude-opus-5.5 --out runs/my-run
+longrun upload --dir runs/my-run --api ${location.origin}</pre>
+    <p>The server verifies the signature and replays the deterministic checks before anything reaches the board. Scores start as provisional; independent reproductions verify them.</p>`;
+}
+
+async function route() {
+  const hash = location.hash.slice(1) || '/';
+  const [path, qs] = hash.split('?');
+  const params = new URLSearchParams(qs || '');
+  try {
+    if (path === '/' || path === '') await renderBoard(params);
+    else if (path.startsWith('/score/')) await renderScore(path.split('/')[2]);
+    else if (path === '/tasks') await renderTasks();
+    else if (path === '/methodology') renderMethodology();
+    else if (path === '/disputes') await renderDisputes();
+    else if (path === '/submit') renderSubmit();
+    else app.innerHTML = '<p>Not found.</p>';
+  } catch (err) {
+    app.innerHTML = '<p>Failed to load: ' + err.message + '</p>';
+  }
+}
+
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>

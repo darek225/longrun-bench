@@ -44,3 +44,8 @@ Environment: dev VM, Python 3, pytest 9.1.1, harness installed via `PYTHONPATH=h
 - Full sweep: `python3 tasks/validate_bank.py` → **85/85 tasks pass**: every scripted solver passes all of its task's deterministic checks on the pinned instance, and every garbage-deliverable control fails at least one check. Per-task detail in `tasks/PROGRESS.md`.
 - First sweep was 58/85; all 27 failures were diagnosed individually (10 solver word-count shortfalls, 1 `numeric_within` label collision with "subtotal", plus smaller variants) and fixed in the generator — never by weakening a check to fit a solver, and never by editing generated output by hand. Fixes regenerated the whole bank.
 - Harness suite after slice 5: **51 passed** (unchanged; the bank is data, not harness code).
+
+## 2026-10-20 — Phase 2 slice 6 verification (leaderboard)
+
+- `python3 -m pytest leaderboard/tests` → **5 passed**: (1) two real scripted run bundles (sprint-data-001, sprint-vendor-001) ingest into one grouped board row (n_tasks=2, n_runs=2, mean >95, provisional), with claimed totals equal to server-replayed totals; (2) a tampered claimed total is rejected (signature verification); (3) a bundle whose deliverable was swapped for garbage is rejected on check-replay mismatch; (4) verification recording judges inside/outside the row's CI correctly; (5) full HTTP smoke: site serves, submit returns 201, board query returns the row, drill-down, dispute create/list, and `/api/tasks` returns all 85 tasks.
+- Harness suite after the `upload` bundle change: **51 passed** (no regressions).
