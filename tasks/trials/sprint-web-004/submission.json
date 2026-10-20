@@ -1,0 +1,57 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "1a0bd408-a6e7-46c2-a64a-a6360b9934a7",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "csv_shape",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "focus_row_values",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "all_models_present",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 13.8198325,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 98.8198
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:4fc5059aa0d7af983ef4371a7c2cb8a5825896ba38684ced0dda7622eca3e4e8",
+    "mac": null
+  },
+  "task_id": "sprint-web-004",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1815
+  },
+  "transcript_sha256": "sha256:97b42d544a7627fe9afb382794a04ffd43a9c348d0f2f8dc615e31b717874320"
+}

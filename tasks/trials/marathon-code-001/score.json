@@ -1,0 +1,70 @@
+{
+  "checks": [
+    {
+      "caps": {
+        "completeness": 10.0,
+        "correctness": 10.0
+      },
+      "check": "pytest_pass",
+      "detail": "5 passed in 0.03s",
+      "id": "acceptance_tests_pass",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "caps": {
+        "completeness": 20.0
+      },
+      "check": "word_count",
+      "detail": "word count 38, expected 30..400",
+      "id": "summary_present",
+      "passed": true,
+      "score": 1.0
+    }
+  ],
+  "criteria": {
+    "completeness": {
+      "caps_applied": [],
+      "score": 25.0,
+      "weight": 25.0
+    },
+    "correctness": {
+      "caps_applied": [],
+      "score": 40.0,
+      "weight": 40.0
+    },
+    "efficiency": {
+      "caps_applied": [],
+      "efficiency": {
+        "clamped": 0.9688128981481482,
+        "raw": 0.9688128981481482,
+        "steps_ratio": 0.06,
+        "time_ratio": 0.00016050925925925927,
+        "tokens_ratio": 0.00385
+      },
+      "score": 14.532193472222223,
+      "weight": 15.0
+    },
+    "error_recovery": {
+      "caps_applied": [],
+      "score": 10.0,
+      "weight": 10.0
+    },
+    "instruction_adherence": {
+      "caps_applied": [],
+      "score": 10.0,
+      "weight": 10.0
+    }
+  },
+  "efficiency": {
+    "clamped": 0.9688128981481482,
+    "raw": 0.9688128981481482,
+    "steps_ratio": 0.06,
+    "time_ratio": 0.00016050925925925927,
+    "tokens_ratio": 0.00385
+  },
+  "notes": "Checks-only provisional score. No LLM judge or human audit has graded this run.",
+  "provisional": true,
+  "tier": "checks",
+  "total": 99.5322
+}

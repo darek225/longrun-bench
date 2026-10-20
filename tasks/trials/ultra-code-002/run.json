@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:5ee7d259fb6f84384cb8417817c261091094030e78cbba84dfd03f2743649997",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/ultra-code-002/workspace/summary.md",
+    "artifact_uri": "summary.md",
+    "notes": "",
+    "summary": "Implemented billing_app.py to spec; acceptance suite green; summary.md delivered."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "scope": "full spec",
+    "stack": "python stdlib"
+  },
+  "run_id": "0c2810f8-3139-4a9e-8cc2-38a274a6fa06",
+  "score_total": 99.8905,
+  "seed": 42,
+  "task_id": "ultra-code-002",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1370,
+    "output_tokens": 620,
+    "steps": 7,
+    "wall_clock_s": 0.9653
+  }
+}

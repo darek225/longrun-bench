@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:c8c40f4fcf8f0b1a2724da7af1639a585dfd6b283b4faa97ff49d20b908d71dd",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-code-005/workspace/summary.md",
+    "artifact_uri": "summary.md",
+    "notes": "",
+    "summary": "Fixed all planted bugs in inventory_api.py; suite is green; summary.md explains each bug and fix."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "bug_count": "three",
+    "theme": "edge-case"
+  },
+  "run_id": "a5e6e96a-821a-4be7-9ddb-fd8659bb71a1",
+  "score_total": 97.2598,
+  "seed": 42,
+  "task_id": "sprint-code-005",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1400,
+    "output_tokens": 580,
+    "steps": 7,
+    "wall_clock_s": 1.1422
+  }
+}

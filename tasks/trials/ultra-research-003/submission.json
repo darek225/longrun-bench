@@ -1,0 +1,62 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "4858cb6b-7bf6-4000-beca-c396a21c2d1d",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "competitors_profiled",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "regulations_addressed",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "risk_register_complete",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "dossier_length",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 14.919571215277777,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 99.9196
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:349420c15f8466d8fb32b0f49938cbd908ca25a35c1f49fc21a91a065e671217",
+    "mac": null
+  },
+  "task_id": "ultra-research-003",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1680,
+    "output_tokens": 730,
+    "steps": 5,
+    "wall_clock_s": 0.181
+  },
+  "transcript_sha256": "sha256:b8ba37aa96407a9831cac0b334bd004bb74ca096ca5ca95799f63ce932b14321"
+}

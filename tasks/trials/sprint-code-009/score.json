@@ -1,0 +1,80 @@
+{
+  "checks": [
+    {
+      "caps": {
+        "completeness": 10.0,
+        "correctness": 10.0
+      },
+      "check": "pytest_pass",
+      "detail": "3 passed in 0.02s",
+      "id": "tests_pass",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "caps": {
+        "completeness": 15.0
+      },
+      "check": "file_exists",
+      "detail": "path exists: /tmp/longrun-bank-9w3dwxho/sprint-code-009/workspace/tests/test_regression.py",
+      "id": "regression_test_added",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "caps": {
+        "completeness": 20.0
+      },
+      "check": "word_count",
+      "detail": "word count 52, expected 30..300",
+      "id": "summary_length",
+      "passed": true,
+      "score": 1.0
+    }
+  ],
+  "criteria": {
+    "completeness": {
+      "caps_applied": [],
+      "score": 25.0,
+      "weight": 25.0
+    },
+    "correctness": {
+      "caps_applied": [],
+      "score": 40.0,
+      "weight": 40.0
+    },
+    "efficiency": {
+      "caps_applied": [],
+      "efficiency": {
+        "clamped": 0.8429549666666667,
+        "raw": 0.8429549666666667,
+        "steps_ratio": 0.3,
+        "time_ratio": 0.0009126666666666667,
+        "tokens_ratio": 0.022875
+      },
+      "score": 12.6443245,
+      "weight": 15.0
+    },
+    "error_recovery": {
+      "caps_applied": [],
+      "score": 10.0,
+      "weight": 10.0
+    },
+    "instruction_adherence": {
+      "caps_applied": [],
+      "score": 10.0,
+      "weight": 10.0
+    }
+  },
+  "efficiency": {
+    "clamped": 0.8429549666666667,
+    "raw": 0.8429549666666667,
+    "steps_ratio": 0.3,
+    "time_ratio": 0.0009126666666666667,
+    "tokens_ratio": 0.022875
+  },
+  "notes": "Checks-only provisional score. No LLM judge or human audit has graded this run.",
+  "provisional": true,
+  "tier": "checks",
+  "total": 97.6443
+}

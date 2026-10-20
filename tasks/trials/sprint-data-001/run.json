@@ -1,0 +1,38 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:eedca49670843db57af1656ea1e3e459a29943c6172f5443d12fa3461af5507b",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-data-001/workspace/report.md",
+    "artifact_uri": "report.md",
+    "notes": "",
+    "summary": "Analyzed sales.csv for the north region: total revenue, top 3 products, and the three planted data quality issues are in report.md."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "top_products": [
+        "Alpha",
+        "Gamma",
+        "Beta"
+      ],
+      "total_revenue": 2550
+    },
+    "region": "north",
+    "top_n": 3
+  },
+  "run_id": "e51f0d9b-05e3-4c87-af00-d873d42d8cca",
+  "score_total": 98.8362,
+  "seed": 42,
+  "task_id": "sprint-data-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 500,
+    "output_tokens": 190,
+    "steps": 3,
+    "wall_clock_s": 0.0059
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "adc2007b-6e8c-4e12-ad14-43ea43222a95",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "acceptance_tests_pass",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "summary_present",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "memory_maintained",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 14.859755243055556,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 99.8598
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:d2ce9ee48f5c3bf19075107c0c051bfeaf664d5cfbc18618d8e678c4c5360a19",
+    "mac": null
+  },
+  "task_id": "ultra-code-004",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1610,
+    "output_tokens": 700,
+    "steps": 9,
+    "wall_clock_s": 1.361
+  },
+  "transcript_sha256": "sha256:90833274bc77d517b7c618641f9546438eafccba3abfd3be646160686720c485"
+}

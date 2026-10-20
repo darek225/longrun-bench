@@ -1,0 +1,67 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "2120a909-e493-4579-9ba3-14b827bc7832",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "october_total",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "november_total",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "december_total",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "quarter_total",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "corrections_applied",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 14.952163506944444,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 99.9522
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:3f1e3300097a4423d8f040d4c0a8889dd8b851cd796ac0feb2a2a463a6dcb04f",
+    "mac": null
+  },
+  "task_id": "ultra-data-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 880,
+    "output_tokens": 380,
+    "steps": 3,
+    "wall_clock_s": 0.043
+  },
+  "transcript_sha256": "sha256:28ffd08324c6f660d3174beb4abaf8cc3874e072588c094fa8309065630a353c"
+}

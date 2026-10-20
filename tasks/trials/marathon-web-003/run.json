@@ -1,0 +1,35 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:e4d685d059633383b97ac0422ec75d99045e9c66e76c4431c55c74627801d574",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/marathon-web-003/workspace/specs.csv",
+    "artifact_uri": "specs.csv",
+    "notes": "",
+    "summary": "Extracted all five models into specs.csv."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "brand_focus": "DustBot",
+    "expected": {
+      "model": "DustBot Ultra",
+      "price": "749",
+      "spec": "300 min"
+    },
+    "output_format": "csv"
+  },
+  "run_id": "a84cfca9-7452-41f1-be09-7f0de7da907e",
+  "score_total": 99.7641,
+  "seed": 42,
+  "task_id": "marathon-web-003",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.113
+  }
+}

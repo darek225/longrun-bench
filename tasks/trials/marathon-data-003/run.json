@@ -1,0 +1,36 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:df886732ca110f3b6510813a2e80e9fef78940375f6548b29807f87f8a9d73d1",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/marathon-data-003/workspace/report.md",
+    "artifact_uri": "report.md",
+    "notes": "",
+    "summary": "Computed net MRR for the pro plan."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "churned": [
+        "B"
+      ],
+      "net_mrr": 350.0
+    },
+    "plan": "pro",
+    "view": "summary"
+  },
+  "run_id": "7048079c-8e81-4c52-a3b4-69fc925e11cf",
+  "score_total": 99.7641,
+  "seed": 42,
+  "task_id": "marathon-data-003",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1215
+  }
+}

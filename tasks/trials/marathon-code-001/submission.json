@@ -1,0 +1,52 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "b8b7c0ea-8579-4e3f-b36e-50e298db69ba",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "acceptance_tests_pass",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "summary_present",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 14.532193472222223,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 99.5322
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:a645fce3b9da51eafe01b6c82822df032742d35826551efde07bcc4d49b3a498",
+    "mac": null
+  },
+  "task_id": "marathon-code-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1070,
+    "output_tokens": 470,
+    "steps": 6,
+    "wall_clock_s": 1.7335
+  },
+  "transcript_sha256": "sha256:31ceab07d7cbd4cb0da80fdb1c06c957a2cf68afa8cc754b49aaf4e67138b8fb"
+}

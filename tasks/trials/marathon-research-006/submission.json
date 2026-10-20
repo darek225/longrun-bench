@@ -1,0 +1,62 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "d10ed86e-2743-483d-a969-fec50e004f07",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "sources_named",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "both_figures_present",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "contradiction_flagged",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "dossier_length",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 14.687269138888889,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 99.6873
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:40eb3e06b2a61132652e32a7172736136e1147eb0a9fe3e5643824f2d35e21b3",
+    "mac": null
+  },
+  "task_id": "marathon-research-006",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 820,
+    "output_tokens": 310,
+    "steps": 4,
+    "wall_clock_s": 0.0661
+  },
+  "transcript_sha256": "sha256:6114834ab4cc958887490598cccd1925bb859b10372d1ae9ac19dc28c30c5048"
+}

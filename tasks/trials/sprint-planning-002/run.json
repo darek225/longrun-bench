@@ -1,0 +1,35 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:948c87a4ee52e873c2d5ade04c42724b704d040bffa76cc807ca64422a0bf801",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-planning-002/workspace/plan.md",
+    "artifact_uri": "plan.md",
+    "notes": "",
+    "summary": "Compared quotes and wrote plan.md with the rule-based recommendation."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "cheapest": "BrightNest",
+      "cheapest_price": 110,
+      "fastest": "PureHome"
+    },
+    "urgency": "standard",
+    "zone": "north_side"
+  },
+  "run_id": "d0353e21-7d23-4e9b-93c4-d9bf4beedbf5",
+  "score_total": 98.8192,
+  "seed": 42,
+  "task_id": "sprint-planning-002",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.3586
+  }
+}

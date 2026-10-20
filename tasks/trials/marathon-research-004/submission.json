@@ -1,0 +1,62 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "74e63089-abce-4d6c-871c-d15a27364a08",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "incumbents_named",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "market_figures",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "verdict_present",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "teardown_length",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 14.764046861111112,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 99.764
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:dd5fec9880e570b413c34707f7c073a67d141dca96725861318d537d14282c45",
+    "mac": null
+  },
+  "task_id": "marathon-research-004",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1463
+  },
+  "transcript_sha256": "sha256:2f62ab3152e808537c29a72ae0f8bf03dfbff5fc068d02d9e1a52f27369899de"
+}

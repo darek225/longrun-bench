@@ -1,0 +1,35 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:58b396f8ff87568d552d160456b979b44dd10a96f310084f345e01267a558a23",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/marathon-web-002/workspace/specs.csv",
+    "artifact_uri": "specs.csv",
+    "notes": "",
+    "summary": "Extracted all five models into specs.csv."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "brand_focus": "TrailBlazer",
+    "expected": {
+      "model": "TrailBlazer X",
+      "price": "2499",
+      "spec": "85 mi"
+    },
+    "output_format": "csv"
+  },
+  "run_id": "b427b9dc-4025-421f-8f1c-e0d11d33f42a",
+  "score_total": 99.764,
+  "seed": 42,
+  "task_id": "marathon-web-002",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1772
+  }
+}

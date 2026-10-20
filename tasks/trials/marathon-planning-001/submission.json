@@ -1,0 +1,62 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "351ee050-41e2-43da-a116-c9739245d047",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "picks_and_sources",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "per_person_total",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "four_days",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "plan_length",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 14.764052722222223,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 99.7641
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:2eadf7c3916164c7136838987dbc883421eb7304c1c1a95f100aacc4a271d14e",
+    "mac": null
+  },
+  "task_id": "marathon-planning-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1252
+  },
+  "transcript_sha256": "sha256:4b9b861641c3b543954ea16053cbbda40d9dbcd46e139b76dc87f951eb64fd95"
+}

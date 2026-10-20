@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:019034fbe05ffc84388c52443b3c7fcdb5788b2dea1574c9db938a38fc247217",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-code-001/workspace/summary.md",
+    "artifact_uri": "summary.md",
+    "notes": "",
+    "summary": "Fixed the ordering bug in dedupe.py, suite is green, summary.md describes the bug and fix."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "case_name": "repeated",
+    "input_type": "strings"
+  },
+  "run_id": "3a614032-fff7-4d71-8d44-6d6456148b53",
+  "score_total": 98.0686,
+  "seed": 42,
+  "task_id": "sprint-code-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 630,
+    "output_tokens": 265,
+    "steps": 5,
+    "wall_clock_s": 1.8186
+  }
+}

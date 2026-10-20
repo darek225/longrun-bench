@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:d764f03777fcda5d54b731def408452acbfd4972f594eded0086ea398a7a58f4",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/marathon-research-001/workspace/teardown.md",
+    "artifact_uri": "teardown.md",
+    "notes": "",
+    "summary": "Wrote the full teardown from market.json."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "audience": "investor",
+    "depth": "standard"
+  },
+  "run_id": "f83587dd-abb9-450b-ab24-7e456154aac4",
+  "score_total": 99.764,
+  "seed": 42,
+  "task_id": "marathon-research-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.162
+  }
+}

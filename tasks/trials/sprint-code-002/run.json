@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:57300697f260181517938833e06e2d31e6cf970211877d12817ca727181962e8",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-code-002/workspace/summary.md",
+    "artifact_uri": "summary.md",
+    "notes": "",
+    "summary": "Fixed all planted bugs in expense_splitter.py; suite is green; summary.md explains each bug and fix."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "bug_count": "three",
+    "theme": "edge-case"
+  },
+  "run_id": "ed5c5ee6-b3fe-4c54-8d70-65f65745037b",
+  "score_total": 97.2596,
+  "seed": 42,
+  "task_id": "sprint-code-002",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1400,
+    "output_tokens": 580,
+    "steps": 7,
+    "wall_clock_s": 1.2148
+  }
+}

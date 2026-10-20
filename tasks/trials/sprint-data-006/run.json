@@ -1,0 +1,39 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:d51a6fef3e0f29b5b64a6c501a7ee98385342b4a08efac9c85acf084423e35ac",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-data-006/workspace/report.md",
+    "artifact_uri": "report.md",
+    "notes": "",
+    "summary": "Computed the report from sessions.csv under the stated rules."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "overall_rate": 4.25,
+      "top_channels": [
+        "organic",
+        "paid",
+        "email"
+      ],
+      "total_conversions": 119.0
+    },
+    "month": "aug",
+    "top_n": 3
+  },
+  "run_id": "1aeb1499-6972-482d-a8a0-6616ac4246a9",
+  "score_total": 98.82,
+  "seed": 42,
+  "task_id": "sprint-data-006",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1208
+  }
+}

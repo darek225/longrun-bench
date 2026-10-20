@@ -1,0 +1,90 @@
+{
+  "checks": [
+    {
+      "caps": {
+        "completeness": 10.0,
+        "correctness": 10.0
+      },
+      "check": "pytest_pass",
+      "detail": "3 passed in 0.02s",
+      "id": "tests_pass",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "caps": {
+        "correctness": 20.0
+      },
+      "check": "file_contains",
+      "detail": "all patterns found",
+      "id": "function_present",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "caps": {
+        "instruction_adherence": 5.0
+      },
+      "check": "file_contains",
+      "detail": "all patterns found",
+      "id": "tests_untouched",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "caps": {
+        "completeness": 20.0
+      },
+      "check": "word_count",
+      "detail": "word count 69, expected 30..300",
+      "id": "summary_length",
+      "passed": true,
+      "score": 1.0
+    }
+  ],
+  "criteria": {
+    "completeness": {
+      "caps_applied": [],
+      "score": 25.0,
+      "weight": 25.0
+    },
+    "correctness": {
+      "caps_applied": [],
+      "score": 40.0,
+      "weight": 40.0
+    },
+    "efficiency": {
+      "caps_applied": [],
+      "efficiency": {
+        "clamped": 0.8712396166666667,
+        "raw": 0.8712396166666667,
+        "steps_ratio": 0.25,
+        "time_ratio": 0.0020206666666666667,
+        "tokens_ratio": 0.0111875
+      },
+      "score": 13.06859425,
+      "weight": 15.0
+    },
+    "error_recovery": {
+      "caps_applied": [],
+      "score": 10.0,
+      "weight": 10.0
+    },
+    "instruction_adherence": {
+      "caps_applied": [],
+      "score": 10.0,
+      "weight": 10.0
+    }
+  },
+  "efficiency": {
+    "clamped": 0.8712396166666667,
+    "raw": 0.8712396166666667,
+    "steps_ratio": 0.25,
+    "time_ratio": 0.0020206666666666667,
+    "tokens_ratio": 0.0111875
+  },
+  "notes": "Checks-only provisional score. No LLM judge or human audit has graded this run.",
+  "provisional": true,
+  "tier": "checks",
+  "total": 98.0686
+}

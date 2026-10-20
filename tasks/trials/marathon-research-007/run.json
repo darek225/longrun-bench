@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:b06c1420afb5c9b92bd1a9e5b5c14f1b2254f3cf52a4c69c9f08e5d80672c6e3",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/marathon-research-007/workspace/dossier.md",
+    "artifact_uri": "dossier.md",
+    "notes": "",
+    "summary": "Wrote the dossier with the contradiction flagged."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "angle": "risk",
+    "audience": "operator"
+  },
+  "run_id": "29c4657b-5c7f-49f2-a0df-46839e3cfe8c",
+  "score_total": 99.6873,
+  "seed": 42,
+  "task_id": "marathon-research-007",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 820,
+    "output_tokens": 310,
+    "steps": 4,
+    "wall_clock_s": 0.0634
+  }
+}

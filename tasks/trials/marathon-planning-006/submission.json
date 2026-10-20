@@ -1,0 +1,62 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "7cd5c5cd-d0b1-40db-bc47-6923df1a0a91",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "speakers_scheduled",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "rooms_used",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "budget_total",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "schedule_length",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 14.764065583333334,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 99.7641
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:cfc2f65a93a43ce1be69300833cdf899f35c7ac8c868d96d62e86a0a16dde5de",
+    "mac": null
+  },
+  "task_id": "marathon-planning-006",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.0789
+  },
+  "transcript_sha256": "sha256:465e2cd6dbc69c6060336df95811d5651d58c3616d4670bad2a212bcc4f5b4a6"
+}

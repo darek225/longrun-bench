@@ -1,0 +1,8 @@
+{
+  "tasks": 85,
+  "discriminating_tasks": 85,
+  "discrimination_index": 1.0,
+  "mean_solver_total": 99.19,
+  "mean_control_total": 54.4,
+  "mean_gap": 44.78
+}

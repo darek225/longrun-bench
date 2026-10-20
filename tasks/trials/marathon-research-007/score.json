@@ -1,0 +1,90 @@
+{
+  "checks": [
+    {
+      "caps": {
+        "completeness": 15.0,
+        "correctness": 25.0
+      },
+      "check": "regex_all",
+      "detail": "all patterns found",
+      "id": "sources_named",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "caps": {
+        "correctness": 20.0
+      },
+      "check": "regex_all",
+      "detail": "all patterns found",
+      "id": "both_figures_present",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "caps": {
+        "completeness": 15.0
+      },
+      "check": "file_contains",
+      "detail": "all patterns found",
+      "id": "contradiction_flagged",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "caps": {
+        "instruction_adherence": 5.0
+      },
+      "check": "word_count",
+      "detail": "word count 616, expected 600..1500",
+      "id": "dossier_length",
+      "passed": true,
+      "score": 1.0
+    }
+  ],
+  "criteria": {
+    "completeness": {
+      "caps_applied": [],
+      "score": 25.0,
+      "weight": 25.0
+    },
+    "correctness": {
+      "caps_applied": [],
+      "score": 40.0,
+      "weight": 40.0
+    },
+    "efficiency": {
+      "caps_applied": [],
+      "efficiency": {
+        "clamped": 0.9791513259259259,
+        "raw": 0.9791513259259259,
+        "steps_ratio": 0.04,
+        "time_ratio": 5.87037037037037e-06,
+        "tokens_ratio": 0.002825
+      },
+      "score": 14.687269888888888,
+      "weight": 15.0
+    },
+    "error_recovery": {
+      "caps_applied": [],
+      "score": 10.0,
+      "weight": 10.0
+    },
+    "instruction_adherence": {
+      "caps_applied": [],
+      "score": 10.0,
+      "weight": 10.0
+    }
+  },
+  "efficiency": {
+    "clamped": 0.9791513259259259,
+    "raw": 0.9791513259259259,
+    "steps_ratio": 0.04,
+    "time_ratio": 5.87037037037037e-06,
+    "tokens_ratio": 0.002825
+  },
+  "notes": "Checks-only provisional score. No LLM judge or human audit has graded this run.",
+  "provisional": true,
+  "tier": "checks",
+  "total": 99.6873
+}

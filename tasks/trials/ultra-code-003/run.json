@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:f9644b4d3475265e149c6dfd171a5b34a252c9edb3258dd3a24dcd009091643f",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/ultra-code-003/workspace/summary.md",
+    "artifact_uri": "summary.md",
+    "notes": "",
+    "summary": "Implemented handlers.py to spec; acceptance suite green; summary.md delivered."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "scope": "full spec",
+    "stack": "python stdlib"
+  },
+  "run_id": "a6d9cbce-b588-45b1-be9a-ffc30d6271e9",
+  "score_total": 99.8598,
+  "seed": 42,
+  "task_id": "ultra-code-003",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1610,
+    "output_tokens": 700,
+    "steps": 9,
+    "wall_clock_s": 1.3234
+  }
+}

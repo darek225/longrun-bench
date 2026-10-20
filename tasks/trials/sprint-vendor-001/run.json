@@ -1,0 +1,42 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:2e249e391eddf970ed1d38127547acb2353516e2c0bfc8167348ad4414be5704",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-vendor-001/workspace/brief.md",
+    "artifact_uri": "brief.md",
+    "notes": "",
+    "summary": "Compared the three CRM vendors from vendors.json for a dental practice and wrote brief.md with prices, features, and a recommendation."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "business_type": "dental_practice",
+    "catalog": {
+      "price_terms": [
+        "50/user",
+        "75/user",
+        "30/user"
+      ],
+      "vendor_names": [
+        "HubSpot",
+        "Salesforce",
+        "Zoho CRM"
+      ]
+    },
+    "product": "crm"
+  },
+  "run_id": "c1e05288-382b-449e-9e84-1bdd92a0c8fc",
+  "score_total": 98.8415,
+  "seed": 42,
+  "task_id": "sprint-vendor-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 440,
+    "output_tokens": 150,
+    "steps": 3,
+    "wall_clock_s": 0.1049
+  }
+}

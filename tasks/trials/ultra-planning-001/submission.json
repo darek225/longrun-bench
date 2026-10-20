@@ -1,0 +1,62 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "d98d1bb1-16c5-41fa-83c4-7ba5a473fd6c",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "final_picks",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "final_total_within_cap",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "change_documented",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "plan_length",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 14.920870413194445,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 99.9209
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:1200d44f704e11c400d26d84581428ecfe76565e18e74753e816d1f3472faedf",
+    "mac": null
+  },
+  "task_id": "ultra-planning-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1320,
+    "output_tokens": 510,
+    "steps": 5,
+    "wall_clock_s": 0.3481
+  },
+  "transcript_sha256": "sha256:6dd610b88ea456d1f38480e5a168995d680134e2ab369d5bb34ff602a19a0bcf"
+}

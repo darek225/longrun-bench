@@ -1,0 +1,37 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:2b18789105cf65aea64c3453869ebbe358065f0422110c4b07fa1410ab1cf1c4",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/marathon-planning-001/workspace/itinerary.md",
+    "artifact_uri": "itinerary.md",
+    "notes": "",
+    "summary": "Planned the trip with the cheapest flight and mid-tier hotel."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "flight": "BudgetAir",
+      "flight_url": "flights.example/ba190",
+      "hotel": "Airport Inn",
+      "hotel_url": "hotels.example/ai120",
+      "per_person": 550.0
+    },
+    "hotel_tier": "mid",
+    "team_size": 6
+  },
+  "run_id": "351ee050-41e2-43da-a116-c9739245d047",
+  "score_total": 99.7641,
+  "seed": 42,
+  "task_id": "marathon-planning-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1252
+  }
+}

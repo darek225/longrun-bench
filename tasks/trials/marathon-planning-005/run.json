@@ -1,0 +1,33 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:33728068da19b0272d871b13f4526c93cd8b03e7a05b8ddd90aee4eb54e5cbd7",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/marathon-planning-005/workspace/schedule.md",
+    "artifact_uri": "schedule.md",
+    "notes": "",
+    "summary": "Built the schedule and budget."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "attendees": 50,
+    "expected": {
+      "total": 2600.0
+    },
+    "track": "single"
+  },
+  "run_id": "fe121743-f938-48c0-9f32-5472a9bc69ba",
+  "score_total": 99.7641,
+  "seed": 42,
+  "task_id": "marathon-planning-005",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.0363
+  }
+}

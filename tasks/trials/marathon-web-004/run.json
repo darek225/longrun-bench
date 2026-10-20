@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:5935f82d65d4f44c9f5af76f56890d7cd608208736812edc1267de3cd6d28ee9",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/marathon-web-004/workspace/report.md",
+    "artifact_uri": "report.md",
+    "notes": "",
+    "summary": "Extracted the site and flagged the price contradiction."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "depth": "full",
+    "snapshot": "2026-10 capture"
+  },
+  "run_id": "8b246644-66f3-4a8b-b693-4ae589a8f841",
+  "score_total": 99.7635,
+  "seed": 42,
+  "task_id": "marathon-web-004",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 730,
+    "output_tokens": 290,
+    "steps": 3,
+    "wall_clock_s": 0.1649
+  }
+}

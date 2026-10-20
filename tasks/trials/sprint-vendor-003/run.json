@@ -1,0 +1,33 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:a2efcf794870fc3c992fe90008f2edc0d14d24e2e5f8e1fd034cfa22037eb583",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-vendor-003/workspace/brief.md",
+    "artifact_uri": "brief.md",
+    "notes": "",
+    "summary": "Compared the payroll software vendors from vendors.json and wrote brief.md."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "business_type": "dental_practice",
+    "expected": {
+      "recommended": "ADP Run"
+    },
+    "focus": "lowest_cost"
+  },
+  "run_id": "6459f8df-a9fc-4b57-9c90-357971fe982c",
+  "score_total": 98.8201,
+  "seed": 42,
+  "task_id": "sprint-vendor-003",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1102
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:356412477cd9f448735496e9d6a5a24dc786ffd22621c5fc66d501cf9dd0e20c",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-vendor-005/workspace/brief.md",
+    "artifact_uri": "brief.md",
+    "notes": "",
+    "summary": "Compared the email marketing platforms vendors from vendors.json and wrote brief.md."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "business_type": "dental_practice",
+    "expected": {
+      "recommended": "Brevo"
+    },
+    "focus": "lowest_cost"
+  },
+  "run_id": "54cf3f25-8c82-4f96-b01e-05ac6adb8263",
+  "score_total": 98.8202,
+  "seed": 42,
+  "task_id": "sprint-vendor-005",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.0627
+  }
+}

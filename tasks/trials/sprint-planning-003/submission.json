@@ -1,0 +1,67 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "b6857d33-a7d9-4c87-81c7-7dc0e5e82e24",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "businesses_named",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "recommendation_correct",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "price_correct",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "no_invented_businesses",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "plan_length",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 13.819454499999999,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 98.8195
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:eae4d24c238cab6d50826ecc1854a99cc7da4f883ae22e0e93d647dbf26f6d7e",
+    "mac": null
+  },
+  "task_id": "sprint-planning-003",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.2949
+  },
+  "transcript_sha256": "sha256:da1f73df317850f5199c8ad07cb90f317e3d047ec2290f10cb7d4dc68bd72ff6"
+}

@@ -1,0 +1,33 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:e666e844c5d7cd7a94563308cdfed90b2d1e3a207f261315f45e8be4a9071e2e",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-vendor-004/workspace/brief.md",
+    "artifact_uri": "brief.md",
+    "notes": "",
+    "summary": "Compared the business VoIP systems vendors from vendors.json and wrote brief.md."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "business_type": "dental_practice",
+    "expected": {
+      "recommended": "Ooma"
+    },
+    "focus": "lowest_cost"
+  },
+  "run_id": "efa2f8bd-6d65-422d-b17a-04a049e751ef",
+  "score_total": 98.82,
+  "seed": 42,
+  "task_id": "sprint-vendor-004",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1301
+  }
+}

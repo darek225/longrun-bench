@@ -1,0 +1,35 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:615a16b7f1e6a4c961c27a595821a44e2d97888c60d0c080f793adf599d926a1",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-web-003/workspace/specs.csv",
+    "artifact_uri": "specs.csv",
+    "notes": "",
+    "summary": "Extracted the full table from specs.html into specs.csv."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "brand_focus": "BaristaOne",
+    "expected": {
+      "model": "BaristaOne",
+      "price": "349",
+      "spec": "15 bar"
+    },
+    "output_format": "csv"
+  },
+  "run_id": "f7242a66-9fcc-45c9-a92f-8e53098d71bd",
+  "score_total": 98.8203,
+  "seed": 42,
+  "task_id": "sprint-web-003",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.0468
+  }
+}

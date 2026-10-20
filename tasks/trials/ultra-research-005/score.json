@@ -1,0 +1,89 @@
+{
+  "checks": [
+    {
+      "caps": {
+        "completeness": 15.0
+      },
+      "check": "file_exists",
+      "detail": "path exists: /tmp/longrun-bank-9w3dwxho/ultra-research-005/workspace/matrix.csv",
+      "id": "matrix_exists",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "caps": {
+        "correctness": 25.0
+      },
+      "check": "file_contains",
+      "detail": "all patterns found",
+      "id": "matrix_values",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "caps": {
+        "correctness": 20.0
+      },
+      "check": "regex_all",
+      "detail": "all patterns found",
+      "id": "winner_named",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "caps": {
+        "correctness": 20.0
+      },
+      "check": "numeric_within",
+      "detail": "found 7.8 near 'winning score', expected 7.8 \u00b1 0.05",
+      "id": "winning_score",
+      "passed": true,
+      "score": 1.0
+    }
+  ],
+  "criteria": {
+    "completeness": {
+      "caps_applied": [],
+      "score": 25.0,
+      "weight": 25.0
+    },
+    "correctness": {
+      "caps_applied": [],
+      "score": 40.0,
+      "weight": 40.0
+    },
+    "efficiency": {
+      "caps_applied": [],
+      "efficiency": {
+        "clamped": 0.9968541074074074,
+        "raw": 0.9968541074074074,
+        "steps_ratio": 0.006,
+        "time_ratio": 1.962962962962963e-06,
+        "tokens_ratio": 0.000485
+      },
+      "score": 14.95281161111111,
+      "weight": 15.0
+    },
+    "error_recovery": {
+      "caps_applied": [],
+      "score": 10.0,
+      "weight": 10.0
+    },
+    "instruction_adherence": {
+      "caps_applied": [],
+      "score": 10.0,
+      "weight": 10.0
+    }
+  },
+  "efficiency": {
+    "clamped": 0.9968541074074074,
+    "raw": 0.9968541074074074,
+    "steps_ratio": 0.006,
+    "time_ratio": 1.962962962962963e-06,
+    "tokens_ratio": 0.000485
+  },
+  "notes": "Checks-only provisional score. No LLM judge or human audit has graded this run.",
+  "provisional": true,
+  "tier": "checks",
+  "total": 99.9528
+}

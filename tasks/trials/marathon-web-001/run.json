@@ -1,0 +1,35 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:c3e0376b2327309dc7f9d12aaf4fbfcfa931b7ad9f02bb56b142ebd9fc5b908a",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/marathon-web-001/workspace/specs.csv",
+    "artifact_uri": "specs.csv",
+    "notes": "",
+    "summary": "Extracted all five models into specs.csv."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "brand_focus": "TorqueMax",
+    "expected": {
+      "model": "TorqueMax Ultra",
+      "price": "259",
+      "spec": "2800 RPM"
+    },
+    "output_format": "csv"
+  },
+  "run_id": "c274da9c-3d94-4c02-8cb1-59fe29e14146",
+  "score_total": 99.7641,
+  "seed": 42,
+  "task_id": "marathon-web-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.0366
+  }
+}

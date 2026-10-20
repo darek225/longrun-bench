@@ -1,0 +1,67 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "3f018074-3bb6-4102-bf06-f83512131ea9",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "january_total",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "february_total",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "march_total",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "quarter_total",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "corrections_applied",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 14.952162409722224,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 99.9522
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:d0ec778cb349ea5a7be9a8cd5434e9b9c0a3ad8bb140d4049e9ec9b4ed7dc7e7",
+    "mac": null
+  },
+  "task_id": "ultra-data-002",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 880,
+    "output_tokens": 380,
+    "steps": 3,
+    "wall_clock_s": 0.0746
+  },
+  "transcript_sha256": "sha256:f07abad2fdf3e14228b59cf26b8554b8cd57cfa2b704dd4d01a633dcd7349859"
+}

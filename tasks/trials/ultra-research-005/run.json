@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:42c927b10f82a9cd752885b5f4a3367b921a00bcdcb117848e2cabcc54c2cb39",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/ultra-research-005/workspace/memo.md",
+    "artifact_uri": "memo.md",
+    "notes": "",
+    "summary": "Scored the vendors, wrote matrix.csv and the award memo naming the winner."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "committee": "standard",
+    "round": "final"
+  },
+  "run_id": "a95f33fb-82a7-4f53-8593-b08731ef63f0",
+  "score_total": 99.9528,
+  "seed": 42,
+  "task_id": "ultra-research-005",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1696
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:5999c6ca782f08f91b1c6081c7ba247ad4b9f81f019fe27af67fc388ee821936",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-data-005/workspace/report.md",
+    "artifact_uri": "report.md",
+    "notes": "",
+    "summary": "Computed the report from counts.csv under the stated rules."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "top_skus": [
+        "A3",
+        "A1",
+        "A6"
+      ],
+      "total_shrinkage_value": 340.0
+    },
+    "top_n": 3,
+    "warehouse": "A"
+  },
+  "run_id": "ce8ed062-adc3-47db-bc12-a19135a4f5b2",
+  "score_total": 98.8199,
+  "seed": 42,
+  "task_id": "sprint-data-005",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1631
+  }
+}

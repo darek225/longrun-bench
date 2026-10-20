@@ -1,0 +1,38 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:56530dcb49c0f2f1a4196388b6754464dbe53c77a05c0a527f09b79524a6160e",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-data-007/workspace/report.md",
+    "artifact_uri": "report.md",
+    "notes": "",
+    "summary": "Computed the report from tickets.csv under the stated rules."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "top_categories": [
+        "network",
+        "login",
+        "unknown"
+      ],
+      "total_tickets": 7.0
+    },
+    "queue": "support",
+    "top_n": 3
+  },
+  "run_id": "6b7fc494-e192-4a05-93a0-9d3cde0e3315",
+  "score_total": 98.82,
+  "seed": 42,
+  "task_id": "sprint-data-007",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1458
+  }
+}

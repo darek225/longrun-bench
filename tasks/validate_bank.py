@@ -65,6 +65,15 @@ def sweep_entry(entry: dict, tmp_root: Path) -> dict:
     passed = sum(1 for c in checks if c["passed"])
     result["solver"] = f"{passed}/{len(checks)} checks, total {score['total']}"
     result["solver_ok"] = code == 0 and passed == len(checks)
+    result["solver_total"] = float(score["total"])
+    # Trial transcript (docs/plan/15 §10): the merged bank keeps the trial
+    # run's evidence per task, not just a pass mark.
+    trial_dir = ROOT / "trials" / entry["task_id"]
+    trial_dir.mkdir(parents=True, exist_ok=True)
+    for name in ("transcript.jsonl", "score.json", "run.json", "submission.json"):
+        artifact = out_dir / name
+        if artifact.exists():
+            shutil.copy2(artifact, trial_dir / name)
 
     artifact = _deliverable_name(task_dir)
     control_ws = tmp_root / (entry["task_id"] + "-control")
@@ -85,6 +94,7 @@ def sweep_entry(entry: dict, tmp_root: Path) -> dict:
     failed = sum(1 for c in control_score["checks"] if not c["passed"])
     result["control"] = f"{failed} checks failed on garbage"
     result["control_ok"] = failed >= 1
+    result["control_total"] = float(control_score["total"])
     result["ok"] = result["solver_ok"] and result["control_ok"]
     return result
 
@@ -117,6 +127,29 @@ def main() -> int:
         lines.append(f"| {r['task_id']} | {r['level']} | {r['category']} | {r['solver']} | {r['control']} | {'PASS' if r['ok'] else 'FAIL'} |")
     lines.append("")
     lines.append(f"Totals: {len(results) - len(failures)}/{len(results)} tasks pass the sweep.")
+    scored = [r for r in results if "solver_total" in r and "control_total" in r]
+    if scored:
+        discriminating = sum(1 for r in scored if r["ok"])
+        mean_solver = sum(r["solver_total"] for r in scored) / len(scored)
+        mean_control = sum(r["control_total"] for r in scored) / len(scored)
+        index = {
+            "tasks": len(scored),
+            "discriminating_tasks": discriminating,
+            "discrimination_index": round(discriminating / len(scored), 4),
+            "mean_solver_total": round(mean_solver, 2),
+            "mean_control_total": round(mean_control, 2),
+            "mean_gap": round(mean_solver - mean_control, 2),
+        }
+        lines.append("")
+        lines.append(
+            "Discrimination index: "
+            f"{index['discrimination_index']} of tasks separate the scripted solver from the garbage control "
+            f"(mean solver total {index['mean_solver_total']}, mean control total {index['mean_control_total']}, "
+            f"mean gap {index['mean_gap']}). Machine-readable copy: tasks/discrimination.json. "
+            "Trial transcripts: tasks/trials/<task_id>/."
+        )
+        if not only:
+            (ROOT / "discrimination.json").write_text(json.dumps(index, indent=2) + "\n", encoding="utf-8")
     if not only:
         (ROOT / "PROGRESS.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     for r in failures:

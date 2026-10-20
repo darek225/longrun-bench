@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:e4421f1e7859620a6d07b56c57dc9b72d818285ecb486e6a0c79b4bdaf3c7941",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/marathon-code-007/workspace/summary.md",
+    "artifact_uri": "summary.md",
+    "notes": "",
+    "summary": "Implemented log_summary.py to spec; acceptance suite green; summary.md delivered."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "scope": "full spec",
+    "stack": "python stdlib"
+  },
+  "run_id": "85ce392f-4d1b-45f1-8ba4-69bd67fb60f6",
+  "score_total": 99.5325,
+  "seed": 42,
+  "task_id": "marathon-code-007",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1070,
+    "output_tokens": 470,
+    "steps": 6,
+    "wall_clock_s": 0.6302
+  }
+}

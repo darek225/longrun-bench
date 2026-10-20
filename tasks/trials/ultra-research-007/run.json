@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:c6693f53686edd54554169332b57461f8155b8fe86c64415a88cb8dccddd2643",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/ultra-research-007/workspace/dossier.md",
+    "artifact_uri": "dossier.md",
+    "notes": "",
+    "summary": "Completed the market-entry dossier across two staged sessions with memory.md maintained."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "posture": "measured",
+    "region_focus": "single metro first"
+  },
+  "run_id": "2a9572fb-64e1-4edf-a480-e1ebaf7e8079",
+  "score_total": 99.9196,
+  "seed": 42,
+  "task_id": "ultra-research-007",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1680,
+    "output_tokens": 730,
+    "steps": 5,
+    "wall_clock_s": 0.1658
+  }
+}

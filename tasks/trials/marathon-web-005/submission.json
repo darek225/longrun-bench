@@ -1,0 +1,57 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "0fca69f5-8c09-4efc-afa8-f2c5da9cde13",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "models_and_true_prices",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "contradiction_named",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "report_length",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 14.763483444444445,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 99.7635
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:0ed6625a0f5e494b012ae27d6e699bf2eb851c67a2150e4b997fd8ae1e465faf",
+    "mac": null
+  },
+  "task_id": "marathon-web-005",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 730,
+    "output_tokens": 290,
+    "steps": 3,
+    "wall_clock_s": 0.1496
+  },
+  "transcript_sha256": "sha256:0bf9333d4039b9076af370be18e5116558edae3bfd53d48fa28006aea8f1a0a2"
+}

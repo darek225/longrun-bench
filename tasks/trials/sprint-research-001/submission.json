@@ -1,0 +1,67 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "end_reason": "deliverable",
+  "harness": {
+    "hash": "sha256:local-dev",
+    "version": "0.1.0"
+  },
+  "redactions_applied": true,
+  "run_id": "7ac1b9f3-a26f-4cbb-a196-13154749d061",
+  "score_claim": {
+    "checks": [
+      {
+        "id": "key_figures",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "players_named",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "sources_cited",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "no_filler",
+        "passed": true,
+        "score": 1.0
+      },
+      {
+        "id": "brief_length",
+        "passed": true,
+        "score": 1.0
+      }
+    ],
+    "criteria": {
+      "completeness": 25.0,
+      "correctness": 40.0,
+      "efficiency": 13.820078833333334,
+      "error_recovery": 10.0,
+      "instruction_adherence": 10.0
+    },
+    "tier": "checks",
+    "total": 98.8201
+  },
+  "seed": 42,
+  "signature": {
+    "alg": "sha256",
+    "digest": "sha256:33da898ba15c3d701e09db8a6743828768bd06c5bb4afaf806be802039cd6e72",
+    "mac": null
+  },
+  "task_id": "sprint-research-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1076
+  },
+  "transcript_sha256": "sha256:ba64227182162b519ed26777c7953bdd6661672f49ddac05fc6a9f10b1605fbb"
+}

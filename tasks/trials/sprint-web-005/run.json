@@ -1,0 +1,35 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:c37c611139751e9b88189179ffd913fe434a3ff6279f8d799c0ba222603dc74a",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-web-005/workspace/specs.csv",
+    "artifact_uri": "specs.csv",
+    "notes": "",
+    "summary": "Extracted the full table from specs.html into specs.csv."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "brand_focus": "SlimBook",
+    "expected": {
+      "model": "SlimBook 14",
+      "price": "749",
+      "spec": "16 GB"
+    },
+    "output_format": "csv"
+  },
+  "run_id": "566d823d-f42c-4651-a2d5-4e3887a7dbef",
+  "score_total": 98.8197,
+  "seed": 42,
+  "task_id": "sprint-web-005",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.2304
+  }
+}

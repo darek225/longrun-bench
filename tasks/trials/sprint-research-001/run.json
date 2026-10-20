@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:a99e781d572575ca13da3a940a30ae70371a5901969f7172df8d5844f1e5bf6c",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-research-001/workspace/brief.md",
+    "artifact_uri": "brief.md",
+    "notes": "",
+    "summary": "Wrote the market brief from sources.json."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "angle": "opportunity",
+    "audience": "investor"
+  },
+  "run_id": "7ac1b9f3-a26f-4cbb-a196-13154749d061",
+  "score_total": 98.8201,
+  "seed": 42,
+  "task_id": "sprint-research-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1076
+  }
+}

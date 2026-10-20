@@ -1,0 +1,38 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:debfc75493680d0ac0c60bb22e19c2b53cd34c4a49e32366130b1f5692710d3f",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/marathon-data-002/workspace/report.md",
+    "artifact_uri": "report.md",
+    "notes": "",
+    "summary": "Computed stockouts and reorder value across categories."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "category": "all",
+    "expected": {
+      "reorder_value": 1000.0,
+      "stockouts": [
+        "S1",
+        "S3",
+        "S4"
+      ]
+    },
+    "view": "summary"
+  },
+  "run_id": "c2e4da47-67d7-43be-9fb4-9b3242e56f90",
+  "score_total": 99.7641,
+  "seed": 42,
+  "task_id": "marathon-data-002",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.0976
+  }
+}

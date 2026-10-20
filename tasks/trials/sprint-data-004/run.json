@@ -1,0 +1,39 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:97daaa68798176be2b2319a2f696d3b2a69e3a631df5ba7ffe769473f5b0ce17",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-data-004/workspace/report.md",
+    "artifact_uri": "report.md",
+    "notes": "",
+    "summary": "Computed the report from invoices.csv under the stated rules."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "top_clients": [
+        "Acme",
+        "Baker",
+        "Corfu"
+      ],
+      "total_revenue": 2400.0,
+      "total_tax": 147.0
+    },
+    "segment": "retail",
+    "top_n": 3
+  },
+  "run_id": "9fd69873-0df1-4fa6-8a07-f8eb325211ef",
+  "score_total": 98.8196,
+  "seed": 42,
+  "task_id": "sprint-data-004",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.2529
+  }
+}

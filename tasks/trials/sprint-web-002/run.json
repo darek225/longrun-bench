@@ -1,0 +1,35 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:fe53c1452d180df30d2245e8f01e7566788c262427e5ca651f710ea957275d90",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-web-002/workspace/specs.csv",
+    "artifact_uri": "specs.csv",
+    "notes": "",
+    "summary": "Extracted the full table from specs.html into specs.csv."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "brand_focus": "PureAir",
+    "expected": {
+      "model": "PureAir 200",
+      "price": "199",
+      "spec": "350 sq ft"
+    },
+    "output_format": "csv"
+  },
+  "run_id": "c67e74b8-6b9e-4719-be70-3cd6d50d8780",
+  "score_total": 98.8198,
+  "seed": 42,
+  "task_id": "sprint-web-002",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1936
+  }
+}

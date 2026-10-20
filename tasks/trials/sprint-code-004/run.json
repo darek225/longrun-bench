@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:8a4c32c875337d9fd24858bbf2b4468c91e027691636fcafd618c4055f2302e0",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-code-004/workspace/summary.md",
+    "artifact_uri": "summary.md",
+    "notes": "",
+    "summary": "Fixed all planted bugs in backup_tool.py; suite is green; summary.md explains each bug and fix."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "bug_count": "three",
+    "theme": "edge-case"
+  },
+  "run_id": "63da9e9f-1c51-4d06-818f-3a198bdf245f",
+  "score_total": 97.2588,
+  "seed": 42,
+  "task_id": "sprint-code-004",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1400,
+    "output_tokens": 580,
+    "steps": 7,
+    "wall_clock_s": 1.438
+  }
+}

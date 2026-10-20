@@ -1,0 +1,38 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:0b3167608ed1c4b163804db7345425386617439c1a8aa4dd5d443d00624b2574",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-planning-006/workspace/plan.md",
+    "artifact_uri": "plan.md",
+    "notes": "",
+    "summary": "Planned the plus-package offsite for 12 and wrote plan.md."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "picks": [
+        "Downtown Loft",
+        "Live music session",
+        "Taco bar"
+      ],
+      "total": 1428.0
+    },
+    "package": "plus",
+    "team_size": 12
+  },
+  "run_id": "1c756e5a-99e2-4061-90d9-e7f306439141",
+  "score_total": 98.82,
+  "seed": 42,
+  "task_id": "sprint-planning-006",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1204
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:9cc53095762053cfcdb95688751d15ba4f7e8e924809efe44fce141e75622781",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/marathon-data-001/workspace/report.md",
+    "artifact_uri": "report.md",
+    "notes": "",
+    "summary": "Joined orders and returns; wrote the net revenue report."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "top_products": [
+        "Alpha",
+        "Gamma",
+        "Beta"
+      ],
+      "total_revenue": 1800.0
+    },
+    "region": "north",
+    "top_n": 3
+  },
+  "run_id": "22ee01e1-a358-4d8c-b2d8-a03e3f046353",
+  "score_total": 99.764,
+  "seed": 42,
+  "task_id": "marathon-data-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.1582
+  }
+}

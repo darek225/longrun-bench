@@ -1,0 +1,7 @@
+{"agent": {"model": "scripted", "name": "scripted-smoke-agent", "profile": "standard"}, "budgets": {"steps": 500, "wall_clock_minutes": 1440}, "harness": {"hash": "sha256:local-dev", "version": "0.1.0"}, "run_id": "a95f33fb-82a7-4f53-8593-b08731ef63f0", "t": "2026-10-20T23:42:19Z", "task": {"id": "ultra-research-005", "instance_seed": 42, "task_set": "0.1.0"}, "type": "run_start"}
+{"path": "memory.md", "t": "2026-10-20T23:42:19Z", "task_id": "ultra-research-005", "type": "memory_seeded"}
+{"step": 0, "t": "2026-10-20T23:42:19Z", "text_hash": "sha256:d080ff17348a2030a3affb3a2aa737d72f5471206515eed47665e036d0988486", "type": "prompt"}
+{"args_hash": "sha256:6c2187cdd9aabcb3c06c620383e4095833eae490170cb9a0953ddb93af557496", "duration_ms": 0, "result_summary": {"chars": 179, "truncated": false}, "step": 1, "t": "2026-10-20T23:42:19Z", "tool": "file.read", "type": "tool_call"}
+{"args_hash": "sha256:ab9b0beb621b598b3c913d677558a01d3e8db68ae44c39681c3eb4c41a2e4e73", "duration_ms": 168, "result_summary": {"chars": 20, "exit_code": 0, "timed_out": false}, "step": 2, "t": "2026-10-20T23:42:20Z", "tool": "python.exec", "type": "tool_call"}
+{"artifact_hash": "sha256:42c927b10f82a9cd752885b5f4a3367b921a00bcdcb117848e2cabcc54c2cb39", "artifact_uri": "memo.md", "step": 3, "t": "2026-10-20T23:42:20Z", "type": "deliverable"}
+{"reason": "deliverable", "step": 3, "t": "2026-10-20T23:42:20Z", "totals": {"input_tokens": 700, "output_tokens": 270, "steps": 3, "wall_clock_s": 0.1696}, "type": "run_end"}

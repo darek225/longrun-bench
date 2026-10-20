@@ -1,0 +1,35 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:2a44c3bb0694ac56de74c5fcafff3441251e6c9aac45b7f73a00279b067d75a8",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-planning-003/workspace/plan.md",
+    "artifact_uri": "plan.md",
+    "notes": "",
+    "summary": "Compared quotes and wrote plan.md with the rule-based recommendation."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "cheapest": "CoolAir",
+      "cheapest_price": 89,
+      "fastest": "AirMedic"
+    },
+    "urgency": "standard",
+    "zone": "north_side"
+  },
+  "run_id": "b6857d33-a7d9-4c87-81c7-7dc0e5e82e24",
+  "score_total": 98.8195,
+  "seed": 42,
+  "task_id": "sprint-planning-003",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.2949
+  }
+}

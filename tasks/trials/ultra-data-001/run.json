@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:27bd6615c4aa318ff81ec133588de7d57691a636e3e7eb8c9f078deb2afb8a69",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/ultra-data-001/workspace/ledger.md",
+    "artifact_uri": "ledger.md",
+    "notes": "",
+    "summary": "Closed the quarter with corrections applied; ledger.md delivered."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "book": "primary",
+    "quarter": "final"
+  },
+  "run_id": "2120a909-e493-4579-9ba3-14b827bc7832",
+  "score_total": 99.9522,
+  "seed": 42,
+  "task_id": "ultra-data-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 880,
+    "output_tokens": 380,
+    "steps": 3,
+    "wall_clock_s": 0.043
+  }
+}

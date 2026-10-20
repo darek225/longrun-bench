@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:afa24753b056f2ed3e877873d52b4ea96430d74508938353b645e3e68cc4f56c",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-code-003/workspace/summary.md",
+    "artifact_uri": "summary.md",
+    "notes": "",
+    "summary": "Fixed all planted bugs in log_analyzer.py; suite is green; summary.md explains each bug and fix."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "bug_count": "three",
+    "theme": "edge-case"
+  },
+  "run_id": "b555e2d1-daf8-4027-a556-dec51866de3d",
+  "score_total": 97.2598,
+  "seed": 42,
+  "task_id": "sprint-code-003",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1400,
+    "output_tokens": 580,
+    "steps": 7,
+    "wall_clock_s": 1.1589
+  }
+}

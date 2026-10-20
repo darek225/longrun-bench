@@ -1,0 +1,34 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:3465c925652222e22a5fe0b29ce2e3852263169ba25429532901194e4390da0f",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/ultra-planning-001/workspace/plan.md",
+    "artifact_uri": "plan.md",
+    "notes": "",
+    "summary": "Revised the relocation plan under the new cap with a documented change log."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "lease": "Loft B",
+      "mover": "SwiftMove",
+      "total": 8000.0
+    },
+    "scenario": "revised"
+  },
+  "run_id": "d98d1bb1-16c5-41fa-83c4-7ba5a473fd6c",
+  "score_total": 99.9209,
+  "seed": 42,
+  "task_id": "ultra-planning-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1320,
+    "output_tokens": 510,
+    "steps": 5,
+    "wall_clock_s": 0.3481
+  }
+}

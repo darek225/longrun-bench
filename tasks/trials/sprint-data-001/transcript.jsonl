@@ -1,0 +1,6 @@
+{"agent": {"model": "scripted", "name": "scripted-smoke-agent", "profile": "standard"}, "budgets": {"steps": 20, "wall_clock_minutes": 15}, "harness": {"hash": "sha256:local-dev", "version": "0.1.0"}, "run_id": "e51f0d9b-05e3-4c87-af00-d873d42d8cca", "t": "2026-10-20T23:41:10Z", "task": {"id": "sprint-data-001", "instance_seed": 42, "task_set": "0.1.0"}, "type": "run_start"}
+{"step": 0, "t": "2026-10-20T23:41:10Z", "text_hash": "sha256:9a670bb665d66e4025cbdded86113749871ebf191c3694c170de6b5772ed9c86", "type": "prompt"}
+{"args_hash": "sha256:dbd48596bd351c4a97f1f455dabd6e0392c9925e52c551c4e607244af7a7f4f4", "duration_ms": 0, "result_summary": {"chars": 512, "truncated": false}, "step": 1, "t": "2026-10-20T23:41:10Z", "tool": "file.read", "type": "tool_call"}
+{"args_hash": "sha256:3ee676e635aa6d3d28e112b5c7e4b678d7f4764eefb0d0845e9b06e3ed300e9c", "duration_ms": 0, "result_summary": {"bytes_written": 470}, "step": 2, "t": "2026-10-20T23:41:10Z", "tool": "file.write", "type": "tool_call"}
+{"artifact_hash": "sha256:eedca49670843db57af1656ea1e3e459a29943c6172f5443d12fa3461af5507b", "artifact_uri": "report.md", "step": 3, "t": "2026-10-20T23:41:10Z", "type": "deliverable"}
+{"reason": "deliverable", "step": 3, "t": "2026-10-20T23:41:10Z", "totals": {"input_tokens": 500, "output_tokens": 190, "steps": 3, "wall_clock_s": 0.0059}, "type": "run_end"}

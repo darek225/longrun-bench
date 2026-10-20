@@ -1,0 +1,38 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:fc59a3ab83116ed20cb5b8c19671ef6e8f4ae80dad381c39881441517ea6d90a",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-planning-008/workspace/plan.md",
+    "artifact_uri": "plan.md",
+    "notes": "",
+    "summary": "Planned the plus-package offsite for 12 and wrote plan.md."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "picks": [
+        "Riverfront Space",
+        "Songwriting session",
+        "Southern buffet"
+      ],
+      "total": 1692.0
+    },
+    "package": "plus",
+    "team_size": 12
+  },
+  "run_id": "43fef1b2-d599-4f63-bdb3-e3240b7d5621",
+  "score_total": 98.8201,
+  "seed": 42,
+  "task_id": "sprint-planning-008",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.0901
+  }
+}

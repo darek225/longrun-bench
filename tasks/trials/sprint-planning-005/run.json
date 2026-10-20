@@ -1,0 +1,35 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:12299e70e9a91542b84ba65601c93a8618134d7d716f25d4fb8940f79eae5fa2",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-planning-005/workspace/plan.md",
+    "artifact_uri": "plan.md",
+    "notes": "",
+    "summary": "Compared quotes and wrote plan.md with the rule-based recommendation."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "cheapest": "SwiftMove",
+      "cheapest_price": 600,
+      "fastest": "HeavyLifters"
+    },
+    "urgency": "standard",
+    "zone": "north_side"
+  },
+  "run_id": "ad5e5294-09e2-47e2-92bd-ade11a189eeb",
+  "score_total": 98.8193,
+  "seed": 42,
+  "task_id": "sprint-planning-005",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.3544
+  }
+}

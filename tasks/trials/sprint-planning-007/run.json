@@ -1,0 +1,38 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:b00ee37f008815de864b4a319f116c6a3515e2215ade3423a15312bb75d3796e",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-planning-007/workspace/plan.md",
+    "artifact_uri": "plan.md",
+    "notes": "",
+    "summary": "Planned the plus-package offsite for 12 and wrote plan.md."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "expected": {
+      "picks": [
+        "City Hub",
+        "Escape room",
+        "Bistro lunch"
+      ],
+      "total": 1560.0
+    },
+    "package": "plus",
+    "team_size": 12
+  },
+  "run_id": "6d89aa23-8300-47e8-ab0b-7a6bfcec44e4",
+  "score_total": 98.8202,
+  "seed": 42,
+  "task_id": "sprint-planning-007",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.0588
+  }
+}

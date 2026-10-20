@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:1869f109825a9703c74aa177f0e397508e9b59ecb9996ea8c7ef816112d66322",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-code-009/workspace/summary.md",
+    "artifact_uri": "summary.md",
+    "notes": "",
+    "summary": "Fixed the crash in text_stats.py, added a regression test, suite green, summary.md delivered."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "codebase": "internal tools",
+    "input_flavor": "production-like"
+  },
+  "run_id": "eccfd28c-b84f-4740-b24d-ece8ca74ea8e",
+  "score_total": 97.6443,
+  "seed": 42,
+  "task_id": "sprint-code-009",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 1250,
+    "output_tokens": 580,
+    "steps": 6,
+    "wall_clock_s": 0.8214
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "agent": {
+    "model": "scripted",
+    "name": "scripted-smoke-agent",
+    "profile": "standard"
+  },
+  "deliverable": {
+    "artifact_hash": "sha256:f78eedc3653bb5fc4f1d145ee45885620426dec927e2b633edf91d09dbb454cc",
+    "artifact_path": "/tmp/longrun-bank-9w3dwxho/sprint-web-001/workspace/specs.csv",
+    "artifact_uri": "specs.csv",
+    "notes": "",
+    "summary": "Extracted the full table from specs.html into specs.csv."
+  },
+  "end_reason": "deliverable",
+  "params": {
+    "brand_focus": "RoboVac",
+    "expected": {
+      "model": "RoboVac X1",
+      "price": "299",
+      "spec": "120 min"
+    },
+    "output_format": "csv"
+  },
+  "run_id": "b6b70293-51da-4a9e-8412-f52c1fb6ec03",
+  "score_total": 98.8189,
+  "seed": 42,
+  "task_id": "sprint-web-001",
+  "task_set": "0.1.0",
+  "totals": {
+    "input_tokens": 700,
+    "output_tokens": 270,
+    "steps": 3,
+    "wall_clock_s": 0.4655
+  }
+}
