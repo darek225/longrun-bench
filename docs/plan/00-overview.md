@@ -16,6 +16,11 @@ This directory is the complete plan to take LongRun Bench from spec (Phase 1, do
 | `08-launch.md` | Positioning, competitive landscape, cold start plan, growth loops, kill risks |
 | `09-remaining-details.md` | Transcript schema, efficiency formula, version migration, Ultra ops, MVP participation, benchmark health metrics, legal |
 | `10-runner-flow.md` | The core loop: BYO API key → harness run → signed transcript → upload → scoreboard. Key handling rules, provider adapters, local models |
+| `11-driver.md` | The agent loop: pseudocode, deliver tool, malformed-input handling, history compaction, transcript events, conformance tests |
+| `12-check-dsl.md` | Deterministic check framework: Check interface, standard library, rubric caps, server replay, authoring rules |
+| `13-harness-hardening.md` | Resource limits, container security, network containment, security event logging, supply chain |
+| `14-task-generation.md` | Concrete build list for the remaining 70 tasks: parameters, ground-truth sources, authoring pipeline |
+| `15-final-mile.md` | Native profile design, legal drafts, methodology/FAQ copy, verification lottery implementation, pricing table, Ultra memory format, CI plan, definition of done |
 
 ## Target repo layout (end of Phase 2)
 
