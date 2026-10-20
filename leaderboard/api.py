@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
+from . import trust
 from .ingest import IngestError, ingest_submission
 from .store import Store
 
@@ -81,6 +82,11 @@ def make_handler(store: Store, tasks_root: Path) -> type[BaseHTTPRequestHandler]
                     self._send_json(200, {"disputes": store.list_disputes()})
                 elif parts == ["api", "reputation"]:
                     self._send_json(200, {"reputation": store.reputation_board()})
+                elif parts == ["api", "verifiers"]:
+                    self._send_json(200, {"verifiers": store.list_verifiers(opted_in_only=False)})
+                elif parts == ["api", "verification-jobs"]:
+                    jobs = store.list_jobs(score_id=query.get("score_id"), verifier=query.get("verifier"), state=query.get("state"))
+                    self._send_json(200, {"jobs": jobs})
                 elif parts == []:
                     self._send_file(SITE_DIR / "index.html")
                 elif len(parts) == 1 and (SITE_DIR / parts[0]).exists():
@@ -99,8 +105,49 @@ def make_handler(store: Store, tasks_root: Path) -> type[BaseHTTPRequestHandler]
                     self._send_json(201, result)
                 elif parts == ["api", "disputes"]:
                     body = self._body()
-                    dispute_id = store.create_dispute(score_id=str(body["score_id"]), reason=str(body.get("reason", "")))
-                    self._send_json(201, {"dispute_id": dispute_id})
+                    if body.get("filer"):
+                        result = trust.file_dispute(
+                            store,
+                            score_id=str(body["score_id"]),
+                            filer=str(body["filer"]),
+                            reason=str(body.get("reason", "")),
+                        )
+                        self._send_json(201, result)
+                    else:
+                        dispute_id = store.create_dispute(score_id=str(body["score_id"]), reason=str(body.get("reason", "")))
+                        self._send_json(201, {"dispute_id": dispute_id})
+                elif len(parts) == 4 and parts[:2] == ["api", "disputes"] and parts[3] == "resolve":
+                    body = self._body()
+                    result = trust.resolve_dispute(
+                        store,
+                        dispute_id=parts[2],
+                        outcome=str(body["outcome"]),
+                        resolution=str(body.get("resolution", "")),
+                    )
+                    self._send_json(200, result)
+                elif parts == ["api", "verifiers", "opt-in"]:
+                    body = self._body()
+                    result = trust.opt_in_verifier(store, user_id=str(body["verifier"]), org=body.get("org"))
+                    self._send_json(201, result)
+                elif parts == ["api", "reputation", "award"]:
+                    body = self._body()
+                    reason = str(body["reason"])
+                    points = int(body.get("points", trust.REPUTATION_AWARDS.get(reason, 0)))
+                    if points == 0:
+                        raise trust.TrustError(f"no default award for reason {reason!r}; pass points explicitly")
+                    store.award_reputation(subject=str(body["subject"]), points=points, reason=reason)
+                    self._send_json(201, {"subject": str(body["subject"]), "points": points, "balance": store.reputation_balance(str(body["subject"]))})
+                elif len(parts) == 4 and parts[:2] == ["api", "scores"] and parts[3] == "request-verification":
+                    body = self._body()
+                    result = trust.request_verification(store, score_id=parts[2], submitter_org=body.get("submitter_org"))
+                    self._send_json(201, result)
+                elif len(parts) == 4 and parts[:2] == ["api", "verification-jobs"] and parts[3] == "submit":
+                    body = self._body()
+                    result = trust.submit_verification_job(store, job_id=parts[2], bundles=list(body["runs"]), tasks_root=tasks_root)
+                    self._send_json(201, result)
+                elif parts == ["api", "admin", "expire-verification-jobs"]:
+                    result = trust.expire_jobs(store)
+                    self._send_json(200, {"expired": result["expired"], "redrawn": [job["id"] for job in result["redrawn"]]})
                 elif len(parts) == 4 and parts[:2] == ["api", "scores"] and parts[3] == "verify":
                     body = self._body()
                     outcome = store.record_verification(
@@ -115,7 +162,7 @@ def make_handler(store: Store, tasks_root: Path) -> type[BaseHTTPRequestHandler]
                     self._send_json(201, outcome)
                 else:
                     self._send_json(404, {"error": f"no route: {parsed.path}"})
-            except IngestError as exc:
+            except (IngestError, trust.TrustError) as exc:
                 self._send_json(400, {"error": str(exc)})
             except KeyError as exc:
                 self._send_json(404, {"error": str(exc)})

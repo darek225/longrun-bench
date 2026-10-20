@@ -1,0 +1,30 @@
+name: CI
+
+# docs/plan/15-final-mile.md §9: harness tests, driver conformance, task
+# validation, spec links, pricing freshness — on every PR and push to main.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pytest
+        run: pip install pytest
+      - name: Harness tests (includes driver conformance sequences)
+        working-directory: harness
+        run: python -m pytest -q
+      - name: Leaderboard tests (ingestion replay, lottery, disputes)
+        run: python -m pytest leaderboard/tests -q
+      - name: Task bank validation sweep (every solver passes, every garbage control fails)
+        run: python tasks/validate_bank.py
+      - name: Spec links
+        run: python scripts/check_spec_links.py
+      - name: Pricing freshness (warns only)
+        run: python scripts/check_pricing_freshness.py

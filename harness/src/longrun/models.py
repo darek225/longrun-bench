@@ -86,10 +86,12 @@ class TaskInstance:
     deterministic_checks: list[dict[str, Any]]
     network_allowlist: list[str]
     task_set_version: str = "0.1.0"
+    level: int = 1
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "task_id": self.task_id,
+            "level": self.level,
             "task_dir": str(self.task_dir),
             "seed": self.seed,
             "params": self.params,

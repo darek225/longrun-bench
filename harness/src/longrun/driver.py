@@ -136,6 +136,37 @@ class ScriptedAdapter:
         return AdapterResponse.from_any(self._responses.pop(0))
 
 
+# Ultra memory file (docs/plan/15-final-mile.md §8): the harness creates it
+# empty at run start and persists it across sessions. The agent structures it
+# freely; this skeleton is a suggestion, not a requirement.
+MEMORY_TEMPLATE = """# Memory — {task_id} — session 1
+
+## Goals
+- [ ] ...
+
+## State
+<!-- What is done, what is in progress. Updated every session. -->
+
+## Open questions
+<!-- Things the agent still needs to figure out. -->
+
+## Session log
+<!-- Append-only: date, what was attempted, outcome. -->
+"""
+
+
+def seed_ultra_memory(workspace: str | Path, task_id: str) -> Path | None:
+    """Create the Ultra memory file if the workspace does not have one yet.
+
+    Never overwrites: an existing memory.md is the agent's own state.
+    """
+    path = Path(workspace) / "memory.md"
+    if path.exists():
+        return None
+    path.write_text(MEMORY_TEMPLATE.format(task_id=task_id), encoding="utf-8")
+    return path
+
+
 @dataclass
 class RunResult:
     run_id: str
@@ -197,6 +228,10 @@ class Driver:
             harness={"version": self.harness_version, "hash": "sha256:local-dev"},
             budgets=instance.budgets.to_dict(),
         )
+        if instance.level == 3:
+            seeded = seed_ultra_memory(self.tools.workspace, instance.task_id)
+            if seeded is not None:
+                self.transcript.log("memory_seeded", path="memory.md", task_id=instance.task_id)
         self.transcript.log("prompt", step=0, text_hash=_hash_text(instance.prompt))
 
         max_turns = instance.budgets.steps * 3 + 12

@@ -23,6 +23,7 @@
     <a href="#/">Board</a>
     <a href="#/tasks">Tasks</a>
     <a href="#/methodology">Methodology</a>
+    <a href="#/faq">FAQ</a>
     <a href="#/disputes">Disputes</a>
     <a href="#/submit">Submit</a>
   </nav>
@@ -74,11 +75,17 @@ async function renderScore(id) {
   const s = await api('/api/scores/' + id);
   const tasks = s.task_scores.map(t => `<tr><td>${t.task_id}</td><td>${t.mean_score.toFixed(2)}</td><td>${t.n_runs}</td></tr>`).join('');
   const runs = s.run_manifests.map(r => `<tr><td>${r.task_id}</td><td>${r.seed}</td><td>${r.claimed_total}</td><td>${r.replayed_total}</td><td><code>${r.transcript_sha256.slice(0, 19)}…</code></td></tr>`).join('');
+  const vers = (s.verifications || []).map(v => `<tr><td>${v.verifier}</td><td>${v.task_id}</td><td>${v.reproduced_total}</td><td>${v.within_ci ? 'inside CI' : 'outside CI'}</td></tr>`).join('');
+  const jobs = (s.verification_jobs || []).map(j => `<tr><td>${j.verifier}</td><td>${j.state}</td><td>${j.due_at || ''}</td></tr>`).join('');
+  const disps = (s.disputes || []).map(d => `<tr><td>${d.status}</td><td>${d.reason || ''}</td><td>${d.outcome || ''}</td><td>${d.resolution || ''}</td></tr>`).join('');
   app.innerHTML = `<h2>${s.agent_name} (${s.model})</h2>
     <p>${s.profile} / ${s.level} / task set ${s.task_set} / board ${s.board} / tier ${s.tier} / status ${s.status}${s.gap_flag ? ' <span class="flag">generalization gap flag</span>' : ''}</p>
     <p>Mean ${s.mean_score.toFixed(2)} (95% CI ${s.ci_low.toFixed(2)} to ${s.ci_high.toFixed(2)}), median ${s.median_score.toFixed(2)}, ${s.n_tasks} tasks, ${s.n_runs} runs.</p>
     <h3>Per-task</h3><table><tr><th>Task</th><th>Mean</th><th>Runs</th></tr>${tasks}</table>
-    <h3>Runs (server-replayed)</h3><table><tr><th>Task</th><th>Seed</th><th>Claimed</th><th>Replayed</th><th>Transcript</th></tr>${runs}</table>`;
+    <h3>Runs (server-replayed)</h3><table><tr><th>Task</th><th>Seed</th><th>Claimed</th><th>Replayed</th><th>Transcript</th></tr>${runs}</table>
+    ${vers ? `<h3>Verifications</h3><table><tr><th>Verifier</th><th>Scope</th><th>Reproduced</th><th>Result</th></tr>${vers}</table>` : ''}
+    ${jobs ? `<h3>Verification jobs</h3><table><tr><th>Verifier</th><th>State</th><th>Due</th></tr>${jobs}</table>` : ''}
+    ${disps ? `<h3>Disputes</h3><table><tr><th>Status</th><th>Reason</th><th>Outcome</th><th>Resolution</th></tr>${disps}</table>` : ''}`;
 }
 
 async function renderTasks() {
@@ -90,11 +97,37 @@ async function renderTasks() {
 
 function renderMethodology() {
   app.innerHTML = `<h2>Methodology</h2>
-    <p>LongRun Bench scores long, multi-step agent runs against rubrics: correctness 40, completeness 25, efficiency 15, error recovery 10, instruction adherence 10. Profiles (bare, standard, native) are never compared across. Levels are Sprint, Marathon, and Ultra.</p>
-    <p>Scores are never trusted from the submitter. The ingestion API verifies the signed submission, then replays the deterministic checks from the run bundle with the same checker code as the harness, and rejects on any mismatch.</p>
-    <p>Verification is by reproduction: two independent re-runs landing inside the reported 95% confidence interval mark a score verified; two outside mark it disputed, with transcripts public.</p>
-    <p>The generalization gap is the mean on recently added tasks minus the mean on older tasks. New tasks are the canary, so no secret held-out set is needed. Gap flags render unconditionally.</p>
+    <h3>We measure the job, not the answer</h3>
+    <p>A LongRun task is a piece of work: a quarter close, a migration, a market dossier. The agent gets the brief, a workspace, tools, and a budget of steps and time, and is graded on the deliverable it hands back, the way a manager grades finished work, not a quiz.</p>
+    <h3>The three levels</h3>
+    <p><strong>Sprint</strong>: up to 20 steps and 15 minutes. Single-sitting jobs. <strong>Marathon</strong>: up to 100 steps and 3 hours. Multi-part jobs with real setbacks in them. <strong>Ultra</strong>: up to 500 steps and 24 hours, with a persistent memory file across sessions. Jobs where losing track of your own state is the main way to fail.</p>
+    <h3>The three profiles</h3>
+    <p><strong>Bare</strong>: a raw model API, nothing else. <strong>Standard</strong>: the open LongRun harness in this repo. <strong>Native</strong>: a finished product with its own harness, run through the protocol or labeled ui-driven. Scores are never compared across profiles; a raw API and a finished product are different things.</p>
+    <h3>Rubrics</h3>
+    <p>Every task is graded on five criteria: correctness 40, completeness 25, efficiency 15, error recovery 10, instruction adherence 10. Worked example: on the Sprint sales-analysis task, correctness is the revenue total and top products against ground truth derived from the drawn parameters; a report with the wrong total has its correctness capped by the failed check no matter how polished the prose is; completeness covers flagging the duplicate, future-dated, and missing-price rows the data plants; efficiency applies the spec formula over steps, tokens, and time, scaled by the correctness ratio, so a fast wrong answer scores worse than a slower right one.</p>
+    <h3>The time-based canary</h3>
+    <p>There is no secret held-out set. New tasks are added in the open, timestamped, and the generalization gap (mean on recent tasks minus mean on older tasks) is computed for every score and shown unconditionally. Training on the public set shows up as a gap; nobody has to trust a secret-keeper.</p>
+    <h3>Score tiers</h3>
+    <p><strong>Checks</strong>: deterministic checks only, replayed by the server from the submitted bundle. <strong>Graded</strong>: checks plus an LLM judge on the fuzzy criteria, with check caps enforced over judge scores. <strong>Verified</strong>: graded or checks, plus two independent reproductions inside the reported 95% confidence interval, drawn by lottery from a staked verifier pool. Two reproductions outside the interval mark a score disputed instead.</p>
+    <h3>What a score is not</h3>
+    <p>Not an endorsement. Not a safety certificate. Not comparable across task set versions or profiles. A score is a measurement under stated conditions: task set version, harness hash, and seed, all printed next to it.</p>
     <p>Full spec: see SPEC.md in the repository.</p>`;
+}
+
+function renderFaq() {
+  const qa = [
+    ['How do I run it?', 'Clone the repo, set your provider API key in the environment, and run one command: longrun run on any task in tasks/. The Docker image in harness/ packages the same thing.'],
+    ['What does it cost me?', 'Your model API usage: a few cents to a few dollars per task at current prices. The benchmark charges nothing, and the org never pays for agent compute.'],
+    ['Can I use a local model?', 'Yes. Point the OpenAI-compatible adapter at your local endpoint with the local/ model prefix.'],
+    ['Why is my score lower than I expected?', 'Read the rubric breakdown on your score page. Most commonly: incomplete deliverables and claims the deterministic checks could not verify.'],
+    ["Someone's score looks fake.", 'File a dispute on the score (it stakes 5 reputation) or reproduce it yourself. The score goes to the verification pool as priority, blind, and the protocol handles the rest.'],
+    ['Do you sell scores?', 'No. The board is free. Flat verification fees and an enterprise API are phase 3 ideas; any price list will be public.'],
+    ['Can I suggest a task?', 'Yes: a PR against the task schema. New tasks must pass the validation sweep, including a scripted solver and a seen-to-fail control.'],
+    ['Why three profiles?', 'Because a raw API and a finished product are different things, and comparing them is meaningless.'],
+    ['What happens to my API key?', 'Nothing. It never leaves your machine: keys are read from the environment at call time, redacted from transcripts, and never part of an upload.'],
+    ['Who runs this?', 'A GitHub org and a handful of maintainers. The spec, the harness, and the board are all public.'],
+  ];
+  app.innerHTML = '<h2>FAQ</h2>' + qa.map(([q, a]) => `<h3>${q}</h3><p>${a}</p>`).join('');
 }
 
 async function renderDisputes() {
@@ -120,6 +153,7 @@ async function route() {
     else if (path.startsWith('/score/')) await renderScore(path.split('/')[2]);
     else if (path === '/tasks') await renderTasks();
     else if (path === '/methodology') renderMethodology();
+    else if (path === '/faq') renderFaq();
     else if (path === '/disputes') await renderDisputes();
     else if (path === '/submit') renderSubmit();
     else app.innerHTML = '<p>Not found.</p>';

@@ -57,9 +57,28 @@ CREATE TABLE disputes (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   score_id   UUID REFERENCES scores(id),
   status     TEXT CHECK (status IN ('open','resolved','frivolous')),
+  filer      TEXT,                        -- stakes 5 reputation (docs/plan/07 §4)
+  outcome    TEXT,                        -- upheld | rejected | frivolous
   reason     TEXT,
   resolution TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Verification lottery (docs/plan/07 §2, docs/plan/15 §6).
+CREATE TABLE verifiers (
+  user_id    TEXT PRIMARY KEY,
+  reputation INT DEFAULT 0,
+  opted_in   BOOLEAN DEFAULT FALSE,
+  org        TEXT                          -- for conflict exclusion
+);
+CREATE TABLE verification_jobs (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  score_id    UUID REFERENCES scores(id),
+  verifier    TEXT REFERENCES verifiers(user_id),
+  state       TEXT CHECK (state IN ('assigned','submitted','expired')) DEFAULT 'assigned',
+  priority    BOOLEAN DEFAULT FALSE,
+  assigned_at TIMESTAMPTZ DEFAULT now(),
+  due_at      TIMESTAMPTZ                  -- 7-day TTL; expiry re-draws and docks 2
 );
 
 -- Verification reproductions (docs/plan/06 §4, 07). A score is `verified`

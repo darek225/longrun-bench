@@ -40,6 +40,37 @@ def _run(tmp_path, instance, responses, task_id="sprint-code-001"):
     return driver.run(instance, ScriptedAdapter(responses), agent=AGENT)
 
 
+def test_ultra_run_seeds_memory_file(tmp_path):
+    # docs/plan/15 §8: Ultra runs start with a memory.md skeleton in the
+    # workspace; Sprint runs do not get one.
+    manifest = load_manifest(TASKS_DIR.parent / "ultra" / "ultra-research-004")
+    instance = render_instance(manifest, seed=42)
+    instance = dataclasses.replace(instance, budgets=Budgets(steps=1, wall_clock_minutes=15))
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    fixtures = TASKS_DIR.parent / "ultra" / "ultra-research-004" / "fixtures"
+    for item in fixtures.iterdir():
+        dest = workspace / item.name
+        if item.is_dir():
+            shutil.copytree(item, dest)
+        else:
+            shutil.copy2(item, dest)
+    tools = WorkspaceTools(workspace, allowlist=instance.network_allowlist)
+    driver = Driver(tools, tmp_path / "transcript.jsonl")
+    driver.run(instance, ScriptedAdapter([]), agent=AGENT)
+    memory = (workspace / "memory.md").read_text(encoding="utf-8")
+    assert memory.startswith("# Memory — ultra-research-004")
+    assert "memory_seeded" in [event["type"] for event in driver.transcript.events]
+
+
+def test_ultra_memory_never_overwritten(tmp_path):
+    from longrun.driver import seed_ultra_memory
+
+    (tmp_path / "memory.md").write_text("agent state\n", encoding="utf-8")
+    assert seed_ultra_memory(tmp_path, "ultra-x") is None
+    assert (tmp_path / "memory.md").read_text(encoding="utf-8") == "agent state\n"
+
+
 def test_scripted_happy_path_delivers(tmp_path):
     script = json.loads((TASKS_DIR / "sprint-code-001" / "smoke-script.json").read_text(encoding="utf-8"))
     result = _run(tmp_path, _instance(), script)

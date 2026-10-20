@@ -81,6 +81,21 @@ CREATE TABLE IF NOT EXISTS reputation (
   reason TEXT NOT NULL,
   created_at TEXT DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS verifiers (
+  user_id TEXT PRIMARY KEY,
+  reputation INT DEFAULT 0,
+  opted_in INT DEFAULT 0,
+  org TEXT
+);
+CREATE TABLE IF NOT EXISTS verification_jobs (
+  id TEXT PRIMARY KEY,
+  score_id TEXT REFERENCES scores(id),
+  verifier TEXT REFERENCES verifiers(user_id),
+  state TEXT CHECK (state IN ('assigned','submitted','expired')) DEFAULT 'assigned',
+  priority INT DEFAULT 0,
+  assigned_at TEXT DEFAULT (datetime('now')),
+  due_at TEXT
+);
 """
 
 
@@ -118,6 +133,11 @@ class Store:
         self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self.conn.executescript(SCHEMA)
+        columns = [row[1] for row in self.conn.execute("PRAGMA table_info(disputes)").fetchall()]
+        if "filer" not in columns:
+            self.conn.execute("ALTER TABLE disputes ADD COLUMN filer TEXT")
+        if "outcome" not in columns:
+            self.conn.execute("ALTER TABLE disputes ADD COLUMN outcome TEXT")
         self.conn.commit()
 
     # -- scores ------------------------------------------------------------
@@ -199,6 +219,7 @@ class Store:
         result["run_manifests"] = [dict(r) for r in self.conn.execute("SELECT * FROM run_manifests WHERE score_id=? ORDER BY task_id", (score_id,)).fetchall()]
         result["verifications"] = [dict(r) for r in self.conn.execute("SELECT * FROM verifications WHERE score_id=? ORDER BY created_at", (score_id,)).fetchall()]
         result["disputes"] = [dict(r) for r in self.conn.execute("SELECT * FROM disputes WHERE score_id=? ORDER BY created_at", (score_id,)).fetchall()]
+        result["verification_jobs"] = [dict(r) for r in self.conn.execute("SELECT * FROM verification_jobs WHERE score_id=? ORDER BY assigned_at", (score_id,)).fetchall()]
         return result
 
     def set_status(self, score_id: str, status: str) -> None:
@@ -223,27 +244,31 @@ class Store:
         return {"within_ci": within}
 
     def verification_counts(self, score_id: str) -> dict[str, int]:
-        rows = self.conn.execute("SELECT within_ci, COUNT(*) AS n FROM verifications WHERE score_id=? GROUP BY within_ci", (score_id,)).fetchall()
+        rows = self.conn.execute("SELECT within_ci, COUNT(DISTINCT verifier) AS n FROM verifications WHERE score_id=? GROUP BY within_ci", (score_id,)).fetchall()
         counts = {"within": 0, "outside": 0}
         for row in rows:
             counts["within" if row["within_ci"] else "outside"] = int(row["n"])
         return counts
 
     # -- disputes --------------------------------------------------------------
-    def create_dispute(self, *, score_id: str, reason: str) -> str:
+    def create_dispute(self, *, score_id: str, reason: str, filer: str | None = None) -> str:
         dispute_id = str(uuid.uuid4())
         self.conn.execute(
-            "INSERT INTO disputes (id, score_id, status, reason) VALUES (?,?, 'open', ?)",
-            (dispute_id, score_id, reason),
+            "INSERT INTO disputes (id, score_id, status, reason, filer) VALUES (?,?, 'open', ?, ?)",
+            (dispute_id, score_id, reason, filer),
         )
         self.conn.commit()
         return dispute_id
 
+    def get_dispute(self, dispute_id: str) -> dict[str, Any] | None:
+        row = self.conn.execute("SELECT * FROM disputes WHERE id=?", (dispute_id,)).fetchone()
+        return dict(row) if row else None
+
     def list_disputes(self) -> list[dict[str, Any]]:
         return [dict(r) for r in self.conn.execute("SELECT * FROM disputes ORDER BY created_at DESC").fetchall()]
 
-    def resolve_dispute(self, dispute_id: str, *, status: str, resolution: str) -> None:
-        self.conn.execute("UPDATE disputes SET status=?, resolution=? WHERE id=?", (status, resolution, dispute_id))
+    def resolve_dispute(self, dispute_id: str, *, status: str, resolution: str, outcome: str | None = None) -> None:
+        self.conn.execute("UPDATE disputes SET status=?, resolution=?, outcome=? WHERE id=?", (status, resolution, outcome, dispute_id))
         self.conn.commit()
 
     # -- reputation --------------------------------------------------------------
@@ -259,3 +284,53 @@ class Store:
             "SELECT subject, SUM(points) AS points FROM reputation GROUP BY subject ORDER BY points DESC"
         ).fetchall()
         return [dict(r) for r in rows]
+
+    def reputation_balance(self, subject: str) -> int:
+        row = self.conn.execute("SELECT COALESCE(SUM(points), 0) AS balance FROM reputation WHERE subject=?", (subject,)).fetchone()
+        return int(row["balance"])
+
+    # -- verification lottery (docs/plan/07 §2, docs/plan/15 §6) --------------
+    def upsert_verifier(self, *, user_id: str, org: str | None, opted_in: bool = True) -> None:
+        self.conn.execute(
+            "INSERT INTO verifiers (user_id, org, opted_in, reputation) VALUES (?,?,?,?) "
+            "ON CONFLICT(user_id) DO UPDATE SET org=excluded.org, opted_in=excluded.opted_in",
+            (user_id, org, 1 if opted_in else 0, self.reputation_balance(user_id)),
+        )
+        self.conn.commit()
+
+    def list_verifiers(self, *, opted_in_only: bool = True) -> list[dict[str, Any]]:
+        query = "SELECT * FROM verifiers"
+        if opted_in_only:
+            query += " WHERE opted_in=1"
+        return [dict(r) for r in self.conn.execute(query + " ORDER BY user_id").fetchall()]
+
+    def insert_job(self, *, score_id: str, verifier: str, assigned_at: str, due_at: str, priority: bool = False) -> str:
+        job_id = str(uuid.uuid4())
+        self.conn.execute(
+            "INSERT INTO verification_jobs (id, score_id, verifier, state, priority, assigned_at, due_at) VALUES (?,?,?,'assigned',?,?,?)",
+            (job_id, score_id, verifier, 1 if priority else 0, assigned_at, due_at),
+        )
+        self.conn.commit()
+        return job_id
+
+    def get_job(self, job_id: str) -> dict[str, Any] | None:
+        row = self.conn.execute("SELECT * FROM verification_jobs WHERE id=?", (job_id,)).fetchone()
+        return dict(row) if row else None
+
+    def list_jobs(self, *, score_id: str | None = None, verifier: str | None = None, state: str | None = None) -> list[dict[str, Any]]:
+        query = "SELECT * FROM verification_jobs WHERE 1=1"
+        params: list[Any] = []
+        if score_id:
+            query += " AND score_id=?"
+            params.append(score_id)
+        if verifier:
+            query += " AND verifier=?"
+            params.append(verifier)
+        if state:
+            query += " AND state=?"
+            params.append(state)
+        return [dict(r) for r in self.conn.execute(query + " ORDER BY assigned_at", params).fetchall()]
+
+    def set_job_state(self, job_id: str, state: str) -> None:
+        self.conn.execute("UPDATE verification_jobs SET state=? WHERE id=?", (state, job_id))
+        self.conn.commit()

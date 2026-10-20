@@ -143,6 +143,7 @@ def render_instance(
         deterministic_checks=list(checks),
         network_allowlist=manifest.network_allowlist,
         task_set_version=str(manifest.raw.get("task_set_version", "0.1.0")),
+        level=manifest.level,
     )
 
 
