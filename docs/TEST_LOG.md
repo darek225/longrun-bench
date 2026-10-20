@@ -56,3 +56,8 @@ Environment: dev VM, Python 3, pytest 9.1.1, harness installed via `PYTHONPATH=h
 - Harness suite: **53 passed** (51 + 2 Ultra memory tests: an Ultra run seeds the memory.md skeleton with a `memory_seeded` event, and seeding never overwrites an existing memory file).
 - `python3 scripts/check_spec_links.py` → 31 docs, **0 unresolved references**. `python3 scripts/check_pricing_freshness.py` → fresh (updated 2026-10-20).
 - Task bank sweep unchanged and still green (85/85; harness changes were additive: a new TaskInstance field with a default, and Ultra-only memory seeding that the ultra solvers' own memory writes supersede).
+
+## 2026-10-20 — Phase 2 final verification
+
+- Full sweep re-run with trial keeping: **85/85 pass**, discrimination index 1.0 (tasks/discrimination.json).
+- Suites at close: harness **53 passed**, leaderboard **15 passed**, spec links 0 unresolved across 31 docs, pricing fresh.
