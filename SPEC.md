@@ -187,26 +187,27 @@ Tasks are templates, not fixed prompts. The instance (vendors, numbers, constrai
 
 ## 8. Leaderboards
 
-Two boards, never merged:
+One board with three score tiers (see `docs/plan/06-community-model.md` §3). The bench org does not run evaluations; it operates the scoreboard.
 
-| | Official | Community |
+| Tier | Verification | Label |
 |---|---|---|
-| Who runs it | Bench org | Anyone |
-| Compute paid by | Vendor (phase 3) / bench org (phase 1-2) | The runner |
-| Verification | Full: controlled infra, human audit sample | Signed results, labeled unverified |
-| Update cadence | Monthly | Continuous |
-| Disputes | Human re-grade, published | Not accepted; re-run instead |
+| Checks-only | Server replays deterministic checks from the signed transcript | `checks` |
+| Full | Checks + LLM judge grading (submitter-funded) | `graded` |
+| Verified | Full + 2 independent reproductions within CI | `verified` |
 
 - Tabs per profile (`bare` / `standard` / `native`), per level (Sprint / Marathon / Ultra). Default view: Marathon / `standard` — the most representative of real agent usage.
-- Every row shows: agent configuration, score, 95% CI, task set version, harness hash, generalization gap (official only), date.
+- Every row shows: agent configuration, score, 95% CI, tier, task set version, harness hash, generalization gap (time-based canary), date.
+- The generalization gap is computed from task timestamps (new vs old tasks), not from secret held-out tasks.
 
 ## 9. Business model
 
-1. **Phase 1-2 (now):** free. The benchmark needs a populated, trusted board before anyone pays. Bench org absorbs official-run compute.
-2. **Phase 3:** vendors pay per official evaluation (compute cost + margin). Pricing is public and flat per level — no pay-for-score, ever. A vendor cannot pay to suppress a generalization-gap flag.
+The bench org's fixed costs are ~$1-6/month (see `docs/plan/06-community-model.md`). It never pays for agent compute.
+
+1. **Phase 1-2 (now):** free. The benchmark needs a populated, trusted board before anyone pays.
+2. **Phase 3:** vendors pay for priority verification and per-evaluation services. Pricing is public and flat per level — no pay-for-score, ever. A vendor cannot pay to suppress a generalization-gap flag.
 3. **Enterprise API:** paid access to score history, CI data, and head-to-head comparisons for buyers choosing agent platforms.
-4. **Sponsored task categories:** allowed, disclosed on the task and the leaderboard, never in the active official set without a 1-quarter quarantine. A sponsor cannot author the rubric for their own category.
-5. What the benchmark will never sell: score boosts, early access to held-out tasks, suppression of flags, or placement.
+4. **Sponsored task categories:** allowed, disclosed on the task and the leaderboard, never in the active set without a 1-quarter quarantine. A sponsor cannot author the rubric for their own category.
+5. What the benchmark will never sell: score boosts, early access to new task quarters beyond the 1-week author window, suppression of flags, or placement.
 
 ## 10. Roadmap
 
