@@ -1,32 +1,41 @@
 # 05 — Operations: Run Ops, Cost Model, Timeline, Risks
 
+> **Superseded in part by `06-community-model.md`.** The bench org does not run evaluations and does not pay for agent compute. This document now covers: what the org operates (the board, not the runs), the community cost model, timeline, and risks.
+
 ## Decisions
 
-- **Official run cadence:** monthly, first Monday. All agents on the board re-run the current task set. Results published within 72 hours.
-- **Who operates runs:** the bench org (initially the repo owner + contractors). Runbooks in `ops/runbooks/`.
-- **Compute:** cloud VMs per run (isolated), orchestrated by a simple queue worker. No Kubernetes in phase 2; graduate when monthly runs exceed 200.
-- **Cost ceiling:** an official monthly run must cost under $5,000 all-in at v1.0 scale (10 agents × 85 tasks × 3 seeds). If it doesn't, cut Ultra to n=2 before cutting anything else.
+- **The org operates the scoreboard, not the evaluations.** Runs happen on runners' hardware. The org maintains the spec, harness, task bank, site, and ingestion API.
+- **Fixed cost target:** under $50/month total, ideally under $15.
+- **Release cadence:** task set MINOR version quarterly (rotation). The board updates continuously as submissions arrive.
 
-## 1. Official run procedure (runbook summary)
+## 1. What the org operates (runbook summary)
 
-1. **Freeze:** Friday before run week, task set version locked, canary instances drawn, seeds committed (hashed, revealed after).
-2. **Execute:** queue worker fans out runs. Each run: fresh container from pinned harness hash, instance rendered with seed, budgets enforced, transcript stored content-addressed.
-3. **Grade:** deterministic checks replayed in code; judge grades fuzzy criteria; 10% human audit sample drawn.
-4. **Review:** generalization gaps computed; flags raised where thresholds hit; vendors notified of flags (14-day response window before publication).
-5. **Publish:** scores appended to the DB, board updates, methodology notes for anything unusual.
+1. **Quarterly rotation:** task set version locked, new tasks added, retirements per the schedule in `tasks/`. Seeds for the quarter committed (hashed).
+2. **Ingestion:** the API verifies harness hashes, replays deterministic checks from submitted transcripts, recomputes scores. Rejections are public.
+3. **Verification lottery:** draws verifiers for scores requesting verification (§07.2).
+4. **Generalization gaps:** computed automatically from task timestamps (§06.5). Flags raised where thresholds hit; vendors notified (14-day response before publication).
+5. **Disputes:** reproduction-first process (§07.4).
 
-## 2. Cost model (v1.0 estimates)
+## 2. Cost model (community-run)
 
-| Item | Unit cost | Monthly |
+| Item | Implementation | Monthly |
 |---|---|---|
-| Agent compute (API models) | ~$2-8 per Marathon run × 30 tasks × 3 seeds × 10 agents | $1,800-7,200 |
-| Judge grading | <5% of agent compute | <$360 |
-| Human audit (10% sample) | $15 × ~90 transcripts | $1,350 |
-| Infra (VMs, storage, site) | flat | ~$300 |
-| **Total** | | **~$3,800-9,200** |
+| Scoreboard site | Cloudflare Pages (static) | $0 |
+| Score database | Supabase/Neon free tier | $0 |
+| Ingestion API | Serverless, check-replay only | $0-5 |
+| Domain | 1 domain | ~$1 |
+| **Total** | | **~$1-6** |
 
-- The ceiling in Decisions assumes mid-range agent costs. If frontier agents cost more, run fewer agents per month (rotation) rather than fewer tasks.
-- Phase 3 vendor fees: flat $2,500 per level per evaluation. At 10 vendors × 3 levels quarterly, that is $75k/quarter against ~$20k/quarter in run costs.
+Who pays for the rest:
+
+| Cost | Paid by |
+|---|---|
+| Agent compute | The runner |
+| Judge grading | The submitter (or BYO key, or checks-only) |
+| Human audit | Disputing parties, split |
+| Verification re-runs | Verifiers (reputation) / vendors (priority fees) |
+
+- Phase 3 revenue (unchanged from spec): flat $2,500/level vendor evaluations, enterprise API, sponsored task categories. Revenue funds infra first, task bounties second.
 
 ## 3. Timeline
 

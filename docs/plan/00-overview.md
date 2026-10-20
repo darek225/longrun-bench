@@ -10,7 +10,11 @@ This directory is the complete plan to take LongRun Bench from spec (Phase 1, do
 | `02-task-bank.md` | Task authoring guide, manifest schema reference, 15 fully-specified exemplar tasks, generation plan for the remaining 70 |
 | `03-judge.md` | The LLM judge: exact prompt, calibration methodology, disagreement handling, cost |
 | `04-leaderboard.md` | Leaderboard site: architecture, database schema, API endpoints, page specs, anti-tamper |
-| `05-operations.md` | Run operations, infrastructure, cost model, timeline, milestones, risk register |
+| `05-operations.md` | Org operations under the community model, cost model (~$1-6/mo), timeline, risk register |
+| `06-community-model.md` | Community-run operating model: verification by reproduction, score tiers, time-based canary, reputation, governance |
+| `07-trust-and-identity.md` | Threat model, verification lottery, transcript privacy, dispute process, limits on org power |
+| `08-launch.md` | Positioning, competitive landscape, cold start plan, growth loops, kill risks |
+| `09-remaining-details.md` | Transcript schema, efficiency formula, version migration, Ultra ops, MVP participation, benchmark health metrics, legal |
 
 ## Target repo layout (end of Phase 2)
 
