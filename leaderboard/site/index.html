@@ -153,10 +153,11 @@ async function renderPricing() {
 
 function renderSubmit() {
   app.innerHTML = `<h2>Submit a run</h2>
-    <p>Run a task with the open harness, then upload the run directory:</p>
+    <p>Everything runs on your machine: your agent, your API key. Run a task with the open harness (or drive your own agent through the protocol server), optionally grade it against the rubric with an LLM judge, then upload:</p>
     <pre>longrun run tasks/sprint/sprint-data-001 --model anthropic/claude-opus-5.5 --out runs/my-run
+longrun grade --task tasks/sprint/sprint-data-001 --run-dir runs/my-run --judge-model anthropic/claude-opus-5.5
 longrun upload --dir runs/my-run --api ${location.origin}</pre>
-    <p>The server verifies the signature and replays the deterministic checks before anything reaches the board. Scores start as provisional; independent reproductions verify them.</p>`;
+    <p>The server verifies the signature, replays the deterministic checks, and for graded claims recomputes the rubric caps and total from the declared judge scores before anything reaches the board. Scores start as provisional; the community rates them by reproduction: two independent reruns inside the confidence interval make a score verified, two outside make it disputed. Full walkthrough: docs/community-quickstart.md in the repository.</p>`;
 }
 
 async function route() {

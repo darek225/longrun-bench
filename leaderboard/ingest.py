@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from longrun.checks import run_checks
+from longrun.judge import JudgeError, combine_graded_scores, prompt_sha256
 from longrun.manifest import load_manifest, render_instance
 from longrun.scoring import score_checks_only
 from longrun.signing import verify_submission
@@ -116,8 +117,51 @@ def verify_and_replay(bundle: dict[str, Any], *, tasks_root: str | Path, index: 
             raise IngestError(f"check replay mismatch on {outcome.id}: claimed passed={claimed['passed']}, replayed passed={outcome.result.passed}")
         if abs(float(claimed["score"]) - outcome.result.score) > CHECK_SCORE_TOLERANCE:
             raise IngestError(f"check replay mismatch on {outcome.id}: claimed score {claimed['score']}, replayed {outcome.result.score}")
-    if abs(float(claim.get("total", -1)) - float(replay["total"])) > TOTAL_TOLERANCE:
-        raise IngestError(f"total mismatch: claimed {claim.get('total')}, replayed {replay['total']}")
+
+    tier = str(claim.get("tier", "checks"))
+    if tier == "graded":
+        # Graded tier (docs/plan/06 §3): the LLM judge's criterion scores
+        # are the submitter's evidence, declared in the signed claim. The
+        # server does not take the total on faith: it verifies the judge
+        # attestation names the fixed disclosed prompt, then recomputes
+        # the graded score from the declared judge scores with its own
+        # replayed check outcomes (caps and the efficiency formula are
+        # recomputed, never trusted). Inflated post-cap criteria or a
+        # total that does not follow from the declared judge scores are
+        # rejected here; a fabricated judge score itself is what signed
+        # attestation, reproduction, and disputes police.
+        judge_block = submission.get("judge")
+        if not isinstance(judge_block, dict) or not judge_block.get("model"):
+            raise IngestError("graded claim requires a judge attestation (judge model, prompt hash)")
+        if judge_block.get("prompt_sha256") != prompt_sha256():
+            raise IngestError("graded claim judge prompt hash does not match the disclosed prompt")
+        judge_scores = claim.get("judge_scores")
+        if not isinstance(judge_scores, dict):
+            raise IngestError("graded claim requires the raw judge criterion scores")
+        try:
+            combined = combine_graded_scores(
+                instance=instance,
+                outcomes=outcomes,
+                judge_scores={name: float(value) for name, value in judge_scores.items()},
+                run_totals=totals,
+            )
+        except (JudgeError, ValueError) as exc:
+            raise IngestError(f"graded claim judge scores invalid: {exc}")
+        claimed_criteria = claim.get("criteria") or {}
+        for name, item in combined["criteria"].items():
+            claimed_value = claimed_criteria.get(name)
+            if claimed_value is None or abs(float(claimed_value) - float(item["score"])) > CHECK_SCORE_TOLERANCE:
+                raise IngestError(
+                    f"graded criterion mismatch on {name}: claimed {claimed_value}, recomputed {item['score']} "
+                    "(check caps and the efficiency formula are applied by the server)"
+                )
+        verified_total = float(combined["total"])
+    elif tier == "checks":
+        verified_total = float(replay["total"])
+    else:
+        raise IngestError(f"unknown score tier in claim: {tier}")
+    if abs(float(claim.get("total", -1)) - verified_total) > TOTAL_TOLERANCE:
+        raise IngestError(f"total mismatch: claimed {claim.get('total')}, verified {verified_total}")
 
     agent = submission.get("agent", {})
     return {
@@ -130,10 +174,10 @@ def verify_and_replay(bundle: dict[str, Any], *, tasks_root: str | Path, index: 
         "profile": str(agent.get("profile", "standard")),
         "task_set": str(submission.get("task_set", "0.1.0")),
         "harness_hash": str(submission.get("harness", {}).get("hash", "")),
-        "tier": str(claim.get("tier", "checks")),
+        "tier": tier,
         "transcript_sha256": digest,
         "claimed_total": float(claim["total"]),
-        "replayed_total": float(replay["total"]),
+        "replayed_total": verified_total,
     }
 
 

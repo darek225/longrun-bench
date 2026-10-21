@@ -26,6 +26,10 @@ Phase 3 systems are built: the enterprise API (key-gated score history and head-
 
 What remains is not code: real vendor evaluations, enterprise buyers, the human judge-calibration panel, counsel review of the legal drafts, a Docker-capable machine to verify the harness image, and a community to submit and verify scores.
 
+## Run it yourself
+
+LongRun Bench is community-run: you run tasks on your own machine with your own agent and API key, grade them against the public rubric with an LLM judge if you want the full score, upload the signed result, and the community rates it by independent reproduction. The walkthrough is `docs/community-quickstart.md`.
+
 ## Contributing
 
 Task proposals via pull request against the task manifest schema in `SPEC.md` §3. All tasks are versioned and rotated; see `SPEC.md` §7.

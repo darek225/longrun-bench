@@ -76,3 +76,11 @@ Environment: dev VM, Python 3, pytest 9.1.1, harness installed via `PYTHONPATH=h
 - Orders: evaluation amount is forced to the published $2,500 (no caller-set price), lifecycle rejects skipping states and paying without a reference, evaluation fulfillment requires linking a real score, priority-verification fulfillment draws 2 priority jobs and records the fee as payable to the completing verifier, a zero fee is refused, and a full order lifecycle leaves every score field (mean, CI, gen gap, flag, status, tier) byte-identical.
 - Monthly run: the batch test ingests an official-board row from real scripted runs; the executed 2026-10 dry run produced 2 official rows (scripted-alpha, scripted-beta), 9 runs each, mean 98.58 (95% CI 98.08 to 99.08), all bundles replay-verified at ingestion. Report committed at `docs/monthly-runs/2026-10-dry-run/`.
 - Task bank sweep not re-run: no task, check, or scoring code changed in Phases 3-4 (driver session mode is opt-in and additive; default runs are unchanged, covered by the 53 pre-existing harness tests passing unmodified).
+
+## 2026-10-20 — Graded-tier ingestion verification
+
+- Leaderboard suite: **30 passed** (26 + 4 new in `leaderboard/tests/test_graded_ingest.py`). Harness suite: **58 passed** (56 + 2 in `harness/tests/test_graded_submission.py`).
+- A run graded by a stub judge (correctness 36, completeness 20, error recovery 10, instruction adherence 9) ingests as a `graded` board row whose mean equals the graded total (not the checks-only total), with claimed == replayed on the run manifest.
+- Forgery controls, all rejected: (1) a validly signed claim that skips check caps (raw judge 40 claimed as final correctness on a run whose checks fail) fails with a graded criterion mismatch, because the server applies the caps itself; (2) a judge attestation with a wrong prompt hash is rejected; (3) a graded claim with no attestation is rejected.
+- Mock-judge boundary: `longrun grade --mock-judge` produces graded-score.json but the submission keeps its checks claim; `apply_grade` re-signs with the attestation and the signature verifies.
+- Spec links after the quickstart doc: 39 docs, 0 unresolved (checked at commit time).

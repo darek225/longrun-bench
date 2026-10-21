@@ -31,12 +31,27 @@ def build_submission(
     score: dict[str, Any],
     harness_hash: str = "sha256:local-dev",
     redactions_applied: bool = True,
+    judge: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """The upload payload from docs/plan/10-runner-flow.md §2.3.
 
     Contains hashes and the score claim only: never the API key (which never
-    enters the harness's data paths), never full tool args.
+    enters the harness's data paths), never full tool args. For graded
+    claims, `judge` carries the attestation (judge model, prompt hash,
+    flags) and the claim carries the raw judge criterion scores, so the
+    server can re-apply caps and the efficiency formula itself.
     """
+    score_claim: dict[str, Any] = {
+        "tier": score.get("tier", "checks"),
+        "total": score.get("total"),
+        "criteria": {name: item.get("score") for name, item in score.get("criteria", {}).items()},
+        "checks": [
+            {"id": check["id"], "passed": check["passed"], "score": check["score"]}
+            for check in score.get("checks", [])
+        ],
+    }
+    if score.get("judge_scores"):
+        score_claim["judge_scores"] = dict(score["judge_scores"])
     submission: dict[str, Any] = {
         "run_id": run_record["run_id"],
         "agent": run_record.get("agent", {}),
@@ -45,19 +60,13 @@ def build_submission(
         "task_set": run_record.get("task_set", "0.1.0"),
         "harness": {"version": __version__, "hash": harness_hash},
         "transcript_sha256": sha256_file(transcript_path),
-        "score_claim": {
-            "tier": score.get("tier", "checks"),
-            "total": score.get("total"),
-            "criteria": {name: item.get("score") for name, item in score.get("criteria", {}).items()},
-            "checks": [
-                {"id": check["id"], "passed": check["passed"], "score": check["score"]}
-                for check in score.get("checks", [])
-            ],
-        },
+        "score_claim": score_claim,
         "totals": run_record.get("totals", {}),
         "end_reason": run_record.get("end_reason"),
         "redactions_applied": redactions_applied,
     }
+    if judge is not None:
+        submission["judge"] = judge
     submission["signature"] = sign_submission(submission)
     return submission
 

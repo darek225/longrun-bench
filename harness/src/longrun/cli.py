@@ -15,7 +15,7 @@ from typing import Any
 from .adapters import make_adapter
 from .checks import run_checks
 from .driver import Driver, ScriptedAdapter, TranscriptWriter
-from .judge import JudgeError, MockJudge, grade_run
+from .judge import JudgeError, MockJudge, grade_run, prompt_sha256
 from .manifest import ManifestError, load_manifest, parse_param_overrides, render_instance
 from .pricing import actual_cost, estimate_cost_range, load_pricing
 from .redact import redact_transcript_file
@@ -416,6 +416,14 @@ def cmd_grade(args: argparse.Namespace) -> int:
         _print_json({"ok": False, "error": str(exc)})
         return 1
     (run_dir / "graded-score.json").write_text(json.dumps(graded, indent=2, sort_keys=True), encoding="utf-8")
+    if args.mock_judge:
+        # The mock judge is a labeled test double: its grades exercise the
+        # pipeline locally but never re-sign a submission, so a mock grade
+        # can never reach the board as a graded claim.
+        submission_tier = "checks (mock grade not submitted)"
+    else:
+        apply_grade(run_dir, graded, judge_label=str(args.judge_model))
+        submission_tier = "graded"
     _print_json(
         {
             "ok": True,
@@ -423,9 +431,38 @@ def cmd_grade(args: argparse.Namespace) -> int:
             "total": graded["total"],
             "flags": graded["flags"],
             "five_percent_rule_violated": graded["judge"]["five_percent_rule_violated"],
+            "submission_tier": submission_tier,
         }
     )
     return 0
+
+
+def apply_grade(run_dir: Path, graded: dict[str, Any], *, judge_label: str) -> dict[str, Any]:
+    """Attach a graded score to a finished run (docs/plan/03, plan 06 §3).
+
+    Re-signs the submission with the graded claim plus the judge
+    attestation (judge model, hash of the fixed disclosed prompt, flags)
+    and the raw judge criterion scores, so the leaderboard can verify the
+    claim by replaying the checks and recomputing caps and the total
+    itself. The transcript is untouched, so its signed hash still matches.
+    """
+    run_record = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+    judge_block = {
+        "model": judge_label,
+        "prompt_sha256": prompt_sha256(),
+        "flags": list(graded.get("flags", [])),
+    }
+    submission = build_submission(
+        run_record=run_record,
+        transcript_path=run_dir / "transcript.jsonl",
+        score=graded,
+        judge=judge_block,
+    )
+    (run_dir / "submission.json").write_text(json.dumps(submission, indent=2, sort_keys=True), encoding="utf-8")
+    run_record["score_total"] = graded["total"]
+    run_record["tier"] = "graded"
+    (run_dir / "run.json").write_text(json.dumps(run_record, indent=2, sort_keys=True), encoding="utf-8")
+    return run_record
 
 
 def cmd_redact(args: argparse.Namespace) -> int:
