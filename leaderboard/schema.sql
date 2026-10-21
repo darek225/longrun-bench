@@ -133,4 +133,36 @@ CREATE TABLE orders (
   updated_at      TIMESTAMPTZ DEFAULT now()
 );
 
+-- Site accounts. Anyone can view the board; uploading requires an account
+-- (email + password or Google sign-in). Agents submit with a personal
+-- upload token tied to the account. Only hashes of passwords, session
+-- tokens, and upload tokens are ever stored.
+ALTER TABLE scores ADD COLUMN submitter_user_id TEXT;
+ALTER TABLE scores ADD COLUMN submitter_name TEXT;
+
+CREATE TABLE users (
+  id           TEXT PRIMARY KEY,
+  email        TEXT NOT NULL UNIQUE,
+  display_name TEXT NOT NULL,
+  password_hash TEXT,
+  google_sub   TEXT UNIQUE,
+  created_at   TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE sessions (
+  token_hash TEXT PRIMARY KEY,
+  user_id    TEXT NOT NULL REFERENCES users(id),
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE upload_tokens (
+  id         TEXT PRIMARY KEY,
+  user_id    TEXT NOT NULL REFERENCES users(id),
+  token_hash TEXT NOT NULL UNIQUE,
+  label      TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  revoked_at TIMESTAMPTZ
+);
+
 -- The app role gets no UPDATE or DELETE grants on scores (corrections append).

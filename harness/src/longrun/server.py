@@ -157,11 +157,24 @@ class RunStore:
         if entry.state != "running":
             raise ValueError(f"run is not awaiting a deliverable (state={entry.state})")
         artifact_uri = str(payload.get("artifact_uri", "deliverable.md"))
-        content = str(payload.get("artifact_content", ""))
         tools = WorkspaceTools(entry.workspace, allowlist=entry.instance.network_allowlist)
         artifact_path = tools.resolve_path(artifact_uri)
-        artifact_path.parent.mkdir(parents=True, exist_ok=True)
-        artifact_path.write_text(content, encoding="utf-8")
+        if "artifact_content" in payload:
+            # The agent sent the deliverable inline (no shared filesystem).
+            content = str(payload.get("artifact_content") or "")
+            artifact_path.parent.mkdir(parents=True, exist_ok=True)
+            artifact_path.write_text(content, encoding="utf-8")
+        else:
+            # The agent worked in the workspace and delivers by reference:
+            # grade the file that is actually there. (Regression, found
+            # 2026-10-20: this path used to overwrite the file with the
+            # payload's empty default content and grade an empty file.)
+            if not artifact_path.exists():
+                raise ValueError(
+                    f"deliverable not found in workspace: {artifact_uri} "
+                    "(write the file into the workspace first, or pass artifact_content)"
+                )
+            content = artifact_path.read_text(encoding="utf-8")
         steps_used = int(payload.get("steps_used", 1))
         totals = {
             "steps": steps_used,
@@ -221,6 +234,15 @@ class RunStore:
             if isinstance(event.get("step"), int):
                 steps_used = max(steps_used, int(event["step"]))
         status: dict[str, Any] = {"run_id": run_id, "state": entry.state, "steps_used": steps_used, "mode": entry.mode}
+        if entry.mode == "external" and entry.state == "running":
+            # An external agent has no driver feeding it the brief: the
+            # status response is where it reads its rendered task prompt,
+            # its parameters, and its workspace (the send-your-AI-the-link
+            # flow depends on this).
+            status["prompt"] = entry.instance.prompt
+            status["params"] = dict(entry.instance.params)
+            status["workspace"] = str(entry.workspace)
+            status["budgets"] = entry.instance.budgets.to_dict()
         if entry.error:
             status["error"] = entry.error
         if entry.result is not None:

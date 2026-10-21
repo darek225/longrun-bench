@@ -108,11 +108,30 @@ def test_http_api_and_site(tmp_path, bundles):
         with urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=10) as response:
             html = response.read().decode()
         assert "LongRun Bench" in html
+        # Uploading requires an account (Darek, 2026-10-20): register and
+        # submit with the account's upload token. Viewing stays public.
+        register_req = urllib.request.Request(
+            f"http://127.0.0.1:{port}/api/auth/register",
+            data=json.dumps({"email": "runner@example.com", "password": "test-password-1", "display_name": "Test Runner"}).encode(),
+            method="POST",
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(register_req, timeout=10) as response:
+            assert response.status == 201
+            session_cookie = response.headers["Set-Cookie"].split(";")[0]
+        token_req = urllib.request.Request(
+            f"http://127.0.0.1:{port}/api/auth/tokens",
+            data=json.dumps({"label": "test"}).encode(),
+            method="POST",
+            headers={"Content-Type": "application/json", "Cookie": session_cookie},
+        )
+        with urllib.request.urlopen(token_req, timeout=10) as response:
+            upload_token = json.loads(response.read())["token"]
         request = urllib.request.Request(
             f"http://127.0.0.1:{port}/api/scores/submit",
             data=json.dumps({"board": "community", "runs": [bundles["data"]]}).encode(),
             method="POST",
-            headers={"Content-Type": "application/json"},
+            headers={"Content-Type": "application/json", "X-Upload-Token": upload_token},
         )
         with urllib.request.urlopen(request, timeout=30) as response:
             assert response.status == 201
@@ -123,6 +142,7 @@ def test_http_api_and_site(tmp_path, bundles):
         with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/scores/{score_id}", timeout=10) as response:
             detail = json.loads(response.read())
         assert detail["task_scores"][0]["task_id"] == "sprint-data-001"
+        assert detail["submitter_name"] == "Test Runner"
         dispute_req = urllib.request.Request(
             f"http://127.0.0.1:{port}/api/disputes",
             data=json.dumps({"score_id": score_id, "reason": "spot check"}).encode(),

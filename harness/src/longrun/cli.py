@@ -522,11 +522,17 @@ def cmd_upload(args: argparse.Namespace) -> int:
     bundle = build_bundle(args.dir)
     payload: Any = {"board": args.board, "runs": [bundle]}
     url = args.api.rstrip("/") + "/api/scores/submit"
+    headers = {"Content-Type": "application/json"}
+    token = getattr(args, "token", None) or os.environ.get("LONGRUN_UPLOAD_TOKEN")
+    if token:
+        # Uploading requires an account on the board; the token ties the
+        # score to that account. Boards never see a password.
+        headers["X-Upload-Token"] = token
     request = urllib.request.Request(
         url,
         data=json.dumps(payload).encode("utf-8"),
         method="POST",
-        headers={"Content-Type": "application/json"},
+        headers=headers,
     )
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
@@ -612,6 +618,7 @@ def build_parser() -> argparse.ArgumentParser:
     upload = sub.add_parser("upload", help="upload a run bundle to the leaderboard API for check replay")
     upload.add_argument("--dir", required=True)
     upload.add_argument("--api", default="http://localhost:8787")
+    upload.add_argument("--token", default=None, help="account upload token (or set LONGRUN_UPLOAD_TOKEN); boards require an account to upload")
     upload.add_argument("--board", default="community", choices=["official", "community"])
     upload.set_defaults(func=cmd_upload)
 

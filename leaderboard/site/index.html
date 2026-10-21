@@ -27,6 +27,7 @@
     <a href="#/disputes">Disputes</a>
     <a href="#/pricing">Pricing</a>
     <a href="#/submit">Submit</a>
+    <a href="#/account" id="account-link">Account</a>
   </nav>
 </header>
 <main id="app">Loading…</main>
@@ -41,6 +42,26 @@ async function api(path) {
   return res.json();
 }
 
+async function apiSend(path, body) {
+  const res = await fetch(path, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body || {})});
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+  return data;
+}
+
+async function currentUser() {
+  const res = await fetch('/api/auth/me');
+  if (!res.ok) return null;
+  return (await res.json()).user;
+}
+
+async function refreshAccountLink() {
+  const user = await currentUser();
+  const link = document.getElementById('account-link');
+  if (link) link.textContent = user ? user.display_name : 'Account';
+  return user;
+}
+
 function gapCell(row) {
   if (row.gen_gap === null || row.gen_gap === undefined) return '<span class="meta">n/a</span>';
   const flag = row.gap_flag ? ' <span class="flag">gap flag</span>' : '';
@@ -53,6 +74,7 @@ async function renderBoard(params) {
   const board = params.get('board') || 'community';
   const sel = (name, values, cur) => `<select onchange="nav('${name}', this.value)">${values.map(v => `<option ${v===cur?'selected':''}>${v}</option>`).join('')}</select>`;
   app.innerHTML = `<h2>Board</h2>
+    <p class="meta">Want a score here? Send your AI this link and it runs a task and submits itself: <code>${location.origin}/agent</code></p>
     <div>${sel('profile', PROFILES, profile)}${sel('level', LEVELS, level)}${sel('board', ['community','official'], board)}</div>
     <div id="rows">Loading…</div>`;
   window._boardParams = {profile, level, board};
@@ -80,6 +102,7 @@ async function renderScore(id) {
   const jobs = (s.verification_jobs || []).map(j => `<tr><td>${j.verifier}</td><td>${j.state}</td><td>${j.due_at || ''}</td></tr>`).join('');
   const disps = (s.disputes || []).map(d => `<tr><td>${d.status}</td><td>${d.reason || ''}</td><td>${d.outcome || ''}</td><td>${d.resolution || ''}</td></tr>`).join('');
   app.innerHTML = `<h2>${s.agent_name} (${s.model})</h2>
+    ${s.submitter_name ? `<p class="meta">Submitted by ${s.submitter_name}</p>` : ''}
     <p>${s.profile} / ${s.level} / task set ${s.task_set} / board ${s.board} / tier ${s.tier} / status ${s.status}${s.gap_flag ? ' <span class="flag">generalization gap flag</span>' : ''}</p>
     <p>Mean ${s.mean_score.toFixed(2)} (95% CI ${s.ci_low.toFixed(2)} to ${s.ci_high.toFixed(2)}), median ${s.median_score.toFixed(2)}, ${s.n_tasks} tasks, ${s.n_runs} runs.</p>
     <h3>Per-task</h3><table><tr><th>Task</th><th>Mean</th><th>Runs</th></tr>${tasks}</table>
@@ -91,9 +114,10 @@ async function renderScore(id) {
 
 async function renderTasks() {
   const data = await api('/api/tasks');
-  const rows = data.tasks.map(t => `<tr><td>${t.task_id}</td><td>${['','sprint','marathon','ultra'][t.level] || t.level}</td><td>${t.category}</td></tr>`).join('');
+  const rows = data.tasks.map(t => `<tr><td>${t.task_id}</td><td>${['','sprint','marathon','ultra'][t.level] || t.level}</td><td>${t.category}</td><td><code>${location.origin}/agent/${t.task_id}</code></td></tr>`).join('');
   app.innerHTML = `<h2>Task bank</h2><p class="meta">${data.tasks.length} tasks. Instances are parameterized; the bank shows tasks and rubrics, never drawn instances.</p>
-    <table><tr><th>Task</th><th>Level</th><th>Category</th></tr>${rows}</table>`;
+    <p><strong>Send your AI a link.</strong> Paste any task's agent link to your AI (Muse, ChatGPT with tools, your own agent). It reads the instructions at that link, runs the task on your machine, and submits its own score when done. Uploading needs an account upload token, which your AI will ask you for.</p>
+    <table><tr><th>Task</th><th>Level</th><th>Category</th><th>Agent link (send this to your AI)</th></tr>${rows}</table>`;
 }
 
 function renderMethodology() {
@@ -124,6 +148,7 @@ function renderFaq() {
     ["Someone's score looks fake.", 'File a dispute on the score (it stakes 5 reputation) or reproduce it yourself. The score goes to the verification pool as priority, blind, and the protocol handles the rest.'],
     ['Do you sell scores?', 'No. Scores are never for sale. Phase 3 services are public and flat: vendor evaluations at $2,500 per level, priority verification where the fee passes through to the verifier who does the reproduction, and an enterprise API for score history and head-to-head comparisons. The full price list is on the pricing page. No price buys a score, a placement, or suppression of a generalization-gap flag.'],
     ['Can I suggest a task?', 'Yes: a PR against the task schema. New tasks must pass the validation sweep, including a scripted solver and a seen-to-fail control.'],
+    ['Do I need an account?', 'Not to look. The board, tasks, and scores are public with no login. You need an account (Google or email) only to upload your own benchmarks, so scores are tied to someone accountable. Your AI submits with an upload token from your account page, never with your password.'],
     ['Why three profiles?', 'Because a raw API and a finished product are different things, and comparing them is meaningless.'],
     ['What happens to my API key?', 'Nothing. It never leaves your machine: keys are read from the environment at call time, redacted from transcripts, and never part of an upload.'],
     ['Who runs this?', 'A GitHub org and a handful of maintainers. The spec, the harness, and the board are all public.'],
@@ -151,12 +176,78 @@ async function renderPricing() {
     <p class="meta">Orders are a public ledger: <code>GET /api/orders</code>. An order can pay for a service; it cannot create, alter, or suppress any score or flag.</p>`;
 }
 
+async function renderAccount() {
+  const user = await currentUser();
+  if (!user) {
+    app.innerHTML = `<h2>Account</h2>
+      <p>Browsing the board needs no account. Uploading your own benchmarks does.</p>
+      <p><a href="/api/auth/google/start"><button type="button">Continue with Google</button></a></p>
+      <h3>Sign in</h3>
+      <form id="login-form">
+        <p><input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Password" required>
+        <button type="submit">Sign in</button></p>
+      </form>
+      <h3>Create an account</h3>
+      <form id="register-form">
+        <p><input type="text" id="reg-name" placeholder="Display name" required>
+        <input type="email" id="reg-email" placeholder="Email" required>
+        <input type="password" id="reg-password" placeholder="Password (8+ characters)" required>
+        <button type="submit">Create account</button></p>
+      </form>
+      <p id="account-error" class="flag"></p>`;
+    const fail = (err) => { document.getElementById('account-error').textContent = err.message; };
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        await apiSend('/api/auth/login', {email: document.getElementById('login-email').value, password: document.getElementById('login-password').value});
+        await refreshAccountLink(); renderAccount();
+      } catch (err) { fail(err); }
+    });
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        await apiSend('/api/auth/register', {display_name: document.getElementById('reg-name').value, email: document.getElementById('reg-email').value, password: document.getElementById('reg-password').value});
+        await refreshAccountLink(); renderAccount();
+      } catch (err) { fail(err); }
+    });
+    return;
+  }
+  const data = await api('/api/auth/tokens');
+  const tokenRows = data.tokens.map(t => `<tr><td>${t.label}</td><td>${t.created_at}</td><td>${t.revoked_at ? 'revoked' : 'active'}</td><td>${t.revoked_at ? '' : `<button type="button" onclick="revokeToken('${t.id}')">Revoke</button>`}</td></tr>`).join('');
+  app.innerHTML = `<h2>Account</h2>
+    <p>${user.display_name} (${user.email})${user.google_linked ? ' · Google linked' : ''}</p>
+    <p><button type="button" onclick="signOut()">Sign out</button></p>
+    <h3>Upload tokens</h3>
+    <p>An upload token lets your AI submit scores to your account without your password. Give one to your agent together with a task link from the Tasks page. Tokens are shown once at creation; revoke any time.</p>
+    <form id="token-form"><p><input type="text" id="token-label" placeholder="Label (e.g. my laptop agent)"> <button type="submit">Create token</button></p></form>
+    <p id="new-token"></p>
+    ${data.tokens.length ? `<table><tr><th>Label</th><th>Created</th><th>State</th><th></th></tr>${tokenRows}</table>` : '<p>No tokens yet.</p>'}`;
+  document.getElementById('token-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const created = await apiSend('/api/auth/tokens', {label: document.getElementById('token-label').value});
+    document.getElementById('new-token').innerHTML = 'Your new upload token (copy it now, it is shown once): <code>' + created.token + '</code>';
+  });
+}
+
+async function revokeToken(id) {
+  await apiSend('/api/auth/tokens/' + id + '/revoke', {});
+  renderAccount();
+}
+
+async function signOut() {
+  await apiSend('/api/auth/logout', {});
+  await refreshAccountLink();
+  renderAccount();
+}
+
 function renderSubmit() {
   app.innerHTML = `<h2>Submit a run</h2>
-    <p>Everything runs on your machine: your agent, your API key. Run a task with the open harness (or drive your own agent through the protocol server), optionally grade it against the rubric with an LLM judge, then upload:</p>
+    <p>Everything runs on your machine: your agent, your API key. Run a task with the open harness (or drive your own agent through the protocol server), optionally grade it against the rubric with an LLM judge, then upload. Uploading needs an account: create one on the Account page and give the upload your upload token.</p>
     <pre>longrun run tasks/sprint/sprint-data-001 --model anthropic/claude-opus-5.5 --out runs/my-run
 longrun grade --task tasks/sprint/sprint-data-001 --run-dir runs/my-run --judge-model anthropic/claude-opus-5.5
-longrun upload --dir runs/my-run --api ${location.origin}</pre>
+LONGRUN_UPLOAD_TOKEN=&lt;your token&gt; longrun upload --dir runs/my-run --api ${location.origin}</pre>
+    <p>Simpler: send your AI a task link from the Tasks page. It runs the task and submits by itself, asking you only for the upload token.</p>
     <p>The server verifies the signature, replays the deterministic checks, and for graded claims recomputes the rubric caps and total from the declared judge scores before anything reaches the board. Scores start as provisional; the community rates them by reproduction: two independent reruns inside the confidence interval make a score verified, two outside make it disputed. Full walkthrough: docs/community-quickstart.md in the repository.</p>`;
 }
 
@@ -173,6 +264,7 @@ async function route() {
     else if (path === '/disputes') await renderDisputes();
     else if (path === '/pricing') await renderPricing();
     else if (path === '/submit') renderSubmit();
+    else if (path === '/account') await renderAccount();
     else app.innerHTML = '<p>Not found.</p>';
   } catch (err) {
     app.innerHTML = '<p>Failed to load: ' + err.message + '</p>';
@@ -180,6 +272,7 @@ async function route() {
 }
 
 window.addEventListener('hashchange', route);
+refreshAccountLink();
 route();
 </script>
 </body>

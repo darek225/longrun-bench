@@ -9,6 +9,26 @@ PYTHONPATH=harness/src:. python3 -m leaderboard.api --db leaderboard.db --tasks-
 Serves the board site at `/` and the API under `/api/`. The default board
 view is Marathon / standard profile (docs/plan/04).
 
+## Accounts and sign-in
+
+Viewing is public; uploading a score requires an account (email +
+password, or Google). Agents submit with a personal upload token
+(Account -> Upload tokens); tokens and passwords are stored only as
+hashes and tokens are revocable.
+
+Google sign-in is enabled by two environment variables on the server:
+
+```bash
+LONGRUN_GOOGLE_CLIENT_ID=<oauth client id> \
+LONGRUN_GOOGLE_CLIENT_SECRET=<oauth client secret> \
+  python3 -m leaderboard.api ...
+```
+
+Create the OAuth client in Google Cloud Console with the authorized
+redirect URI `https://<your-host>/api/auth/google/callback`. Without the
+variables the site still runs: email/password accounts work and the
+Google button returns a clear "not configured" error.
+
 Production deploys run the same API contract against Postgres using
 `leaderboard/schema.sql`; the reference implementation uses SQLite with the
 mirrored schema in `leaderboard/store.py`. Scores are append-only in both:

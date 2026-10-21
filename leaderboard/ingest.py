@@ -181,13 +181,20 @@ def verify_and_replay(bundle: dict[str, Any], *, tasks_root: str | Path, index: 
     }
 
 
-def ingest_submission(payload: dict[str, Any], *, store: Any, tasks_root: str | Path) -> dict[str, Any]:
+def ingest_submission(
+    payload: dict[str, Any],
+    *,
+    store: Any,
+    tasks_root: str | Path,
+    submitter: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Ingest one or more run bundles into board score rows.
 
     Runs are grouped by (agent, model, profile, level, task_set, board); each
     group becomes one append-only score row. Any rejected run rejects the
     whole submission: a partial board row built on unverified runs is worse
-    than no row.
+    than no row. `submitter` is the authenticated site account the upload
+    came through (HTTP path); direct operator ingestion passes None.
     """
     board = str(payload.get("board", "community"))
     if board not in ("official", "community"):
@@ -222,6 +229,7 @@ def ingest_submission(payload: dict[str, Any], *, store: Any, tasks_root: str | 
             tier=group["tier"],
             task_runs=group["task_runs"],
             manifests=group["manifests"],
+            submitter=submitter,
         )
         score_ids.append(score_id)
     return {"score_ids": score_ids, "runs_verified": len(verified)}

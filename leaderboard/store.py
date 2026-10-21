@@ -118,6 +118,28 @@ CREATE TABLE IF NOT EXISTS orders (
   created_at TEXT DEFAULT (datetime('now')),
   updated_at TEXT DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS users (
+  id TEXT PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  display_name TEXT NOT NULL,
+  password_hash TEXT,              -- NULL for Google-only accounts
+  google_sub TEXT UNIQUE,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE TABLE IF NOT EXISTS sessions (
+  token_hash TEXT PRIMARY KEY,     -- sha256 of the cookie token; the token itself is never stored
+  user_id TEXT NOT NULL REFERENCES users(id),
+  expires_at TEXT NOT NULL,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE TABLE IF NOT EXISTS upload_tokens (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id),
+  token_hash TEXT NOT NULL UNIQUE, -- sha256 of the token; the token is shown once at creation
+  label TEXT NOT NULL,
+  created_at TEXT DEFAULT (datetime('now')),
+  revoked_at TEXT
+);
 """
 
 
@@ -160,6 +182,11 @@ class Store:
             self.conn.execute("ALTER TABLE disputes ADD COLUMN filer TEXT")
         if "outcome" not in columns:
             self.conn.execute("ALTER TABLE disputes ADD COLUMN outcome TEXT")
+        score_columns = [row[1] for row in self.conn.execute("PRAGMA table_info(scores)").fetchall()]
+        if "submitter_user_id" not in score_columns:
+            self.conn.execute("ALTER TABLE scores ADD COLUMN submitter_user_id TEXT")
+        if "submitter_name" not in score_columns:
+            self.conn.execute("ALTER TABLE scores ADD COLUMN submitter_name TEXT")
         self.conn.commit()
 
     # -- scores ------------------------------------------------------------
@@ -177,6 +204,7 @@ class Store:
         task_runs: dict[str, list[float]],
         manifests: list[dict[str, Any]],
         gen_gap: float | None = None,
+        submitter: dict[str, Any] | None = None,
     ) -> str:
         agg = aggregate(task_runs)
         score_id = str(uuid.uuid4())
@@ -187,14 +215,17 @@ class Store:
         ).fetchone()
         self.conn.execute(
             "INSERT INTO scores (id, agent_name, model, profile, level, task_set, harness_hash, board, tier, status, "
-            "mean_score, ci_low, ci_high, median_score, n_tasks, n_runs, gen_gap, gap_flag, provisional, supersedes) "
-            "VALUES (?,?,?,?,?,?,?,?,?,'provisional',?,?,?,?,?,?,?, ?,?,?)",
+            "mean_score, ci_low, ci_high, median_score, n_tasks, n_runs, gen_gap, gap_flag, provisional, supersedes, "
+            "submitter_user_id, submitter_name) "
+            "VALUES (?,?,?,?,?,?,?,?,?,'provisional',?,?,?,?,?,?,?, ?,?,?,?,?)",
             (
                 score_id, agent_name, model, profile, level, task_set, harness_hash, board, tier,
                 agg["mean_score"], agg["ci_low"], agg["ci_high"], agg["median_score"], agg["n_tasks"], agg["n_runs"],
                 gen_gap, 1 if (gen_gap is not None and abs(gen_gap) >= 10) else 0,
                 1 if agg["provisional"] else 0,
                 previous["id"] if previous else None,
+                submitter.get("id") if submitter else None,
+                submitter.get("display_name") if submitter else None,
             ),
         )
         for task_id, mean_score in agg["task_means"].items():

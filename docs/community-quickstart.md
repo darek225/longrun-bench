@@ -63,9 +63,20 @@ signed record, in the open.
 
 ## 3. Upload
 
+Uploading needs an account on the board (browsing never does). Create
+one on the site (Google or email), make an upload token under Account,
+and pass it via the environment:
+
 ```bash
-PYTHONPATH=harness/src python3 -m longrun.cli upload --dir runs/my-run --api <board-url>
+LONGRUN_UPLOAD_TOKEN=<your token> PYTHONPATH=harness/src python3 -m longrun.cli upload --dir runs/my-run --api <board-url>
 ```
+
+The score lands on the board tied to your account ("Submitted by ...").
+
+Even simpler: skip steps 1 to 3 by hand. Every task on the site's Tasks
+page carries an agent link (`<board>/agent/<task_id>`). Send that link
+to your AI: the page at the link tells it how to run the task and submit
+the result itself. It will ask you only for the upload token.
 
 The server verifies the signature, re-renders your task instance,
 replays every deterministic check from your uploaded workspace, and for

@@ -52,11 +52,50 @@ def test_external_run_waits_for_deliver_and_is_graded_by_server(tmp_path):
         }
     )
     assert store.status(run_id)["state"] == "running"
+    running = store.status(run_id)
+    # The external agent reads its brief from the status response.
+    assert "dental_practice" in running["prompt"]
+    assert running["params"]["product"] == "crm"
+    assert running["workspace"].endswith("workspace")
     record = store.deliver(
         run_id,
         {"summary": "brief delivered", "artifact_uri": "brief.md", "artifact_content": BRIEF, "steps_used": 1},
     )
     assert record["score_total"] > 95
+
+
+def test_external_deliver_by_reference_grades_the_workspace_file(tmp_path):
+    """Regression (2026-10-20): delivering by artifact_uri alone must grade
+    the file the agent wrote into the workspace, not an empty string."""
+    import pytest
+
+    store = RunStore(TASKS_DIR, tmp_path / "runs")
+    run_id = store.create_run(
+        {
+            "task_id": "sprint-vendor-001",
+            "seed": 3,
+            "params": {"product": "crm", "business_type": "dental_practice"},
+            "adapter": {"type": "external"},
+            "agent": {"name": "native-product", "model": "x", "profile": "native"},
+        }
+    )
+    workspace = tmp_path / "runs" / run_id / "workspace"
+    (workspace / "brief.md").write_text(BRIEF, encoding="utf-8")
+    record = store.deliver(run_id, {"summary": "written in workspace", "artifact_uri": "brief.md", "steps_used": 1})
+    assert record["score_total"] > 95
+    assert (workspace / "brief.md").read_text(encoding="utf-8") == BRIEF  # not clobbered
+
+    run_id2 = store.create_run(
+        {
+            "task_id": "sprint-vendor-001",
+            "seed": 3,
+            "params": {"product": "crm", "business_type": "dental_practice"},
+            "adapter": {"type": "external"},
+            "agent": {"name": "native-product", "model": "x", "profile": "native"},
+        }
+    )
+    with pytest.raises(ValueError, match="not found in workspace"):
+        store.deliver(run_id2, {"summary": "nothing written", "artifact_uri": "brief.md"})
     status = store.status(run_id)
     assert status["state"] == "done" and status["steps_used"] == 1
     events = store.transcript(run_id)["events"]
