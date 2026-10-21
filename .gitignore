@@ -2,3 +2,6 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 runs/
+
+# Board DB backups contain password hashes: private data repo only, never this repo
+backups/

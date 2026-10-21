@@ -36,16 +36,32 @@ corrections are new rows linked by `supersedes`, never updates.
 
 ## Backup and restore
 
-- SQLite: stop the server (or use a quiet moment), copy the `.db` file.
-  `cp leaderboard.db backups/leaderboard-$(date +%F).db`
-- Postgres: `pg_dump $DATABASE_URL > backups/leaderboard-$(date +%F).sql`
-- Transcripts are content-addressed and hosted by submitters; the board
-  stores hashes only, so there is no transcript blob store to back up.
-- Restore: replace the db file / `psql $DATABASE_URL < backup.sql`, restart,
-  then `GET /api/health` and spot-check `GET /api/scores`.
+The board DB is backed up to the **private** repo
+`darek225/longrun-bench-data` as GitHub release assets (same pattern as
+the Dowser data backups). The DB contains password and token hashes, so
+it must never be committed to this repo or any public place; local
+snapshots land in `backups/`, which is gitignored.
 
-Keep at least the last 4 weekly backups. A backup that has never been
-restored is a hope, not a backup: test a restore quarterly.
+```bash
+# Snapshot (consistent while the server runs) + upload to the data repo:
+python3 scripts/backup-db.py --db leaderboard.db
+
+# Local snapshot only:
+python3 scripts/backup-db.py --db leaderboard.db --local-only
+
+# Restore the newest backup (sha256 verified before anything is written):
+python3 scripts/restore-db.py --out leaderboard.db --force
+```
+
+Each backup is a gzipped snapshot plus a manifest (sha256, size, and
+per-table row counts only: no emails, no hashes). Restore downloads the
+asset and manifest, verifies the checksum, then integrity-checks the
+database before placing it. On the production host, run the backup from
+a daily systemd timer and keep at least the last 4 weekly releases. A
+backup that has never been restored is a hope, not a backup: test a
+restore quarterly. Transcripts are content-addressed and hosted by
+submitters; the board stores hashes only, so there is no transcript
+blob store to back up.
 
 ## Health checks
 
