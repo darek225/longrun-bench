@@ -20,9 +20,11 @@ Every existing AI benchmark measures single answers: one prompt, one response, o
 
 ## Status
 
-Phase 2 is underway. First slice built (2026-10-20): the standard harness core (task rendering, driver, tools, deterministic checks, checks-only scoring, CLI) under `harness/`, plus three seed Sprint tasks under `tasks/sprint/`, all covered by 27 passing tests and scripted end-to-end smoke runs. See `docs/WORK_LOG.md` and `docs/TEST_LOG.md`.
+Phase 2 is complete (2026-10-20): the standard harness, provider adapters and BYO-key runner, protocol server, LLM judge with calibration machinery, the full 85-task bank (validation sweep 85/85, discrimination index 1.0), and the leaderboard with signature-verifying ingestion, server-side check replay, the verification lottery, and staked disputes. See `docs/DEFINITION_OF_DONE_AUDIT.md`.
 
-Still ahead in Phase 2: real provider adapters (BYO-key runner), the protocol server, the LLM judge and calibration set, the remaining seed tasks (85 total), and the leaderboard site. See `SPEC.md` §10 (Roadmap) and `docs/plan/`.
+Phase 3 systems are built: the enterprise API (key-gated score history and head-to-head comparisons), the public price list and paid-service order ledger (flat $2,500/level evaluations, pass-through priority verification), and monthly official run tooling, exercised by the 2026-10 dry run (`docs/monthly-runs/2026-10-dry-run/`). Phase 4's session layer is built: Ultra runs pause and resume across sessions with cumulative budgets, a persistent workspace and memory file, and an abandon path that grades what exists. See `docs/PHASE_3_4_AUDIT.md`.
+
+What remains is not code: real vendor evaluations, enterprise buyers, the human judge-calibration panel, counsel review of the legal drafts, a Docker-capable machine to verify the harness image, and a community to submit and verify scores.
 
 ## Contributing
 

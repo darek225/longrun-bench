@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
-from . import trust
+from . import enterprise, orders, trust
 from .ingest import IngestError, ingest_submission
 from .store import Store
 
@@ -63,6 +63,9 @@ def make_handler(store: Store, tasks_root: Path) -> type[BaseHTTPRequestHandler]
             length = int(self.headers.get("Content-Length", 0))
             return json.loads(self.rfile.read(length).decode("utf-8")) if length else {}
 
+        def _enterprise_key(self) -> dict[str, Any] | None:
+            return enterprise.authenticate(store, self.headers.get("X-API-Key"))
+
         def do_GET(self) -> None:
             parsed = urlparse(self.path)
             parts = [p for p in parsed.path.split("/") if p]
@@ -87,6 +90,36 @@ def make_handler(store: Store, tasks_root: Path) -> type[BaseHTTPRequestHandler]
                 elif parts == ["api", "verification-jobs"]:
                     jobs = store.list_jobs(score_id=query.get("score_id"), verifier=query.get("verifier"), state=query.get("state"))
                     self._send_json(200, {"jobs": jobs})
+                elif parts == ["api", "pricing"]:
+                    self._send_json(200, orders.price_list())
+                elif parts == ["api", "orders"]:
+                    self._send_json(200, {"orders": store.list_orders(requester=query.get("requester"), status=query.get("status"))})
+                elif len(parts) == 3 and parts[:2] == ["api", "orders"]:
+                    order = store.get_order(parts[2])
+                    self._send_json(200, order) if order else self._send_json(404, {"error": "unknown order id"})
+                elif parts == ["api", "admin", "api-keys"]:
+                    self._send_json(200, {"api_keys": store.list_api_keys()})
+                elif parts == ["api", "enterprise", "history"]:
+                    if not self._enterprise_key():
+                        self._send_json(401, {"error": "enterprise API key required (X-API-Key)"})
+                    else:
+                        result = enterprise.history(
+                            store,
+                            agent_name=query.get("agent_name"), model=query.get("model"),
+                            profile=query.get("profile"), level=query.get("level"), board=query.get("board"),
+                        )
+                        self._send_json(200, result)
+                elif parts == ["api", "enterprise", "compare"]:
+                    if not self._enterprise_key():
+                        self._send_json(401, {"error": "enterprise API key required (X-API-Key)"})
+                    else:
+                        result = enterprise.compare(store, left_id=str(query["left"]), right_id=str(query["right"]))
+                        self._send_json(200, result)
+                elif parts == ["api", "enterprise", "scores"]:
+                    if not self._enterprise_key():
+                        self._send_json(401, {"error": "enterprise API key required (X-API-Key)"})
+                    else:
+                        self._send_json(200, enterprise.export_scores(store, board=query.get("board")))
                 elif parts == []:
                     self._send_file(SITE_DIR / "index.html")
                 elif len(parts) == 1 and (SITE_DIR / parts[0]).exists():
@@ -148,6 +181,39 @@ def make_handler(store: Store, tasks_root: Path) -> type[BaseHTTPRequestHandler]
                 elif parts == ["api", "admin", "expire-verification-jobs"]:
                     result = trust.expire_jobs(store)
                     self._send_json(200, {"expired": result["expired"], "redrawn": [job["id"] for job in result["redrawn"]]})
+                elif parts == ["api", "orders"]:
+                    body = self._body()
+                    result = orders.create_order(
+                        store,
+                        kind=str(body["kind"]),
+                        requester=str(body["requester"]),
+                        level=body.get("level"),
+                        score_id=body.get("score_id"),
+                        fee_usd=body.get("fee_usd"),
+                        note=body.get("note"),
+                    )
+                    self._send_json(201, result)
+                elif len(parts) == 4 and parts[:2] == ["api", "orders"] and parts[3] == "transition":
+                    body = self._body()
+                    result = orders.transition(
+                        store,
+                        order_id=parts[2],
+                        status=str(body["status"]),
+                        payment_ref=body.get("payment_ref"),
+                        score_id=body.get("score_id"),
+                        note=body.get("note"),
+                        tasks_root=tasks_root,
+                    )
+                    self._send_json(200, result)
+                elif parts == ["api", "admin", "api-keys"]:
+                    body = self._body()
+                    result = enterprise.create_api_key(store, label=str(body["label"]))
+                    self._send_json(201, result)
+                elif len(parts) == 5 and parts[:3] == ["api", "admin", "api-keys"] and parts[4] == "revoke":
+                    if store.revoke_api_key(parts[3]):
+                        self._send_json(200, {"revoked": parts[3]})
+                    else:
+                        self._send_json(404, {"error": "unknown or already-revoked key id"})
                 elif len(parts) == 4 and parts[:2] == ["api", "scores"] and parts[3] == "verify":
                     body = self._body()
                     outcome = store.record_verification(
@@ -162,7 +228,7 @@ def make_handler(store: Store, tasks_root: Path) -> type[BaseHTTPRequestHandler]
                     self._send_json(201, outcome)
                 else:
                     self._send_json(404, {"error": f"no route: {parsed.path}"})
-            except (IngestError, trust.TrustError) as exc:
+            except (IngestError, trust.TrustError, orders.OrderError, enterprise.EnterpriseError) as exc:
                 self._send_json(400, {"error": str(exc)})
             except KeyError as exc:
                 self._send_json(404, {"error": str(exc)})

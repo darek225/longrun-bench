@@ -105,4 +105,32 @@ CREATE TABLE reputation (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- Enterprise API keys (Phase 3, SPEC.md §9). Only the sha256 hash is stored;
+-- the key itself is shown once at creation and never persisted.
+CREATE TABLE api_keys (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  key_hash   TEXT NOT NULL UNIQUE,
+  label      TEXT NOT NULL,
+  scope      TEXT NOT NULL DEFAULT 'enterprise',
+  created_at TIMESTAMPTZ DEFAULT now(),
+  revoked_at TIMESTAMPTZ
+);
+
+-- Paid-service orders (Phase 3, SPEC.md §9, docs/plan/05 §2). A public
+-- ledger: orders can never alter a score, a flag, or a board position.
+CREATE TABLE orders (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  kind            TEXT NOT NULL CHECK (kind IN ('evaluation','priority_verification')),
+  requester       TEXT NOT NULL,
+  level           TEXT,                        -- evaluation: sprint|marathon|ultra
+  score_id        UUID REFERENCES scores(id),
+  amount_usd      NUMERIC NOT NULL,
+  fee_to_verifier BOOLEAN DEFAULT FALSE,       -- priority fee passes through to the verifier (plan 06 §4)
+  status          TEXT NOT NULL DEFAULT 'quoted' CHECK (status IN ('quoted','invoiced','paid','fulfilled','cancelled')),
+  payment_ref     TEXT,
+  note            TEXT,
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  updated_at      TIMESTAMPTZ DEFAULT now()
+);
+
 -- The app role gets no UPDATE or DELETE grants on scores (corrections append).

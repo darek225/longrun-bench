@@ -96,6 +96,28 @@ CREATE TABLE IF NOT EXISTS verification_jobs (
   assigned_at TEXT DEFAULT (datetime('now')),
   due_at TEXT
 );
+CREATE TABLE IF NOT EXISTS api_keys (
+  id TEXT PRIMARY KEY,
+  key_hash TEXT NOT NULL UNIQUE,     -- sha256 of the key; the key itself is never stored
+  label TEXT NOT NULL,
+  scope TEXT NOT NULL DEFAULT 'enterprise',
+  created_at TEXT DEFAULT (datetime('now')),
+  revoked_at TEXT
+);
+CREATE TABLE IF NOT EXISTS orders (
+  id TEXT PRIMARY KEY,
+  kind TEXT NOT NULL CHECK (kind IN ('evaluation','priority_verification')),
+  requester TEXT NOT NULL,
+  level TEXT,                        -- evaluation: sprint|marathon|ultra
+  score_id TEXT REFERENCES scores(id),
+  amount_usd REAL NOT NULL,
+  fee_to_verifier INT DEFAULT 0,     -- priority verification: the fee passes through to the verifier
+  status TEXT NOT NULL DEFAULT 'quoted' CHECK (status IN ('quoted','invoiced','paid','fulfilled','cancelled')),
+  payment_ref TEXT,
+  note TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
 """
 
 
@@ -333,4 +355,75 @@ class Store:
 
     def set_job_state(self, job_id: str, state: str) -> None:
         self.conn.execute("UPDATE verification_jobs SET state=? WHERE id=?", (state, job_id))
+        self.conn.commit()
+
+    # -- score history (enterprise API, SPEC.md §9) ---------------------------
+    def score_history(self, *, agent_name: str | None = None, model: str | None = None, profile: str | None = None, level: str | None = None, board: str | None = None) -> list[dict[str, Any]]:
+        """Every score row including superseded ones, chronological. The
+        public board shows only the latest row per configuration; history is
+        the enterprise view (docs/plan/08 §3)."""
+        query = "SELECT * FROM scores WHERE 1=1"
+        params: list[Any] = []
+        for column, value in (("agent_name", agent_name), ("model", model), ("profile", profile), ("level", level), ("board", board)):
+            if value:
+                query += f" AND {column}=?"
+                params.append(value)
+        query += " ORDER BY created_at, rowid"
+        return [dict(row) for row in self.conn.execute(query, params).fetchall()]
+
+    # -- enterprise API keys ---------------------------------------------------
+    def create_api_key(self, *, key_hash: str, label: str, scope: str = "enterprise") -> str:
+        key_id = str(uuid.uuid4())
+        self.conn.execute(
+            "INSERT INTO api_keys (id, key_hash, label, scope) VALUES (?,?,?,?)",
+            (key_id, key_hash, label, scope),
+        )
+        self.conn.commit()
+        return key_id
+
+    def api_key_by_hash(self, key_hash: str) -> dict[str, Any] | None:
+        row = self.conn.execute("SELECT * FROM api_keys WHERE key_hash=?", (key_hash,)).fetchone()
+        return dict(row) if row else None
+
+    def list_api_keys(self) -> list[dict[str, Any]]:
+        rows = self.conn.execute("SELECT id, label, scope, created_at, revoked_at FROM api_keys ORDER BY created_at").fetchall()
+        return [dict(r) for r in rows]
+
+    def revoke_api_key(self, key_id: str) -> bool:
+        cursor = self.conn.execute("UPDATE api_keys SET revoked_at=datetime('now') WHERE id=? AND revoked_at IS NULL", (key_id,))
+        self.conn.commit()
+        return cursor.rowcount > 0
+
+    # -- orders (Phase 3 paid services, SPEC.md §9) ------------------------------
+    def create_order(self, *, kind: str, requester: str, level: str | None, score_id: str | None, amount_usd: float, fee_to_verifier: bool, note: str | None = None) -> str:
+        order_id = str(uuid.uuid4())
+        self.conn.execute(
+            "INSERT INTO orders (id, kind, requester, level, score_id, amount_usd, fee_to_verifier, note) VALUES (?,?,?,?,?,?,?,?)",
+            (order_id, kind, requester, level, score_id, float(amount_usd), 1 if fee_to_verifier else 0, note),
+        )
+        self.conn.commit()
+        return order_id
+
+    def get_order(self, order_id: str) -> dict[str, Any] | None:
+        row = self.conn.execute("SELECT * FROM orders WHERE id=?", (order_id,)).fetchone()
+        return dict(row) if row else None
+
+    def list_orders(self, *, requester: str | None = None, status: str | None = None) -> list[dict[str, Any]]:
+        query = "SELECT * FROM orders WHERE 1=1"
+        params: list[Any] = []
+        if requester:
+            query += " AND requester=?"
+            params.append(requester)
+        if status:
+            query += " AND status=?"
+            params.append(status)
+        return [dict(r) for r in self.conn.execute(query + " ORDER BY created_at, rowid", params).fetchall()]
+
+    def update_order(self, order_id: str, **fields: Any) -> None:
+        allowed = {"status", "payment_ref", "score_id", "note"}
+        updates = {key: value for key, value in fields.items() if key in allowed}
+        if not updates:
+            return
+        assignments = ", ".join(f"{key}=?" for key in updates) + ", updated_at=datetime('now')"
+        self.conn.execute(f"UPDATE orders SET {assignments} WHERE id=?", (*updates.values(), order_id))
         self.conn.commit()

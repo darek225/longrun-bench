@@ -12,3 +12,6 @@ wins and the runbook gets fixed in the same PR.
 | [dispute-handling.md](dispute-handling.md) | The dispute process, step by step |
 | [task-bank-release.md](task-bank-release.md) | Adding/regenerating tasks and cutting a task-set release |
 | [harness-release.md](harness-release.md) | Harness changes, pricing refresh, hash pinning |
+| [monthly-official-run.md](monthly-official-run.md) | Official monthly batches and dry runs (Phase 3) |
+| [enterprise-and-orders.md](enterprise-and-orders.md) | Enterprise API keys, paid-service order ledger (Phase 3) |
+| [ultra-ops.md](ultra-ops.md) | Ultra sessions: pause/resume, schedules, abandonment (Phase 4) |

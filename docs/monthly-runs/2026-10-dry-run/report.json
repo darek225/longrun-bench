@@ -1,0 +1,51 @@
+{
+  "board": "official",
+  "generated_at": "2026-10-21T01:12:25Z",
+  "label": "2026-10 official dry run",
+  "note": "First run of the Phase 3 monthly-run pipeline. Both configurations use the task bank's scripted solvers, so identical scores across configurations are expected: this run validates the batch, ingestion, and reporting machinery, not agent quality. The pinned task parameters make the drawn instances identical across seeds for these seed tasks; seed variation exercises the run bookkeeping (n=3 per task, SPEC.md \u00a76.2) rather than instance variety.",
+  "preliminary": true,
+  "results": [
+    {
+      "agent_name": "scripted-alpha",
+      "ci_high": 99.0842,
+      "ci_low": 98.0828,
+      "level": "sprint",
+      "mean_score": 98.5835,
+      "median_score": 98.8362,
+      "model": "scripted",
+      "n_runs": 9,
+      "n_tasks": 3,
+      "profile": "standard",
+      "provisional": false,
+      "score_id": "af82ad22-ddc6-482b-9488-79120ce3f6b0",
+      "status": "provisional",
+      "tier": "checks"
+    },
+    {
+      "agent_name": "scripted-beta",
+      "ci_high": 99.0841,
+      "ci_low": 98.083,
+      "level": "sprint",
+      "mean_score": 98.5836,
+      "median_score": 98.8362,
+      "model": "scripted",
+      "n_runs": 9,
+      "n_tasks": 3,
+      "profile": "standard",
+      "provisional": false,
+      "score_id": "7fe91c2e-63bf-4b1a-af6a-d810c1b02d97",
+      "status": "provisional",
+      "tier": "checks"
+    }
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "tasks": [
+    "sprint/sprint-data-001",
+    "sprint/sprint-vendor-001",
+    "sprint/sprint-code-001"
+  ]
+}

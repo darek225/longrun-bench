@@ -61,3 +61,18 @@ Environment: dev VM, Python 3, pytest 9.1.1, harness installed via `PYTHONPATH=h
 
 - Full sweep re-run with trial keeping: **85/85 pass**, discrimination index 1.0 (tasks/discrimination.json).
 - Suites at close: harness **53 passed**, leaderboard **15 passed**, spec links 0 unresolved across 31 docs, pricing fresh.
+
+## 2026-10-20 — Phase 4 verification (Ultra sessions)
+
+- Harness suite: **56 passed** (53 + 3 new session tests in `harness/tests/test_sessions.py`).
+- Pause/resume end to end on ultra-research-004 with its smoke script split across two sessions: session 1 with `--session-steps 1` exits 3, writes the snapshot (status paused, 1 step, schedule entry), keeps the workspace and seeded memory.md, and writes no submission.json. `--resume` completes the run: same run id, cumulative totals (3 steps, 700 input tokens across sessions), final score 99.95, session status completed with a 2-entry schedule. Transcript holds exactly one `run_start` plus `session_start`/`session_pause`/`session_resume` events.
+- Abandon: after a 1-step paused session, `longrun abandon` grades what exists (total 20.0: no deliverable zeroes correctness/completeness under the existing rule), flags the record abandoned, produces a submittable bundle, and refuses a second abandon or a resume.
+- Resume with no session.json exits 1.
+
+## 2026-10-20 — Phase 3 verification (enterprise, orders, monthly run)
+
+- Leaderboard suite: **26 passed** (15 + 5 enterprise + 5 orders + 1 monthly-run).
+- Enterprise: key lifecycle (issue, authenticate, revoke, revoked key rejected), hash-only storage (the key string appears nowhere in the stored record), history returns both rows after a superseding submission while the public board shows one, compare returns per-task deltas and CI overlap, cross-profile and cross-level compares refuse, and the HTTP layer returns 401 without a key and serves history/compare with one.
+- Orders: evaluation amount is forced to the published $2,500 (no caller-set price), lifecycle rejects skipping states and paying without a reference, evaluation fulfillment requires linking a real score, priority-verification fulfillment draws 2 priority jobs and records the fee as payable to the completing verifier, a zero fee is refused, and a full order lifecycle leaves every score field (mean, CI, gen gap, flag, status, tier) byte-identical.
+- Monthly run: the batch test ingests an official-board row from real scripted runs; the executed 2026-10 dry run produced 2 official rows (scripted-alpha, scripted-beta), 9 runs each, mean 98.58 (95% CI 98.08 to 99.08), all bundles replay-verified at ingestion. Report committed at `docs/monthly-runs/2026-10-dry-run/`.
+- Task bank sweep not re-run: no task, check, or scoring code changed in Phases 3-4 (driver session mode is opt-in and additive; default runs are unchanged, covered by the 53 pre-existing harness tests passing unmodified).

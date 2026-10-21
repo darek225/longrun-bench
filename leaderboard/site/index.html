@@ -25,6 +25,7 @@
     <a href="#/methodology">Methodology</a>
     <a href="#/faq">FAQ</a>
     <a href="#/disputes">Disputes</a>
+    <a href="#/pricing">Pricing</a>
     <a href="#/submit">Submit</a>
   </nav>
 </header>
@@ -121,7 +122,7 @@ function renderFaq() {
     ['Can I use a local model?', 'Yes. Point the OpenAI-compatible adapter at your local endpoint with the local/ model prefix.'],
     ['Why is my score lower than I expected?', 'Read the rubric breakdown on your score page. Most commonly: incomplete deliverables and claims the deterministic checks could not verify.'],
     ["Someone's score looks fake.", 'File a dispute on the score (it stakes 5 reputation) or reproduce it yourself. The score goes to the verification pool as priority, blind, and the protocol handles the rest.'],
-    ['Do you sell scores?', 'No. The board is free. Flat verification fees and an enterprise API are phase 3 ideas; any price list will be public.'],
+    ['Do you sell scores?', 'No. Scores are never for sale. Phase 3 services are public and flat: vendor evaluations at $2,500 per level, priority verification where the fee passes through to the verifier who does the reproduction, and an enterprise API for score history and head-to-head comparisons. The full price list is on the pricing page. No price buys a score, a placement, or suppression of a generalization-gap flag.'],
     ['Can I suggest a task?', 'Yes: a PR against the task schema. New tasks must pass the validation sweep, including a scripted solver and a seen-to-fail control.'],
     ['Why three profiles?', 'Because a raw API and a finished product are different things, and comparing them is meaningless.'],
     ['What happens to my API key?', 'Nothing. It never leaves your machine: keys are read from the environment at call time, redacted from transcripts, and never part of an upload.'],
@@ -134,6 +135,20 @@ async function renderDisputes() {
   const data = await api('/api/disputes');
   const rows = data.disputes.map(d => `<tr><td>${d.id.slice(0, 8)}</td><td>${d.score_id.slice(0, 8)}</td><td>${d.status}</td><td>${d.reason || ''}</td><td>${d.resolution || ''}</td></tr>`).join('');
   app.innerHTML = `<h2>Disputes</h2>${data.disputes.length ? `<table><tr><th>Id</th><th>Score</th><th>Status</th><th>Reason</th><th>Resolution</th></tr>${rows}</table>` : '<p>No disputes on record.</p>'}`;
+}
+
+async function renderPricing() {
+  const p = await api('/api/pricing');
+  const evals = Object.entries(p.evaluations).filter(([k]) => k !== 'note')
+    .map(([level, price]) => `<tr><td>Vendor evaluation, ${level}</td><td>$${price.toLocaleString()} flat</td></tr>`).join('');
+  const never = p.never_for_sale.map(item => `<li>${item}</li>`).join('');
+  app.innerHTML = `<h2>Pricing</h2>
+    <p>The board is free to read and free to submit to. These are the Phase 3 paid services (SPEC §9). Prices are public and flat; there are no negotiated discounts, because a discount schedule is a pay-for-placement schedule waiting to happen.</p>
+    <table><tr><th>Service</th><th>Price</th></tr>${evals}
+    <tr><td>Priority verification</td><td>Fee set by the requester, paid in full to the verifier who completes the reproduction. The bench org takes no cut.</td></tr>
+    <tr><td>Enterprise API</td><td>Key access to score history, CI data, and head-to-head comparisons.</td></tr></table>
+    <h3>Never for sale</h3><ul>${never}</ul>
+    <p class="meta">Orders are a public ledger: <code>GET /api/orders</code>. An order can pay for a service; it cannot create, alter, or suppress any score or flag.</p>`;
 }
 
 function renderSubmit() {
@@ -155,6 +170,7 @@ async function route() {
     else if (path === '/methodology') renderMethodology();
     else if (path === '/faq') renderFaq();
     else if (path === '/disputes') await renderDisputes();
+    else if (path === '/pricing') await renderPricing();
     else if (path === '/submit') renderSubmit();
     else app.innerHTML = '<p>Not found.</p>';
   } catch (err) {
