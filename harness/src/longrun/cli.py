@@ -7,17 +7,20 @@ import shutil
 import sys
 import urllib.error
 import urllib.request
+import uuid
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 from .adapters import make_adapter
 from .checks import run_checks
-from .driver import Driver, ScriptedAdapter
+from .driver import Driver, ScriptedAdapter, TranscriptWriter
 from .judge import JudgeError, MockJudge, grade_run
 from .manifest import ManifestError, load_manifest, parse_param_overrides, render_instance
 from .pricing import actual_cost, estimate_cost_range, load_pricing
 from .redact import redact_transcript_file
 from .scoring import score_checks_only
+from .sessions import SessionState, load_session
 from .signing import build_submission
 from .tools import WorkspaceTools
 
@@ -30,6 +33,23 @@ def _load_instance(args: argparse.Namespace):
     manifest = load_manifest(args.task_dir)
     overrides = parse_param_overrides(args.param)
     return manifest, render_instance(manifest, seed=args.seed, overrides=overrides)
+
+
+def _load_instance_or_resume(args: argparse.Namespace):
+    """With --resume, the instance comes from the session snapshot, not the
+    CLI seed/params: a resumed session must be the same instance (plan 09 §4)."""
+    if not getattr(args, "resume", False):
+        return _load_instance(args)
+    state = load_session(Path(args.out))
+    if state is None:
+        raise ManifestError(f"no session.json in {args.out}; nothing to resume")
+    if state.status not in ("in_progress", "paused"):
+        raise ManifestError(f"session in {args.out} is {state.status}; only in_progress/paused sessions resume")
+    manifest = load_manifest(state.task_dir)
+    instance = render_instance(manifest, seed=state.seed, overrides=state.params)
+    if instance.task_id != state.task_id:
+        raise ManifestError(f"task_dir renders {instance.task_id}, session is for {state.task_id}")
+    return manifest, instance
 
 
 def cmd_validate_task(args: argparse.Namespace) -> int:
@@ -155,30 +175,107 @@ def _prepare_workspace(task_dir: str, out_dir: Path) -> Path:
     return workspace
 
 
+def _execute(args: argparse.Namespace, instance: Any, adapter: Any, agent: dict[str, Any]):
+    """Run one session of a run and post-process it.
+
+    Plain runs are one session that ends the run. Session mode (Ultra,
+    docs/plan/09 §4) is entered with --session-steps or --resume: budgets and
+    the transcript are cumulative across sessions, the workspace and memory
+    file persist, and a session that hits its step cap pauses (exit code 3)
+    instead of ending the run.
+    """
+    out_dir = Path(args.out)
+    session_steps = getattr(args, "session_steps", None)
+    state: SessionState | None = None
+    if getattr(args, "resume", False):
+        state = load_session(out_dir)
+    session_mode = session_steps is not None or state is not None
+    if state is not None:
+        workspace = out_dir / "workspace"
+        workspace.mkdir(parents=True, exist_ok=True)
+    else:
+        workspace = _prepare_workspace(args.task_dir, out_dir)
+    if session_mode and state is None:
+        state = SessionState(
+            run_id=str(uuid.uuid4()),
+            task_id=instance.task_id,
+            task_dir=str(args.task_dir),
+            seed=instance.seed,
+            params=instance.params,
+            agent=agent,
+        )
+    tools = WorkspaceTools(workspace, allowlist=instance.network_allowlist)
+    driver = Driver(tools, out_dir / "transcript.jsonl")
+    if state is not None:
+        wall_before = state.wall_clock_s
+        state.session_number += 1
+        result = driver.run(
+            instance,
+            adapter,
+            agent=agent,
+            run_id=state.run_id,
+            initial_steps=state.steps_used,
+            initial_input_tokens=state.input_tokens,
+            initial_output_tokens=state.output_tokens,
+            initial_wall_clock_s=state.wall_clock_s,
+            session_number=state.session_number,
+            session_step_cap=session_steps,
+        )
+        state.steps_used = int(result.totals["steps"])
+        state.input_tokens = int(result.totals["input_tokens"])
+        state.output_tokens = int(result.totals["output_tokens"])
+        state.wall_clock_s = float(result.totals["wall_clock_s"])
+        state.record_session(
+            steps=int(result.totals.get("session_steps", result.totals["steps"])),
+            wall_clock_s=state.wall_clock_s - wall_before,
+            end_reason=result.end_reason,
+        )
+        if result.end_reason == "session_pause":
+            state.status = "paused"
+            state.save(out_dir)
+            record = {
+                "run_id": result.run_id,
+                "task_id": instance.task_id,
+                "seed": instance.seed,
+                "params": instance.params,
+                "agent": agent,
+                "status": "paused",
+                "sessions": state.session_number,
+                "end_reason": "session_pause",
+                "totals": result.totals,
+            }
+            (out_dir / "run.json").write_text(json.dumps(record, indent=2, sort_keys=True), encoding="utf-8")
+            return 3, record, result
+        state.status = "completed"
+        state.save(out_dir)
+    else:
+        result = driver.run(instance, adapter, agent=agent)
+    run_record = _finish_run(out_dir, workspace, instance, result, agent)
+    if state is not None:
+        run_record["sessions"] = state.session_number
+        (out_dir / "run.json").write_text(json.dumps(run_record, indent=2, sort_keys=True), encoding="utf-8")
+    return (0 if result.end_reason == "deliverable" else 2), run_record, result
+
+
 def cmd_run_scripted(args: argparse.Namespace) -> int:
     try:
-        _, instance = _load_instance(args)
+        _, instance = _load_instance_or_resume(args)
     except ManifestError as exc:
         _print_json({"ok": False, "error": str(exc)})
         return 1
-    out_dir = Path(args.out)
-    workspace = _prepare_workspace(args.task_dir, out_dir)
     responses = json.loads(Path(args.script).read_text(encoding="utf-8"))
     if not isinstance(responses, list):
         _print_json({"ok": False, "error": "script must be a JSON list of adapter responses"})
         return 1
-    tools = WorkspaceTools(workspace, allowlist=instance.network_allowlist)
-    driver = Driver(tools, out_dir / "transcript.jsonl")
     agent = {"name": args.agent_name, "model": args.model, "profile": "standard"}
-    result = driver.run(instance, ScriptedAdapter(responses), agent=agent)
-    run_record = _finish_run(out_dir, workspace, instance, result, agent)
+    code, run_record, _result = _execute(args, instance, ScriptedAdapter(responses), agent)
     _print_json(run_record)
-    return 0 if result.end_reason == "deliverable" else 2
+    return code
 
 
 def cmd_run(args: argparse.Namespace) -> int:
     try:
-        manifest, instance = _load_instance(args)
+        manifest, instance = _load_instance_or_resume(args)
     except ManifestError as exc:
         _print_json({"ok": False, "error": str(exc)})
         return 1
@@ -199,9 +296,6 @@ def cmd_run(args: argparse.Namespace) -> int:
     pricing = load_pricing()
     estimate = estimate_cost_range(model=args.model, step_budget=instance.budgets.steps, pricing=pricing, price_override=price_override)
     out_dir = Path(args.out)
-    workspace = _prepare_workspace(args.task_dir, out_dir)
-    tools = WorkspaceTools(workspace, allowlist=instance.network_allowlist)
-    driver = Driver(tools, out_dir / "transcript.jsonl")
     agent = {"name": args.agent_name, "model": args.model, "profile": "standard"}
     print(
         f"Task: {instance.task_id} ({manifest.category}, level {manifest.level}) "
@@ -210,18 +304,63 @@ def cmd_run(args: argparse.Namespace) -> int:
         f"Key: {key_env or 'none'} (from env, never transmitted).",
         file=sys.stderr,
     )
-    result = driver.run(instance, adapter, agent=agent)
-    run_record = _finish_run(out_dir, workspace, instance, result, agent)
-    run_record["actual_cost_usd"] = actual_cost(
-        model=args.model,
-        input_tokens=int(result.totals["input_tokens"]),
-        output_tokens=int(result.totals["output_tokens"]),
-        pricing=pricing,
-        price_override=price_override,
+    code, run_record, result = _execute(args, instance, adapter, agent)
+    if code != 3:  # a paused session has no final cost yet
+        run_record["actual_cost_usd"] = actual_cost(
+            model=args.model,
+            input_tokens=int(result.totals["input_tokens"]),
+            output_tokens=int(result.totals["output_tokens"]),
+            pricing=pricing,
+            price_override=price_override,
+        )
+        (out_dir / "run.json").write_text(json.dumps(run_record, indent=2, sort_keys=True), encoding="utf-8")
+    _print_json(run_record)
+    return code
+
+
+def cmd_abandon(args: argparse.Namespace) -> int:
+    """Close a session-mode run as abandoned (docs/plan/09 §4).
+
+    The partial transcript and workspace are graded on what exists and the
+    run becomes submittable, flagged abandoned. Abandoning is data: it still
+    counts for the runner's participation stats.
+    """
+    out_dir = Path(args.dir)
+    state = load_session(out_dir)
+    if state is None:
+        _print_json({"ok": False, "error": f"no session.json in {args.dir}; only session-mode runs can be abandoned"})
+        return 1
+    if state.status in ("completed", "abandoned"):
+        _print_json({"ok": False, "error": f"session is already {state.status}"})
+        return 1
+    try:
+        manifest = load_manifest(state.task_dir)
+        instance = render_instance(manifest, seed=state.seed, overrides=state.params)
+    except ManifestError as exc:
+        _print_json({"ok": False, "error": str(exc)})
+        return 1
+    writer = TranscriptWriter(out_dir / "transcript.jsonl")
+    writer.log("run_abandoned", session=state.session_number, step=state.steps_used)
+    state.status = "abandoned"
+    state.save(out_dir)
+    result = SimpleNamespace(
+        run_id=state.run_id,
+        end_reason="abandoned",
+        deliverable=None,
+        totals={
+            "steps": state.steps_used,
+            "input_tokens": state.input_tokens,
+            "output_tokens": state.output_tokens,
+            "wall_clock_s": state.wall_clock_s,
+        },
     )
+    workspace = out_dir / "workspace"
+    run_record = _finish_run(out_dir, workspace, instance, result, state.agent)
+    run_record["abandoned"] = True
+    run_record["sessions"] = state.session_number
     (out_dir / "run.json").write_text(json.dumps(run_record, indent=2, sort_keys=True), encoding="utf-8")
     _print_json(run_record)
-    return 0 if result.end_reason == "deliverable" else 2
+    return 0
 
 
 def cmd_grade(args: argparse.Namespace) -> int:
@@ -398,6 +537,8 @@ def build_parser() -> argparse.ArgumentParser:
     run_scripted.add_argument("--out", required=True)
     run_scripted.add_argument("--agent-name", default="scripted-smoke-agent")
     run_scripted.add_argument("--model", default="scripted")
+    run_scripted.add_argument("--session-steps", type=int, help="cap steps for this session; the run pauses and can be resumed (Ultra, plan 09 §4)")
+    run_scripted.add_argument("--resume", action="store_true", help="resume the session-mode run in --out from its session.json snapshot")
     run_scripted.set_defaults(func=cmd_run_scripted)
 
     run = sub.add_parser("run", help="run a task with a real provider adapter (BYO key via env)")
@@ -410,7 +551,13 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--price-out", type=float, help="output price per Mtok (overrides pricing.json)")
     run.add_argument("--out", required=True)
     run.add_argument("--agent-name", default="longrun-runner")
+    run.add_argument("--session-steps", type=int, help="cap steps for this session; the run pauses and can be resumed (Ultra, plan 09 §4)")
+    run.add_argument("--resume", action="store_true", help="resume the session-mode run in --out from its session.json snapshot")
     run.set_defaults(func=cmd_run)
+
+    abandon = sub.add_parser("abandon", help="close a session-mode run as abandoned and grade what exists (plan 09 §4)")
+    abandon.add_argument("--dir", required=True)
+    abandon.set_defaults(func=cmd_abandon)
 
     grade = sub.add_parser("grade", help="grade a completed run with the LLM judge (or --mock-judge)")
     grade.add_argument("--task", required=True)

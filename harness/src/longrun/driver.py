@@ -182,6 +182,12 @@ class TranscriptWriter:
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.events: list[dict[str, Any]] = []
+        if self.path.exists():
+            # Resumed Ultra session (docs/plan/09 §4): the transcript is one
+            # record across sessions, so earlier events are part of this run.
+            for line in self.path.read_text(encoding="utf-8").splitlines():
+                if line.strip():
+                    self.events.append(json.loads(line))
 
     def log(self, event_type: str, **fields: Any) -> dict[str, Any]:
         event = {"t": _utc_now(), "type": event_type, **fields}
@@ -197,12 +203,29 @@ class Driver:
         self.transcript = TranscriptWriter(transcript_path)
         self.harness_version = harness_version
 
-    def run(self, instance: TaskInstance, adapter: Adapter, *, agent: dict[str, Any]) -> RunResult:
-        run_id = str(uuid.uuid4())
+    def run(
+        self,
+        instance: TaskInstance,
+        adapter: Adapter,
+        *,
+        agent: dict[str, Any],
+        run_id: str | None = None,
+        initial_steps: int = 0,
+        initial_input_tokens: int = 0,
+        initial_output_tokens: int = 0,
+        initial_wall_clock_s: float = 0.0,
+        session_number: int | None = None,
+        session_step_cap: int | None = None,
+    ) -> RunResult:
+        # Session mode (Ultra, docs/plan/09 §4): run_id and the cumulative
+        # counters carry over from the snapshot; budgets are enforced on the
+        # cumulative totals, and session_step_cap pauses instead of ending.
+        run_id = run_id or str(uuid.uuid4())
         start = time.monotonic()
-        steps = 0
-        input_tokens = 0
-        output_tokens = 0
+        steps = int(initial_steps)
+        session_steps = 0
+        input_tokens = int(initial_input_tokens)
+        output_tokens = int(initial_output_tokens)
         consecutive_errors = 0
         text_only_streak = 0
         turns = 0
@@ -220,24 +243,39 @@ class Driver:
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": instance.prompt},
         ]
-        self.transcript.log(
-            "run_start",
-            run_id=run_id,
-            agent=agent,
-            task={"id": instance.task_id, "instance_seed": instance.seed, "task_set": instance.task_set_version},
-            harness={"version": self.harness_version, "hash": "sha256:local-dev"},
-            budgets=instance.budgets.to_dict(),
-        )
+        resumed = session_number is not None and session_number > 1
+        if not resumed:
+            self.transcript.log(
+                "run_start",
+                run_id=run_id,
+                agent=agent,
+                task={"id": instance.task_id, "instance_seed": instance.seed, "task_set": instance.task_set_version},
+                harness={"version": self.harness_version, "hash": "sha256:local-dev"},
+                budgets=instance.budgets.to_dict(),
+            )
+            self.transcript.log("prompt", step=0, text_hash=_hash_text(instance.prompt))
+        if session_number is not None:
+            self.transcript.log(
+                "session_resume" if resumed else "session_start",
+                session=session_number,
+                step=steps,
+                steps_before=steps if resumed else 0,
+            )
         if instance.level == 3:
             seeded = seed_ultra_memory(self.tools.workspace, instance.task_id)
             if seeded is not None:
                 self.transcript.log("memory_seeded", path="memory.md", task_id=instance.task_id)
-        self.transcript.log("prompt", step=0, text_hash=_hash_text(instance.prompt))
 
-        max_turns = instance.budgets.steps * 3 + 12
+        remaining_steps = instance.budgets.steps - steps
+        allowance = remaining_steps if session_step_cap is None else min(remaining_steps, session_step_cap)
+        max_turns = max(1, allowance) * 3 + 12
         while True:
             elapsed = time.monotonic() - start
-            if steps >= instance.budgets.steps or elapsed >= instance.budgets.wall_clock_minutes * 60:
+            if session_step_cap is not None and session_steps >= session_step_cap and steps < instance.budgets.steps:
+                self.transcript.log("session_pause", step=steps, session=session_number)
+                end_reason = "session_pause"
+                break
+            if steps >= instance.budgets.steps or (initial_wall_clock_s + elapsed) >= instance.budgets.wall_clock_minutes * 60:
                 self.transcript.log("budget_exceeded", step=steps)
                 end_reason = "budget"
                 break
@@ -291,6 +329,7 @@ class Driver:
             should_end = False
             for call in response.tool_calls:
                 steps += 1
+                session_steps += 1
                 name = str(call.get("name", ""))
                 args = call.get("args", {}) if isinstance(call.get("args", {}), dict) else {}
                 # Record the call itself so provider adapters can render a valid
@@ -362,6 +401,11 @@ class Driver:
                     end_reason = "budget"
                     should_end = True
                     break
+                if session_step_cap is not None and session_steps >= session_step_cap:
+                    self.transcript.log("session_pause", step=steps, session=session_number)
+                    end_reason = "session_pause"
+                    should_end = True
+                    break
 
             history = self._maybe_compact(history, adapter)
             if should_end:
@@ -369,10 +413,13 @@ class Driver:
 
         totals = {
             "steps": steps,
-            "wall_clock_s": round(time.monotonic() - start, 4),
+            "wall_clock_s": round(initial_wall_clock_s + (time.monotonic() - start), 4),
             "input_tokens": input_tokens,
             "output_tokens": output_tokens,
         }
+        if session_number is not None:
+            totals["session"] = session_number
+            totals["session_steps"] = session_steps
         self.transcript.log("run_end", step=steps, reason=end_reason, totals=totals)
         return RunResult(
             run_id=run_id,

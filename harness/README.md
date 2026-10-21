@@ -1,14 +1,19 @@
 # LongRun Bench harness
 
-Phase 2 starts with a local, dependency-light vertical slice of the standard harness:
+The standard harness (SPEC.md §5), dependency-light:
 
 - render parameterized task instances from `manifest.json`
-- run a scripted/model adapter through the driver loop
+- run a scripted/model adapter through the driver loop (BYO key via env;
+  OpenAI-compatible, Anthropic, and Google adapters in `adapters.py`)
 - execute the standard workspace tools with step counting
-- write JSONL transcripts in the Phase 1 schema shape
-- replay deterministic checks and compute a checks-only provisional score
-
-This is not the full Phase 2 definition of done yet. The Docker image, hosted protocol server, LLM judge, leaderboard, and full 85-task bank remain later Phase 2 slices.
+- write JSONL transcripts in the spec schema shape
+- replay deterministic checks and compute scores (checks-only, or graded
+  with the LLM judge via `longrun grade`)
+- serve the harness protocol for native/bare submissions (`server.py`)
+- Ultra session mode: `--session-steps` pauses a run at a session
+  boundary, `--resume` continues it from its `session.json` snapshot with
+  cumulative budgets, and `longrun abandon` closes a run as abandoned
+  (docs/runbooks/ultra-ops.md)
 
 ## Quickstart
 
@@ -28,4 +33,4 @@ python -m longrun.cli run-scripted ../tasks/sprint/sprint-code-001 \
   --out /tmp/longrun-smoke
 ```
 
-Outputs land in the `--out` directory: `transcript.jsonl`, `score.json`, `run.json`, and the run `workspace/`.
+Outputs land in the `--out` directory: `transcript.jsonl`, `score.json`, `run.json`, `submission.json`, and the run `workspace/`.
