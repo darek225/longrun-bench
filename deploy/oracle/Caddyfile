@@ -1,0 +1,7 @@
+# Replace YOUR_DOMAIN with the production domain (or the instance's
+# public IP hostname for a pre-domain smoke test). Caddy provisions
+# HTTPS certificates automatically for a real domain.
+YOUR_DOMAIN {
+	reverse_proxy 127.0.0.1:8787
+	encode gzip
+}

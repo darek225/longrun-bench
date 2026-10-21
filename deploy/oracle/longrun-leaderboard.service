@@ -1,0 +1,21 @@
+[Unit]
+Description=LongRun Bench leaderboard (site + API)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=longrun
+Group=longrun
+WorkingDirectory=/opt/longrun-bench
+Environment=PYTHONPATH=/opt/longrun-bench:/opt/longrun-bench/harness/src
+EnvironmentFile=-/opt/longrun-bench/.env.production
+ExecStart=/usr/bin/python3 -m leaderboard.api --db /opt/longrun-bench/leaderboard.db --tasks-root /opt/longrun-bench/tasks --port 8787
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/longrun-bench
+
+[Install]
+WantedBy=multi-user.target

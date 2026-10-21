@@ -1,0 +1,10 @@
+[Unit]
+Description=LongRun Bench DB backup to private data repo
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=longrun
+Group=longrun
+WorkingDirectory=/opt/longrun-bench
+ExecStart=/usr/bin/python3 scripts/backup-db.py --db /opt/longrun-bench/leaderboard.db
