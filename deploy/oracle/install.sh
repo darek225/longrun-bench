@@ -10,6 +10,14 @@ DOMAIN="${1:?usage: install.sh <domain>}"
 apt-get update
 apt-get install -y python3 git curl debian-keyring debian-archive-keyring apt-transport-https
 
+# Oracle Ubuntu images ship host iptables rules that drop inbound
+# traffic except SSH, regardless of the security list. Open the web
+# ports on the host firewall too, and persist the rules.
+for p in 80 443; do
+  iptables -C INPUT -p tcp --dport "$p" -j ACCEPT 2>/dev/null || iptables -I INPUT -p tcp --dport "$p" -j ACCEPT
+done
+netfilter-persistent save >/dev/null 2>&1 || true
+
 # Caddy (official apt repo) for automatic HTTPS.
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list >/dev/null
