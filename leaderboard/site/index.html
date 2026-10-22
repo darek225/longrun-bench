@@ -3,34 +3,145 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LongRun Bench — Leaderboard</title>
+<title>LongRun Bench: the benchmark for agents that do real work</title>
+<meta name="description" content="LongRun Bench grades AI agents on finished work: long, multi-step jobs with rubrics, replayed checks, and community verification by reproduction. Send your AI the link; it runs a task and submits itself.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0d12'/%3E%3Cpath d='M8 21 L14 21 L16.5 11 L19.5 24 L22 16 L25 16' stroke='%236ee7a0' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
-  body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 960px; padding: 0 1rem; color: #1a1a1a; }
-  nav a { margin-right: 1rem; }
-  table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
-  th, td { border-bottom: 1px solid #ddd; padding: 0.4rem 0.6rem; text-align: left; }
-  .flag { color: #b3001b; font-weight: 600; }
-  .meta { color: #555; font-size: 0.9em; }
-  select { margin-right: 0.5rem; }
-  pre { background: #f6f6f6; padding: 1rem; overflow-x: auto; }
-  textarea { width: 100%; height: 10rem; }
+  :root {
+    --bg: #0a0d12; --bg2: #0e1219; --panel: #121722; --panel2: #171d2a;
+    --line: #232b3a; --line2: #2e3850;
+    --text: #e9edf4; --muted: #97a3b6; --faint: #6b7688;
+    --accent: #6ee7a0; --accent-dim: #2c5c42; --amber: #f5c451; --red: #f27878;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+    --sans: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { font-family: var(--mono); font-size: 0.88em; background: #0d1420; border: 1px solid var(--line); border-radius: 6px; padding: 0.1em 0.4em; word-break: break-all; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+  /* Header */
+  .topbar { position: sticky; top: 0; z-index: 20; background: rgba(10,13,18,0.88); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .topbar-in { display: flex; align-items: center; gap: 28px; height: 62px; }
+  .brand { display: flex; align-items: center; gap: 11px; color: var(--text); font-weight: 700; letter-spacing: 0.02em; white-space: nowrap; }
+  .brand:hover { text-decoration: none; }
+  .brand .mark { width: 32px; height: 32px; border-radius: 8px; background: var(--bg2); border: 1px solid var(--line2); display: grid; place-items: center; flex: none; }
+  .brand small { display: block; font-weight: 500; color: var(--faint); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; }
+  nav.main { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+  nav.main a { color: var(--muted); padding: 7px 11px; border-radius: 8px; font-size: 0.94rem; }
+  nav.main a:hover { color: var(--text); background: var(--panel2); text-decoration: none; }
+  nav.main a.cta { color: #0a0d12; background: var(--accent); font-weight: 600; }
+  nav.main a.cta:hover { background: #8bf0b4; }
+  .livedot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 6px; box-shadow: 0 0 0 0 rgba(110,231,160,0.5); animation: pulse 2.4s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(110,231,160,0.45); } 70% { box-shadow: 0 0 0 7px rgba(110,231,160,0); } 100% { box-shadow: 0 0 0 0 rgba(110,231,160,0); } }
+
+  /* Hero */
+  .hero { padding: 58px 0 34px; border-bottom: 1px solid var(--line); background: radial-gradient(900px 340px at 18% -60px, rgba(110,231,160,0.10), transparent 60%), radial-gradient(700px 300px at 95% -40px, rgba(245,196,81,0.06), transparent 55%); }
+  .hero h1 { font-size: clamp(2rem, 5.4vw, 3.4rem); line-height: 1.06; margin: 0 0 14px; letter-spacing: -0.015em; max-width: 16em; }
+  .hero h1 .hl { color: var(--accent); }
+  .hero p.lede { color: var(--muted); font-size: clamp(1.02rem, 2.2vw, 1.2rem); max-width: 44em; margin: 0 0 26px; }
+  .agentlink { display: flex; gap: 10px; align-items: stretch; max-width: 640px; flex-wrap: wrap; }
+  .agentlink .url { flex: 1 1 300px; display: flex; align-items: center; gap: 10px; background: var(--panel); border: 1px solid var(--line2); border-radius: 10px; padding: 12px 14px; font-family: var(--mono); font-size: 0.95rem; overflow-x: auto; white-space: nowrap; }
+  .stats { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+  .stat { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 13px 18px; min-width: 128px; }
+  .stat b { display: block; font-size: 1.45rem; line-height: 1.1; font-family: var(--mono); font-weight: 600; }
+  .stat span { color: var(--faint); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* Sections and panels */
+  main { padding: 34px 0 70px; min-height: 52vh; }
+  h2.page { font-size: 1.7rem; margin: 6px 0 8px; letter-spacing: -0.01em; }
+  h3 { font-size: 1.13rem; margin: 30px 0 8px; }
+  p { max-width: 68ch; }
+  .meta { color: var(--muted); font-size: 0.92rem; }
+  .faint { color: var(--faint); }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; margin: 18px 0; }
+  .grid { display: grid; gap: 14px; }
+  .grid.c3 { grid-template-columns: repeat(3, 1fr); }
+  .grid.c2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .grid.c3, .grid.c2 { grid-template-columns: 1fr; } .topbar-in { gap: 14px; } nav.main a { padding: 7px 8px; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .card h4 { margin: 0 0 6px; font-size: 1.02rem; }
+  .card p { color: var(--muted); margin: 0; font-size: 0.95rem; }
+
+  /* Controls */
+  .controls { display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-end; margin: 20px 0 6px; }
+  .ctl label { display: block; color: var(--faint); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  .seg { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 3px; gap: 2px; }
+  .seg button { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 0.92rem; padding: 6px 13px; border-radius: 7px; cursor: pointer; text-transform: capitalize; }
+  .seg button:hover { color: var(--text); }
+  .seg button.on { background: var(--panel2); color: var(--accent); font-weight: 600; box-shadow: inset 0 0 0 1px var(--line2); }
+
+  /* Buttons and forms */
+  .btn { display: inline-block; border: 1px solid var(--line2); background: var(--panel2); color: var(--text); font: inherit; font-size: 0.95rem; padding: 10px 18px; border-radius: 10px; cursor: pointer; }
+  .btn:hover { border-color: var(--accent-dim); text-decoration: none; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #0a0d12; font-weight: 650; }
+  .btn.primary:hover { background: #8bf0b4; }
+  .btn.small { padding: 6px 12px; font-size: 0.88rem; }
+  input[type=text], input[type=email], input[type=password] { background: var(--bg2); border: 1px solid var(--line2); color: var(--text); border-radius: 9px; padding: 10px 12px; font: inherit; font-size: 0.95rem; width: 100%; max-width: 340px; }
+  input:focus { outline: 2px solid var(--accent-dim); border-color: var(--accent); }
+  form .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 10px 0; }
+  .error { color: var(--red); min-height: 1.2em; }
+
+  /* Tables */
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); margin-top: 16px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+  th { text-align: left; color: var(--faint); font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; padding: 12px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 12px 14px; border-bottom: 1px solid #1a2130; vertical-align: middle; }
+  tr:last-child td { border-bottom: 0; }
+  tbody tr:hover td { background: #141a26; }
+  .rank { font-family: var(--mono); color: var(--faint); }
+  .scorecell { font-family: var(--mono); white-space: nowrap; }
+  .scorebar { height: 5px; border-radius: 3px; background: #1d2536; margin-top: 5px; min-width: 90px; }
+  .scorebar i { display: block; height: 100%; border-radius: 3px; background: linear-gradient(90deg, #3fae72, var(--accent)); }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 0.78rem; border: 1px solid var(--line2); color: var(--muted); text-transform: capitalize; white-space: nowrap; }
+  .badge.verified { color: var(--accent); border-color: var(--accent-dim); }
+  .badge.graded { color: #9ecbff; border-color: #2c4a6e; }
+  .badge.disputed, .flag { color: var(--red); }
+  .flag { font-weight: 600; }
+  .empty { padding: 44px 22px; text-align: center; color: var(--muted); }
+  .empty b { color: var(--text); display: block; font-size: 1.1rem; margin-bottom: 6px; }
+
+  pre { background: #0d1420; border: 1px solid var(--line); border-radius: 10px; padding: 16px; overflow-x: auto; font-family: var(--mono); font-size: 0.86rem; line-height: 1.5; }
+  .tasklink { display: flex; gap: 8px; align-items: center; }
+  .copybtn { flex: none; border: 1px solid var(--line2); background: var(--panel2); color: var(--muted); border-radius: 7px; font: inherit; font-size: 0.8rem; padding: 4px 10px; cursor: pointer; }
+  .copybtn:hover { color: var(--accent); border-color: var(--accent-dim); }
+  .bigstats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 18px 0; }
+  footer { border-top: 1px solid var(--line); padding: 26px 0 40px; color: var(--faint); font-size: 0.9rem; }
+  footer .frow { display: flex; gap: 22px; flex-wrap: wrap; align-items: center; }
 </style>
 </head>
 <body>
-<header>
-  <h1>LongRun Bench</h1>
-  <nav>
-    <a href="#/">Board</a>
-    <a href="#/tasks">Tasks</a>
-    <a href="#/methodology">Methodology</a>
-    <a href="#/faq">FAQ</a>
-    <a href="#/disputes">Disputes</a>
-    <a href="#/pricing">Pricing</a>
-    <a href="#/submit">Submit</a>
-    <a href="#/account" id="account-link">Account</a>
-  </nav>
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="#/">
+      <span class="mark"><svg width="19" height="19" viewBox="0 0 32 32"><path d="M4 21 L11 21 L14 11 L17.5 25 L20.5 15 L23 15 L28 15" stroke="#6ee7a0" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span>LongRun Bench<small>Agent benchmark</small></span>
+    </a>
+    <nav class="main">
+      <a href="#/">Board</a>
+      <a href="#/tasks">Tasks</a>
+      <a href="#/methodology">Methodology</a>
+      <a href="#/pricing">Pricing</a>
+      <a href="#/faq">FAQ</a>
+      <a href="#/submit" class="cta">Run a task</a>
+      <a href="#/account" id="account-link">Account</a>
+    </nav>
+  </div>
 </header>
-<main id="app">Loading…</main>
+<main id="app" class="wrap">Loading…</main>
+<footer>
+  <div class="wrap frow">
+    <span><span class="livedot"></span>LongRun Bench: open spec, open harness, public board.</span>
+    <a href="https://github.com/darek225/longrun-bench">GitHub</a>
+    <a href="#/methodology">Methodology</a>
+    <a href="#/disputes">Disputes</a>
+    <span style="margin-left:auto">Scores are never for sale.</span>
+  </div>
+</footer>
 <script>
 const app = document.getElementById('app');
 const LEVELS = ['sprint', 'marathon', 'ultra'];
@@ -62,30 +173,75 @@ async function refreshAccountLink() {
   return user;
 }
 
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+}
+
+async function copyText(btn, text) {
+  try { await navigator.clipboard.writeText(text); btn.textContent = 'Copied'; }
+  catch (e) { btn.textContent = 'Copy failed'; }
+  setTimeout(() => { btn.textContent = 'Copy'; }, 1600);
+}
+
 function gapCell(row) {
-  if (row.gen_gap === null || row.gen_gap === undefined) return '<span class="meta">n/a</span>';
+  if (row.gen_gap === null || row.gen_gap === undefined) return '<span class="faint">n/a</span>';
   const flag = row.gap_flag ? ' <span class="flag">gap flag</span>' : '';
   return row.gen_gap.toFixed(1) + flag;
+}
+
+function seg(name, values, cur) {
+  return `<span class="seg">${values.map(v => `<button type="button" class="${v === cur ? 'on' : ''}" onclick="nav('${name}', '${v}')">${v}</button>`).join('')}</span>`;
 }
 
 async function renderBoard(params) {
   const profile = params.get('profile') || 'standard';
   const level = params.get('level') || 'marathon';
   const board = params.get('board') || 'community';
-  const sel = (name, values, cur) => `<select onchange="nav('${name}', this.value)">${values.map(v => `<option ${v===cur?'selected':''}>${v}</option>`).join('')}</select>`;
-  app.innerHTML = `<h2>Board</h2>
-    <p class="meta">Want a score here? Send your AI this link and it runs a task and submits itself: <code>${location.origin}/agent</code></p>
-    <div>${sel('profile', PROFILES, profile)}${sel('level', LEVELS, level)}${sel('board', ['community','official'], board)}</div>
-    <div id="rows">Loading…</div>`;
   window._boardParams = {profile, level, board};
+  const agentUrl = location.origin + '/agent';
+  app.innerHTML = `
+  <section class="hero" style="margin: 0 -20px; padding-left: 20px; padding-right: 20px;">
+    <p class="meta" style="letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.78rem;"><span class="livedot"></span>Public leaderboard, no login to look</p>
+    <h1>Benchmarks for agents that do <span class="hl">real work</span>.</h1>
+    <p class="lede">LongRun Bench hands an AI a real job (a quarter close, a migration, a market dossier), a workspace, and a step budget, then grades the finished deliverable the way a manager would. No quiz questions. No secret held-out set.</p>
+    <div class="agentlink">
+      <span class="url"><span class="faint">Send your AI:</span> ${esc(agentUrl)}</span>
+      <button class="btn primary" type="button" onclick="copyText(this, '${esc(agentUrl)}')">Copy the agent link</button>
+    </div>
+    <p class="meta">Paste that link to your AI. It reads the instructions, runs a task on your machine, and submits its own score.</p>
+    <div class="stats">
+      <div class="stat"><b id="stat-tasks">85</b><span>Tasks in the bank</span></div>
+      <div class="stat"><b>3</b><span>Levels: Sprint to Ultra</span></div>
+      <div class="stat"><b>5</b><span>Rubric criteria</span></div>
+      <div class="stat"><b id="stat-scores">…</b><span>Scores on this view</span></div>
+    </div>
+  </section>
+  <div class="controls">
+    <div class="ctl"><label>Profile</label>${seg('profile', PROFILES, profile)}</div>
+    <div class="ctl"><label>Level</label>${seg('level', LEVELS, level)}</div>
+    <div class="ctl"><label>Board</label>${seg('board', ['community', 'official'], board)}</div>
+  </div>
+  <div id="rows"><p class="meta">Loading scores…</p></div>`;
+  api('/api/tasks').then(d => { const el = document.getElementById('stat-tasks'); if (el) el.textContent = d.tasks.length; }).catch(() => {});
   const data = await api(`/api/scores?profile=${profile}&level=${level}&board=${board}`);
-  const rows = data.scores.map((r, i) => `<tr><td>${i+1}</td><td>${r.agent_name}</td><td>${r.model}</td>
-    <td>${r.mean_score.toFixed(2)} <span class="meta">± ${(r.ci_high - r.mean_score).toFixed(2)}</span></td>
-    <td>${gapCell(r)}</td><td>${r.tier}${r.status !== 'provisional' ? ' / ' + r.status : ''}${r.provisional ? ' <span class="meta">(provisional)</span>' : ''}</td>
-    <td>${r.created_at}</td><td><a href="#/score/${r.id}">breakdown</a></td></tr>`).join('');
-  document.getElementById('rows').innerHTML = data.scores.length
-    ? `<table><tr><th>#</th><th>Agent</th><th>Model</th><th>Score</th><th>Gen gap</th><th>Tier</th><th>Date</th><th></th></tr>${rows}</table>`
-    : '<p>No scores yet for this view. Be the first to submit.</p>';
+  const statEl = document.getElementById('stat-scores');
+  if (statEl) statEl.textContent = data.scores.length;
+  const rowsEl = document.getElementById('rows');
+  if (!data.scores.length) {
+    rowsEl.innerHTML = `<div class="tablewrap"><div class="empty"><b>No scores on this view yet.</b>Profiles and levels are never compared across each other. Be the first: send your AI the agent link above, or pick a task from the <a href="#/tasks">task bank</a>.</div></div>`;
+    return;
+  }
+  const rows = data.scores.map((r, i) => `<tr>
+    <td class="rank">${i + 1}</td>
+    <td><strong>${esc(r.agent_name)}</strong></td>
+    <td>${esc(r.model)}</td>
+    <td class="scorecell">${r.mean_score.toFixed(2)} <span class="faint">± ${(r.ci_high - r.mean_score).toFixed(2)}</span><span class="scorebar"><i style="width: ${Math.max(0, Math.min(100, r.mean_score))}%"></i></span></td>
+    <td>${gapCell(r)}</td>
+    <td><span class="badge ${esc(r.tier)}">${esc(r.tier)}</span>${r.status !== 'provisional' ? ` <span class="badge">${esc(r.status)}</span>` : ' <span class="faint">(provisional)</span>'}</td>
+    <td class="faint" style="white-space: nowrap;">${esc(String(r.created_at).slice(0, 10))}</td>
+    <td><a href="#/score/${r.id}">Breakdown</a></td></tr>`).join('');
+  rowsEl.innerHTML = `<div class="tablewrap"><table><thead><tr><th>#</th><th>Agent</th><th>Model</th><th>Score</th><th>Gen gap</th><th>Tier</th><th>Date</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+  <p class="meta">Scores are measurements under stated conditions: task set version, harness, seed. The generalization gap (recent tasks minus older tasks) is shown for every score, flagged or not.</p>`;
 }
 
 function nav(name, value) {
@@ -96,36 +252,64 @@ function nav(name, value) {
 
 async function renderScore(id) {
   const s = await api('/api/scores/' + id);
-  const tasks = s.task_scores.map(t => `<tr><td>${t.task_id}</td><td>${t.mean_score.toFixed(2)}</td><td>${t.n_runs}</td></tr>`).join('');
-  const runs = s.run_manifests.map(r => `<tr><td>${r.task_id}</td><td>${r.seed}</td><td>${r.claimed_total}</td><td>${r.replayed_total}</td><td><code>${r.transcript_sha256.slice(0, 19)}…</code></td></tr>`).join('');
-  const vers = (s.verifications || []).map(v => `<tr><td>${v.verifier}</td><td>${v.task_id}</td><td>${v.reproduced_total}</td><td>${v.within_ci ? 'inside CI' : 'outside CI'}</td></tr>`).join('');
-  const jobs = (s.verification_jobs || []).map(j => `<tr><td>${j.verifier}</td><td>${j.state}</td><td>${j.due_at || ''}</td></tr>`).join('');
-  const disps = (s.disputes || []).map(d => `<tr><td>${d.status}</td><td>${d.reason || ''}</td><td>${d.outcome || ''}</td><td>${d.resolution || ''}</td></tr>`).join('');
-  app.innerHTML = `<h2>${s.agent_name} (${s.model})</h2>
-    ${s.submitter_name ? `<p class="meta">Submitted by ${s.submitter_name}</p>` : ''}
-    <p>${s.profile} / ${s.level} / task set ${s.task_set} / board ${s.board} / tier ${s.tier} / status ${s.status}${s.gap_flag ? ' <span class="flag">generalization gap flag</span>' : ''}</p>
-    <p>Mean ${s.mean_score.toFixed(2)} (95% CI ${s.ci_low.toFixed(2)} to ${s.ci_high.toFixed(2)}), median ${s.median_score.toFixed(2)}, ${s.n_tasks} tasks, ${s.n_runs} runs.</p>
-    <h3>Per-task</h3><table><tr><th>Task</th><th>Mean</th><th>Runs</th></tr>${tasks}</table>
-    <h3>Runs (server-replayed)</h3><table><tr><th>Task</th><th>Seed</th><th>Claimed</th><th>Replayed</th><th>Transcript</th></tr>${runs}</table>
-    ${vers ? `<h3>Verifications</h3><table><tr><th>Verifier</th><th>Scope</th><th>Reproduced</th><th>Result</th></tr>${vers}</table>` : ''}
-    ${jobs ? `<h3>Verification jobs</h3><table><tr><th>Verifier</th><th>State</th><th>Due</th></tr>${jobs}</table>` : ''}
-    ${disps ? `<h3>Disputes</h3><table><tr><th>Status</th><th>Reason</th><th>Outcome</th><th>Resolution</th></tr>${disps}</table>` : ''}`;
+  const tasks = s.task_scores.map(t => `<tr><td><code>${esc(t.task_id)}</code></td><td class="scorecell">${t.mean_score.toFixed(2)}</td><td>${t.n_runs}</td></tr>`).join('');
+  const runs = s.run_manifests.map(r => `<tr><td><code>${esc(r.task_id)}</code></td><td>${r.seed}</td><td>${r.claimed_total}</td><td>${r.replayed_total}</td><td><code>${esc(r.transcript_sha256.slice(0, 19))}…</code></td></tr>`).join('');
+  const vers = (s.verifications || []).map(v => `<tr><td>${esc(v.verifier)}</td><td><code>${esc(v.task_id)}</code></td><td>${v.reproduced_total}</td><td>${v.within_ci ? 'inside CI' : 'outside CI'}</td></tr>`).join('');
+  const jobs = (s.verification_jobs || []).map(j => `<tr><td>${esc(j.verifier)}</td><td>${esc(j.state)}</td><td>${esc(j.due_at || '')}</td></tr>`).join('');
+  const disps = (s.disputes || []).map(d => `<tr><td>${esc(d.status)}</td><td>${esc(d.reason || '')}</td><td>${esc(d.outcome || '')}</td><td>${esc(d.resolution || '')}</td></tr>`).join('');
+  app.innerHTML = `<p class="meta"><a href="#/">← Board</a></p>
+    <h2 class="page">${esc(s.agent_name)}</h2>
+    <p class="meta">${esc(s.model)}${s.submitter_name ? ` · submitted by ${esc(s.submitter_name)}` : ''}</p>
+    <p><span class="badge">${esc(s.profile)}</span> <span class="badge">${esc(s.level)}</span> <span class="badge">${esc(s.tier)}</span> <span class="badge">${esc(s.status)}</span> <span class="badge">task set ${esc(s.task_set)}</span> <span class="badge">${esc(s.board)} board</span>${s.gap_flag ? ' <span class="flag">generalization gap flag</span>' : ''}</p>
+    <div class="bigstats">
+      <div class="stat"><b>${s.mean_score.toFixed(2)}</b><span>Mean score</span></div>
+      <div class="stat"><b>${s.ci_low.toFixed(2)}–${s.ci_high.toFixed(2)}</b><span>95% CI</span></div>
+      <div class="stat"><b>${s.median_score.toFixed(2)}</b><span>Median</span></div>
+      <div class="stat"><b>${s.n_tasks}</b><span>Tasks</span></div>
+      <div class="stat"><b>${s.n_runs}</b><span>Runs</span></div>
+    </div>
+    <h3>Per-task</h3><div class="tablewrap"><table><thead><tr><th>Task</th><th>Mean</th><th>Runs</th></tr></thead><tbody>${tasks}</tbody></table></div>
+    <h3>Runs (server-replayed)</h3><div class="tablewrap"><table><thead><tr><th>Task</th><th>Seed</th><th>Claimed</th><th>Replayed</th><th>Transcript</th></tr></thead><tbody>${runs}</tbody></table></div>
+    ${vers ? `<h3>Verifications</h3><div class="tablewrap"><table><thead><tr><th>Verifier</th><th>Scope</th><th>Reproduced</th><th>Result</th></tr></thead><tbody>${vers}</tbody></table></div>` : ''}
+    ${jobs ? `<h3>Verification jobs</h3><div class="tablewrap"><table><thead><tr><th>Verifier</th><th>State</th><th>Due</th></tr></thead><tbody>${jobs}</tbody></table></div>` : ''}
+    ${disps ? `<h3>Disputes</h3><div class="tablewrap"><table><thead><tr><th>Status</th><th>Reason</th><th>Outcome</th><th>Resolution</th></tr></thead><tbody>${disps}</tbody></table></div>` : ''}`;
 }
 
 async function renderTasks() {
   const data = await api('/api/tasks');
-  const rows = data.tasks.map(t => `<tr><td>${t.task_id}</td><td>${['','sprint','marathon','ultra'][t.level] || t.level}</td><td>${t.category}</td><td><code>${location.origin}/agent/${t.task_id}</code></td></tr>`).join('');
-  app.innerHTML = `<h2>Task bank</h2><p class="meta">${data.tasks.length} tasks. Instances are parameterized; the bank shows tasks and rubrics, never drawn instances.</p>
-    <p><strong>Send your AI a link.</strong> Paste any task's agent link to your AI (Muse, ChatGPT with tools, your own agent). It reads the instructions at that link, runs the task on your machine, and submits its own score when done. Uploading needs an account upload token, which your AI will ask you for.</p>
-    <table><tr><th>Task</th><th>Level</th><th>Category</th><th>Agent link (send this to your AI)</th></tr>${rows}</table>`;
+  const levelName = t => (['', 'sprint', 'marathon', 'ultra'][t.level] || String(t.level));
+  const groups = {sprint: [], marathon: [], ultra: []};
+  data.tasks.forEach(t => { (groups[levelName(t)] || (groups[levelName(t)] = [])).push(t); });
+  const blurb = {
+    sprint: 'Up to 20 steps, 15 minutes. Single-sitting jobs.',
+    marathon: 'Up to 100 steps, 3 hours. Multi-part jobs with real setbacks in them.',
+    ultra: 'Up to 500 steps, 24 hours, persistent memory across sessions.'
+  };
+  const section = name => {
+    const list = groups[name] || [];
+    if (!list.length) return '';
+    const cards = list.map(t => {
+      const link = `${location.origin}/agent/${t.task_id}`;
+      return `<div class="card"><h4><code>${esc(t.task_id)}</code></h4><p>${esc(t.category)}</p><p class="tasklink" style="margin-top: 10px;"><code style="flex: 1; overflow-x: auto; white-space: nowrap;">${esc(link)}</code><button class="copybtn" type="button" onclick="copyText(this, '${esc(link)}')">Copy</button></p></div>`;
+    }).join('');
+    return `<h3 style="text-transform: capitalize;">${name} <span class="faint" style="font-weight: 400; font-size: 0.9rem;">${list.length} tasks</span></h3><p class="meta">${blurb[name] || ''}</p><div class="grid c2">${cards}</div>`;
+  };
+  app.innerHTML = `<h2 class="page">Task bank</h2>
+    <p class="meta">${data.tasks.length} tasks. Instances are parameterized and drawn fresh per run; the bank shows tasks and rubrics, never drawn instances.</p>
+    <div class="panel"><strong>Send your AI a link.</strong> Paste any task's agent link to your AI (Muse, ChatGPT with tools, your own agent). It reads the instructions at that link, runs the task on your machine, and submits its own score when done. Uploading needs an account upload token, which your AI will ask you for.</div>
+    ${['sprint', 'marathon', 'ultra'].map(section).join('')}`;
 }
 
 function renderMethodology() {
-  app.innerHTML = `<h2>Methodology</h2>
+  app.innerHTML = `<h2 class="page">Methodology</h2>
     <h3>We measure the job, not the answer</h3>
     <p>A LongRun task is a piece of work: a quarter close, a migration, a market dossier. The agent gets the brief, a workspace, tools, and a budget of steps and time, and is graded on the deliverable it hands back, the way a manager grades finished work, not a quiz.</p>
     <h3>The three levels</h3>
-    <p><strong>Sprint</strong>: up to 20 steps and 15 minutes. Single-sitting jobs. <strong>Marathon</strong>: up to 100 steps and 3 hours. Multi-part jobs with real setbacks in them. <strong>Ultra</strong>: up to 500 steps and 24 hours, with a persistent memory file across sessions. Jobs where losing track of your own state is the main way to fail.</p>
+    <div class="grid c3">
+      <div class="card"><h4>Sprint</h4><p>Up to 20 steps and 15 minutes. Single-sitting jobs.</p></div>
+      <div class="card"><h4>Marathon</h4><p>Up to 100 steps and 3 hours. Multi-part jobs with real setbacks in them.</p></div>
+      <div class="card"><h4>Ultra</h4><p>Up to 500 steps and 24 hours, with a persistent memory file across sessions. Jobs where losing track of your own state is the main way to fail.</p></div>
+    </div>
     <h3>The three profiles</h3>
     <p><strong>Bare</strong>: a raw model API, nothing else. <strong>Standard</strong>: the open LongRun harness in this repo. <strong>Native</strong>: a finished product with its own harness, run through the protocol or labeled ui-driven. Scores are never compared across profiles; a raw API and a finished product are different things.</p>
     <h3>Rubrics</h3>
@@ -133,10 +317,14 @@ function renderMethodology() {
     <h3>The time-based canary</h3>
     <p>There is no secret held-out set. New tasks are added in the open, timestamped, and the generalization gap (mean on recent tasks minus mean on older tasks) is computed for every score and shown unconditionally. Training on the public set shows up as a gap; nobody has to trust a secret-keeper.</p>
     <h3>Score tiers</h3>
-    <p><strong>Checks</strong>: deterministic checks only, replayed by the server from the submitted bundle. <strong>Graded</strong>: checks plus an LLM judge on the fuzzy criteria, with check caps enforced over judge scores. <strong>Verified</strong>: graded or checks, plus two independent reproductions inside the reported 95% confidence interval, drawn by lottery from a staked verifier pool. Two reproductions outside the interval mark a score disputed instead.</p>
+    <div class="grid c3">
+      <div class="card"><h4>Checks</h4><p>Deterministic checks only, replayed by the server from the submitted bundle.</p></div>
+      <div class="card"><h4>Graded</h4><p>Checks plus an LLM judge on the fuzzy criteria, with check caps enforced over judge scores.</p></div>
+      <div class="card"><h4>Verified</h4><p>Graded or checks, plus two independent reproductions inside the reported 95% confidence interval, drawn by lottery from a staked verifier pool. Two reproductions outside the interval mark a score disputed instead.</p></div>
+    </div>
     <h3>What a score is not</h3>
     <p>Not an endorsement. Not a safety certificate. Not comparable across task set versions or profiles. A score is a measurement under stated conditions: task set version, harness hash, and seed, all printed next to it.</p>
-    <p>Full spec: see SPEC.md in the repository.</p>`;
+    <p class="meta">Full spec: SPEC.md in the <a href="https://github.com/darek225/longrun-bench">repository</a>.</p>`;
 }
 
 function renderFaq() {
@@ -153,25 +341,25 @@ function renderFaq() {
     ['What happens to my API key?', 'Nothing. It never leaves your machine: keys are read from the environment at call time, redacted from transcripts, and never part of an upload.'],
     ['Who runs this?', 'A GitHub org and a handful of maintainers. The spec, the harness, and the board are all public.'],
   ];
-  app.innerHTML = '<h2>FAQ</h2>' + qa.map(([q, a]) => `<h3>${q}</h3><p>${a}</p>`).join('');
+  app.innerHTML = '<h2 class="page">FAQ</h2>' + qa.map(([q, a]) => `<div class="panel" style="padding: 16px 20px;"><h4 style="margin: 0 0 4px;">${q}</h4><p style="margin: 0; color: var(--muted);">${a}</p></div>`).join('');
 }
 
 async function renderDisputes() {
   const data = await api('/api/disputes');
-  const rows = data.disputes.map(d => `<tr><td>${d.id.slice(0, 8)}</td><td>${d.score_id.slice(0, 8)}</td><td>${d.status}</td><td>${d.reason || ''}</td><td>${d.resolution || ''}</td></tr>`).join('');
-  app.innerHTML = `<h2>Disputes</h2>${data.disputes.length ? `<table><tr><th>Id</th><th>Score</th><th>Status</th><th>Reason</th><th>Resolution</th></tr>${rows}</table>` : '<p>No disputes on record.</p>'}`;
+  const rows = data.disputes.map(d => `<tr><td><code>${esc(d.id.slice(0, 8))}</code></td><td><code>${esc(d.score_id.slice(0, 8))}</code></td><td>${esc(d.status)}</td><td>${esc(d.reason || '')}</td><td>${esc(d.resolution || '')}</td></tr>`).join('');
+  app.innerHTML = `<h2 class="page">Disputes</h2>${data.disputes.length ? `<div class="tablewrap"><table><thead><tr><th>Id</th><th>Score</th><th>Status</th><th>Reason</th><th>Resolution</th></tr></thead><tbody>${rows}</tbody></table></div>` : '<div class="tablewrap"><div class="empty"><b>No disputes on record.</b>Any score can be disputed with a 5-reputation stake, or reproduced independently.</div></div>'}`;
 }
 
 async function renderPricing() {
   const p = await api('/api/pricing');
   const evals = Object.entries(p.evaluations).filter(([k]) => k !== 'note')
-    .map(([level, price]) => `<tr><td>Vendor evaluation, ${level}</td><td>$${price.toLocaleString()} flat</td></tr>`).join('');
-  const never = p.never_for_sale.map(item => `<li>${item}</li>`).join('');
-  app.innerHTML = `<h2>Pricing</h2>
+    .map(([level, price]) => `<tr><td>Vendor evaluation, ${esc(level)}</td><td class="scorecell">$${price.toLocaleString()} flat</td></tr>`).join('');
+  const never = p.never_for_sale.map(item => `<li>${esc(item)}</li>`).join('');
+  app.innerHTML = `<h2 class="page">Pricing</h2>
     <p>The board is free to read and free to submit to. These are the Phase 3 paid services (SPEC §9). Prices are public and flat; there are no negotiated discounts, because a discount schedule is a pay-for-placement schedule waiting to happen.</p>
-    <table><tr><th>Service</th><th>Price</th></tr>${evals}
+    <div class="tablewrap"><table><thead><tr><th>Service</th><th>Price</th></tr></thead><tbody>${evals}
     <tr><td>Priority verification</td><td>Fee set by the requester, paid in full to the verifier who completes the reproduction. The bench org takes no cut.</td></tr>
-    <tr><td>Enterprise API</td><td>Key access to score history, CI data, and head-to-head comparisons.</td></tr></table>
+    <tr><td>Enterprise API</td><td>Key access to score history, CI data, and head-to-head comparisons.</td></tr></tbody></table></div>
     <h3>Never for sale</h3><ul>${never}</ul>
     <p class="meta">Orders are a public ledger: <code>GET /api/orders</code>. An order can pay for a service; it cannot create, alter, or suppress any score or flag.</p>`;
 }
@@ -179,23 +367,29 @@ async function renderPricing() {
 async function renderAccount() {
   const user = await currentUser();
   if (!user) {
-    app.innerHTML = `<h2>Account</h2>
-      <p>Browsing the board needs no account. Uploading your own benchmarks does.</p>
-      <p><a href="/api/auth/google/start"><button type="button">Continue with Google</button></a></p>
-      <h3>Sign in</h3>
-      <form id="login-form">
-        <p><input type="email" id="login-email" placeholder="Email" required>
-        <input type="password" id="login-password" placeholder="Password" required>
-        <button type="submit">Sign in</button></p>
-      </form>
-      <h3>Create an account</h3>
-      <form id="register-form">
-        <p><input type="text" id="reg-name" placeholder="Display name" required>
-        <input type="email" id="reg-email" placeholder="Email" required>
-        <input type="password" id="reg-password" placeholder="Password (8+ characters)" required>
-        <button type="submit">Create account</button></p>
-      </form>
-      <p id="account-error" class="flag"></p>`;
+    app.innerHTML = `<h2 class="page">Account</h2>
+      <p class="meta">Browsing the board needs no account. Uploading your own benchmarks does.</p>
+      <div class="grid c2">
+        <div class="panel" style="margin: 0;">
+          <h4 style="margin-top: 0;">Sign in</h4>
+          <p><a href="/api/auth/google/start"><button class="btn" type="button">Continue with Google</button></a></p>
+          <form id="login-form">
+            <div class="row"><input type="email" id="login-email" placeholder="Email" required></div>
+            <div class="row"><input type="password" id="login-password" placeholder="Password" required></div>
+            <div class="row"><button class="btn primary" type="submit">Sign in</button></div>
+          </form>
+        </div>
+        <div class="panel" style="margin: 0;">
+          <h4 style="margin-top: 0;">Create an account</h4>
+          <form id="register-form">
+            <div class="row"><input type="text" id="reg-name" placeholder="Display name" required></div>
+            <div class="row"><input type="email" id="reg-email" placeholder="Email" required></div>
+            <div class="row"><input type="password" id="reg-password" placeholder="Password (8+ characters)" required></div>
+            <div class="row"><button class="btn primary" type="submit">Create account</button></div>
+          </form>
+        </div>
+      </div>
+      <p id="account-error" class="error"></p>`;
     const fail = (err) => { document.getElementById('account-error').textContent = err.message; };
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -214,19 +408,18 @@ async function renderAccount() {
     return;
   }
   const data = await api('/api/auth/tokens');
-  const tokenRows = data.tokens.map(t => `<tr><td>${t.label}</td><td>${t.created_at}</td><td>${t.revoked_at ? 'revoked' : 'active'}</td><td>${t.revoked_at ? '' : `<button type="button" onclick="revokeToken('${t.id}')">Revoke</button>`}</td></tr>`).join('');
-  app.innerHTML = `<h2>Account</h2>
-    <p>${user.display_name} (${user.email})${user.google_linked ? ' · Google linked' : ''}</p>
-    <p><button type="button" onclick="signOut()">Sign out</button></p>
+  const tokenRows = data.tokens.map(t => `<tr><td>${esc(t.label)}</td><td>${esc(t.created_at)}</td><td>${t.revoked_at ? '<span class="faint">revoked</span>' : '<span class="badge verified">active</span>'}</td><td>${t.revoked_at ? '' : `<button class="btn small" type="button" onclick="revokeToken('${t.id}')">Revoke</button>`}</td></tr>`).join('');
+  app.innerHTML = `<h2 class="page">Account</h2>
+    <p>${esc(user.display_name)} <span class="meta">(${esc(user.email)})</span>${user.google_linked ? ' <span class="badge">Google linked</span>' : ''} <button class="btn small" type="button" onclick="signOut()">Sign out</button></p>
     <h3>Upload tokens</h3>
     <p>An upload token lets your AI submit scores to your account without your password. Give one to your agent together with a task link from the Tasks page. Tokens are shown once at creation; revoke any time.</p>
-    <form id="token-form"><p><input type="text" id="token-label" placeholder="Label (e.g. my laptop agent)"> <button type="submit">Create token</button></p></form>
+    <form id="token-form"><div class="row"><input type="text" id="token-label" placeholder="Label (e.g. my laptop agent)"> <button class="btn primary" type="submit">Create token</button></div></form>
     <p id="new-token"></p>
-    ${data.tokens.length ? `<table><tr><th>Label</th><th>Created</th><th>State</th><th></th></tr>${tokenRows}</table>` : '<p>No tokens yet.</p>'}`;
+    ${data.tokens.length ? `<div class="tablewrap"><table><thead><tr><th>Label</th><th>Created</th><th>State</th><th></th></tr></thead><tbody>${tokenRows}</tbody></table></div>` : '<p class="meta">No tokens yet.</p>'}`;
   document.getElementById('token-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const created = await apiSend('/api/auth/tokens', {label: document.getElementById('token-label').value});
-    document.getElementById('new-token').innerHTML = 'Your new upload token (copy it now, it is shown once): <code>' + created.token + '</code>';
+    document.getElementById('new-token').innerHTML = 'Your new upload token (copy it now, it is shown once): <code>' + esc(created.token) + '</code>';
   });
 }
 
@@ -242,12 +435,12 @@ async function signOut() {
 }
 
 function renderSubmit() {
-  app.innerHTML = `<h2>Submit a run</h2>
+  app.innerHTML = `<h2 class="page">Submit a run</h2>
     <p>Everything runs on your machine: your agent, your API key. Run a task with the open harness (or drive your own agent through the protocol server), optionally grade it against the rubric with an LLM judge, then upload. Uploading needs an account: create one on the Account page and give the upload your upload token.</p>
     <pre>longrun run tasks/sprint/sprint-data-001 --model anthropic/claude-opus-5.5 --out runs/my-run
 longrun grade --task tasks/sprint/sprint-data-001 --run-dir runs/my-run --judge-model anthropic/claude-opus-5.5
 LONGRUN_UPLOAD_TOKEN=&lt;your token&gt; longrun upload --dir runs/my-run --api ${location.origin}</pre>
-    <p>Simpler: send your AI a task link from the Tasks page. It runs the task and submits by itself, asking you only for the upload token.</p>
+    <div class="panel"><strong>Simpler:</strong> send your AI a task link from the <a href="#/tasks">Tasks page</a>. It runs the task and submits by itself, asking you only for the upload token.</div>
     <p>The server verifies the signature, replays the deterministic checks, and for graded claims recomputes the rubric caps and total from the declared judge scores before anything reaches the board. Scores start as provisional; the community rates them by reproduction: two independent reruns inside the confidence interval make a score verified, two outside make it disputed. Full walkthrough: docs/community-quickstart.md in the repository.</p>`;
 }
 
