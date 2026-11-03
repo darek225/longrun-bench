@@ -55,6 +55,31 @@ def test_ingest_groups_runs_into_one_board_row(tmp_path, bundles):
     assert all(m["claimed_total"] == m["replayed_total"] for m in detail["run_manifests"])
 
 
+def test_ingest_persists_run_detail(tmp_path, bundles):
+    from conftest import TASKS_DIR
+
+    store = Store(tmp_path / "board.db")
+    result = ingest_submission({"board": "community", "runs": [bundles["data"]]}, store=store, tasks_root=TASKS_DIR)
+    score = store.get_score(result["score_ids"][0])
+    assert len(score["run_manifests"]) == 1
+    detail = score["run_manifests"][0]["detail"]
+    # The task itself: rendered prompt, seed parameters, rubric weights.
+    assert detail["task"]["id"] == "sprint-data-001"
+    assert detail["task"]["prompt"]
+    assert sum(item["weight"] for item in detail["task"]["rubric"]) == 100
+    # The replayed checks with their pass/fail and explanations.
+    assert detail["checks"], "detail must carry the replayed checks"
+    for check in detail["checks"]:
+        assert {"id", "check", "passed", "score", "detail", "caps"} <= set(check)
+    # The criteria breakdown the total came from.
+    assert set(detail["criteria"]) == {"correctness", "completeness", "efficiency", "error_recovery", "instruction_adherence"}
+    # What the agent produced and did.
+    assert detail["deliverable"] is not None and detail["deliverable"]["content"]
+    assert detail["transcript"], "detail must carry transcript events"
+    assert detail["transcript"][0]["type"] == "run_start"
+    assert detail["totals"]["steps"] > 0
+
+
 def test_ingest_rejects_tampered_claim(tmp_path, bundles):
     from conftest import TASKS_DIR
 

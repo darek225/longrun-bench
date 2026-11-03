@@ -54,6 +54,10 @@ CREATE TABLE IF NOT EXISTS run_manifests (
   tier TEXT NOT NULL DEFAULT 'checks',
   created_at TEXT DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS run_details (
+  manifest_id TEXT PRIMARY KEY REFERENCES run_manifests(id),
+  detail TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS disputes (
   id TEXT PRIMARY KEY,
   score_id TEXT REFERENCES scores(id),
@@ -234,15 +238,21 @@ class Store:
                 (score_id, task_id, round(mean_score, 4), len(task_runs[task_id])),
             )
         for manifest in manifests:
+            manifest_id = str(uuid.uuid4())
             self.conn.execute(
                 "INSERT INTO run_manifests (id, score_id, run_id, task_id, seed, transcript_sha256, claimed_total, replayed_total, tier) "
                 "VALUES (?,?,?,?,?,?,?,?,?)",
                 (
-                    str(uuid.uuid4()), score_id, manifest["run_id"], manifest["task_id"], int(manifest["seed"]),
+                    manifest_id, score_id, manifest["run_id"], manifest["task_id"], int(manifest["seed"]),
                     manifest["transcript_sha256"], float(manifest["claimed_total"]), float(manifest["replayed_total"]),
                     manifest.get("tier", "checks"),
                 ),
             )
+            if manifest.get("detail") is not None:
+                self.conn.execute(
+                    "INSERT INTO run_details (manifest_id, detail) VALUES (?,?)",
+                    (manifest_id, json.dumps(manifest["detail"])),
+                )
         self.conn.commit()
         return score_id
 
@@ -270,6 +280,20 @@ class Store:
         result = dict(row)
         result["task_scores"] = [dict(r) for r in self.conn.execute("SELECT * FROM task_scores WHERE score_id=? ORDER BY task_id", (score_id,)).fetchall()]
         result["run_manifests"] = [dict(r) for r in self.conn.execute("SELECT * FROM run_manifests WHERE score_id=? ORDER BY task_id", (score_id,)).fetchall()]
+        details = {
+            r["manifest_id"]: r["detail"]
+            for r in self.conn.execute(
+                "SELECT manifest_id, detail FROM run_details WHERE manifest_id IN (SELECT id FROM run_manifests WHERE score_id=?)",
+                (score_id,),
+            ).fetchall()
+        }
+        for manifest_row in result["run_manifests"]:
+            raw = details.get(manifest_row["id"])
+            if raw is not None:
+                try:
+                    manifest_row["detail"] = json.loads(raw)
+                except json.JSONDecodeError:
+                    manifest_row["detail"] = None
         result["verifications"] = [dict(r) for r in self.conn.execute("SELECT * FROM verifications WHERE score_id=? ORDER BY created_at", (score_id,)).fetchall()]
         result["disputes"] = [dict(r) for r in self.conn.execute("SELECT * FROM disputes WHERE score_id=? ORDER BY created_at", (score_id,)).fetchall()]
         result["verification_jobs"] = [dict(r) for r in self.conn.execute("SELECT * FROM verification_jobs WHERE score_id=? ORDER BY assigned_at", (score_id,)).fetchall()]

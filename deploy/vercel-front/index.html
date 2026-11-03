@@ -250,10 +250,68 @@ function nav(name, value) {
   location.hash = '#/?' + p.toString();
 }
 
+const CRITERIA_ORDER = ['correctness', 'completeness', 'efficiency', 'error_recovery', 'instruction_adherence'];
+const CRITERION_LABEL = {correctness: 'Correctness', completeness: 'Completeness', efficiency: 'Efficiency', error_recovery: 'Error recovery', instruction_adherence: 'Instruction adherence'};
+
+function renderRunDetail(r) {
+  const d = r.detail;
+  if (!d) {
+    return `<div class="card"><h4><code>${esc(r.task_id)}</code> · seed ${r.seed}</h4>
+      <p class="meta">No detail recorded for this run. It was submitted before the board kept per-run detail, so only the replayed total above is on record. New submissions carry the full breakdown: the task, the rubric, every check, the deliverable, and the transcript.</p></div>`;
+  }
+  const t = d.task || {};
+  const params = Object.entries(t.params || {}).map(([k, v]) => `<tr><td><code>${esc(k)}</code></td><td>${esc(typeof v === 'object' ? JSON.stringify(v) : String(v))}</td></tr>`).join('');
+  const anchors = (t.rubric || []).map(rb => {
+    const a = Object.entries(rb.anchors || {}).sort((x, y) => Number(y[0]) - Number(x[0])).map(([pts, txt]) => `<li><b>${esc(pts)}</b>: ${esc(txt)}</li>`).join('');
+    return a ? `<p style="margin:0.4rem 0 0.1rem;"><b>${esc(CRITERION_LABEL[rb.criterion] || rb.criterion)}</b> (weight ${rb.weight})</p><ul style="margin:0.1rem 0 0.4rem; padding-left:1.2rem;">${a}</ul>` : '';
+  }).join('');
+  const crit = CRITERIA_ORDER.filter(name => d.criteria && d.criteria[name]).map(name => {
+    const c = d.criteria[name];
+    const pct = c.weight ? Math.max(0, Math.min(100, (c.score / c.weight) * 100)) : 0;
+    const caps = (c.caps_applied || []).map(cap => `<div class="meta" style="color:#f0b35e;">Capped at ${cap.cap} by check <code>${esc(cap.check_id)}</code>: ${esc(cap.detail || '')}</div>`).join('');
+    return `<div style="margin:0.45rem 0;"><div style="display:flex; justify-content:space-between; gap:1rem;"><span>${esc(CRITERION_LABEL[name] || name)}</span><b>${Number(c.score).toFixed(2)} / ${c.weight}</b></div><span class="scorebar"><i style="width:${pct}%"></i></span>${caps}</div>`;
+  }).join('');
+  const checks = (d.checks || []).map(c => `<tr>
+    <td>${c.passed ? '<span style="color:#7ee2a0;">PASS</span>' : '<span style="color:#ff9c9c;">FAIL</span>'}</td>
+    <td><code>${esc(c.id)}</code><div class="meta">${esc(c.check)}</div></td>
+    <td>${esc(c.detail || '')}${Object.keys(c.caps || {}).length ? `<div class="meta">Caps: ${Object.entries(c.caps).map(([k, v]) => `${esc(CRITERION_LABEL[k] || k)} ≤ ${v}`).join(', ')}</div>` : ''}</td>
+    <td class="scorecell">${Number(c.score).toFixed(2)}</td></tr>`).join('');
+  const tot = d.totals || {};
+  const transcript = (d.transcript || []).map(e => {
+    let body = '';
+    if (e.type === 'run_start') body = `Run started · task <code>${esc((e.task || {}).id || '')}</code> seed ${esc(String((e.task || {}).instance_seed ?? ''))}`;
+    else if (e.type === 'prompt') body = 'Task prompt sent to the model';
+    else if (e.type === 'tool_call') body = `<code>${esc(e.tool || '')}</code> · ${esc(typeof e.result_summary === 'object' ? JSON.stringify(e.result_summary) : String(e.result_summary || ''))}${e.duration_ms != null ? ` · ${e.duration_ms} ms` : ''}`;
+    else if (e.type === 'model_error') body = `<span style="color:#ff9c9c;">Model error: ${esc(e.error || '')}</span>`;
+    else if (e.type === 'deliverable') body = `Deliverable produced: <code>${esc(e.artifact_uri || '')}</code>`;
+    else if (e.type === 'run_end') body = `Run ended (${esc(e.reason || '')}) · ${esc(JSON.stringify(e.totals || {}))}`;
+    else body = esc(JSON.stringify(e).slice(0, 300));
+    return `<div style="padding:0.3rem 0; border-bottom:1px solid rgba(255,255,255,0.07);"><span class="meta">step ${esc(String(e.step ?? '·'))}</span> ${body}</div>`;
+  }).join('');
+  return `<div class="card" style="margin:1rem 0;">
+    <h4 style="margin-top:0;"><code>${esc(t.id || r.task_id)}</code> · seed ${r.seed} · replayed total <b>${r.replayed_total}</b></h4>
+    <h4>The task</h4>
+    <p>${esc(t.prompt || '')}</p>
+    ${params ? `<div class="tablewrap"><table><thead><tr><th>Parameter</th><th>Value for this seed</th></tr></thead><tbody>${params}</tbody></table></div>` : ''}
+    <p class="meta">Budgets: ${(t.budgets || {}).steps ?? '?'} steps, ${(t.budgets || {}).wall_clock_minutes ?? '?'} minutes. Category: ${esc(t.category || '')}.</p>
+    <h4>How it was graded: the rubric</h4>
+    ${crit}
+    ${anchors ? `<details><summary>Rubric anchors for this task</summary>${anchors}</details>` : ''}
+    <h4>The checks (replayed by the server)</h4>
+    <div class="tablewrap"><table><thead><tr><th>Result</th><th>Check</th><th>What the checker found</th><th>Score</th></tr></thead><tbody>${checks}</tbody></table></div>
+    <h4>The run</h4>
+    <p class="meta">${tot.steps ?? '?'} steps · ${Number(tot.input_tokens || 0).toLocaleString()} input tokens · ${Number(tot.output_tokens || 0).toLocaleString()} output tokens · ${tot.wall_clock_s != null ? Number(tot.wall_clock_s).toFixed(1) + 's' : '?'} wall clock · ended: ${esc(d.end_reason || '?')}</p>
+    <h4>What it produced</h4>
+    ${d.deliverable ? `<p class="meta">Deliverable: <code>${esc(d.deliverable.uri || '')}</code></p><pre style="white-space:pre-wrap; overflow-x:auto; background:rgba(255,255,255,0.04); padding:0.8rem; border-radius:8px;">${esc(d.deliverable.content || '')}</pre>` : '<p class="meta">No deliverable was produced.</p>'}
+    <details><summary>Transcript: what it did, step by step (${(d.transcript || []).length} events)</summary>${transcript}</details>
+  </div>`;
+}
+
 async function renderScore(id) {
   const s = await api('/api/scores/' + id);
   const tasks = s.task_scores.map(t => `<tr><td><code>${esc(t.task_id)}</code></td><td class="scorecell">${t.mean_score.toFixed(2)}</td><td>${t.n_runs}</td></tr>`).join('');
   const runs = s.run_manifests.map(r => `<tr><td><code>${esc(r.task_id)}</code></td><td>${r.seed}</td><td>${r.claimed_total}</td><td>${r.replayed_total}</td><td><code>${esc(r.transcript_sha256.slice(0, 19))}…</code></td></tr>`).join('');
+  const runDetails = s.run_manifests.map(r => renderRunDetail(r)).join('');
   const vers = (s.verifications || []).map(v => `<tr><td>${esc(v.verifier)}</td><td><code>${esc(v.task_id)}</code></td><td>${v.reproduced_total}</td><td>${v.within_ci ? 'inside CI' : 'outside CI'}</td></tr>`).join('');
   const jobs = (s.verification_jobs || []).map(j => `<tr><td>${esc(j.verifier)}</td><td>${esc(j.state)}</td><td>${esc(j.due_at || '')}</td></tr>`).join('');
   const disps = (s.disputes || []).map(d => `<tr><td>${esc(d.status)}</td><td>${esc(d.reason || '')}</td><td>${esc(d.outcome || '')}</td><td>${esc(d.resolution || '')}</td></tr>`).join('');
@@ -270,6 +328,7 @@ async function renderScore(id) {
     </div>
     <h3>Per-task</h3><div class="tablewrap"><table><thead><tr><th>Task</th><th>Mean</th><th>Runs</th></tr></thead><tbody>${tasks}</tbody></table></div>
     <h3>Runs (server-replayed)</h3><div class="tablewrap"><table><thead><tr><th>Task</th><th>Seed</th><th>Claimed</th><th>Replayed</th><th>Transcript</th></tr></thead><tbody>${runs}</tbody></table></div>
+    <h3>Run details: the task, the rubric, the checks, the work</h3>${runDetails}
     ${vers ? `<h3>Verifications</h3><div class="tablewrap"><table><thead><tr><th>Verifier</th><th>Scope</th><th>Reproduced</th><th>Result</th></tr></thead><tbody>${vers}</tbody></table></div>` : ''}
     ${jobs ? `<h3>Verification jobs</h3><div class="tablewrap"><table><thead><tr><th>Verifier</th><th>State</th><th>Due</th></tr></thead><tbody>${jobs}</tbody></table></div>` : ''}
     ${disps ? `<h3>Disputes</h3><div class="tablewrap"><table><thead><tr><th>Status</th><th>Reason</th><th>Outcome</th><th>Resolution</th></tr></thead><tbody>${disps}</tbody></table></div>` : ''}`;

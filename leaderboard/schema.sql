@@ -52,6 +52,15 @@ CREATE TABLE run_manifests (
   created_at        TIMESTAMPTZ DEFAULT now()
 );
 
+-- Per-run detail behind the drill-down view (docs/SCORE_DETAIL_SPEC.md).
+-- Written once at ingest from server-replayed outcomes plus the
+-- hash-verified transcript and the workspace files the checks replayed
+-- against. Never updated; corrections are new score rows.
+CREATE TABLE run_details (
+  manifest_id UUID PRIMARY KEY REFERENCES run_manifests(id),
+  detail     JSONB NOT NULL
+);
+
 -- Disputes and flags are public records.
 CREATE TABLE disputes (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),

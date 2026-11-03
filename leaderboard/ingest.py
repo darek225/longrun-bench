@@ -23,6 +23,43 @@ class IngestError(ValueError):
     pass
 
 
+_TRANSCRIPT_STRING_CAP = 4000
+_TRANSCRIPT_EVENT_CAP = 2000
+
+
+def _truncate_strings(value: Any) -> Any:
+    if isinstance(value, str):
+        if len(value) > _TRANSCRIPT_STRING_CAP:
+            return value[:_TRANSCRIPT_STRING_CAP] + f"\n... [truncated, {len(value)} chars total; full transcript is proven by its sha256]"
+        return value
+    if isinstance(value, dict):
+        return {k: _truncate_strings(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_truncate_strings(v) for v in value]
+    return value
+
+
+def _transcript_events(transcript_text: str) -> list[dict[str, Any]]:
+    """Parse the hash-verified transcript for the detail view.
+
+    Strings are truncated for display; the stored transcript_sha256 on the
+    run manifest remains the proof of the full bytes.
+    """
+    events: list[dict[str, Any]] = []
+    for line in transcript_text.splitlines():
+        if not line.strip():
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(event, dict):
+            events.append(_truncate_strings(event))
+        if len(events) >= _TRANSCRIPT_EVENT_CAP:
+            break
+    return events
+
+
 def _task_index(tasks_root: Path) -> dict[str, Path]:
     index: dict[str, Path] = {}
     for manifest_path in tasks_root.rglob("manifest.json"):
@@ -67,6 +104,7 @@ def verify_and_replay(bundle: dict[str, Any], *, tasks_root: str | Path, index: 
     instance = render_instance(manifest, seed=int(run_record["seed"]), overrides=dict(run_record.get("params", {})))
     totals = dict(run_record.get("totals", {}))
 
+    deliverable_content: str | None = None
     tmp = Path(tempfile.mkdtemp(prefix="longrun-replay-"))
     try:
         workspace = tmp / "workspace"
@@ -104,6 +142,11 @@ def verify_and_replay(bundle: dict[str, Any], *, tasks_root: str | Path, index: 
             wall_clock_s=float(totals.get("wall_clock_s", 0.0)),
             deliverable_present=artifact_path is not None and artifact_path.exists(),
         )
+        if artifact_path is not None and artifact_path.exists():
+            try:
+                deliverable_content = artifact_path.read_text(encoding="utf-8", errors="replace")[:200_000]
+            except OSError:
+                deliverable_content = None
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -163,6 +206,34 @@ def verify_and_replay(bundle: dict[str, Any], *, tasks_root: str | Path, index: 
     if abs(float(claim.get("total", -1)) - verified_total) > TOTAL_TOLERANCE:
         raise IngestError(f"total mismatch: claimed {claim.get('total')}, verified {verified_total}")
 
+    verified_criteria = combined["criteria"] if tier == "graded" else replay["criteria"]
+    detail = {
+        "task": {
+            "id": task_id,
+            "category": str(manifest.category),
+            "level": LEVEL_NAMES.get(manifest.level, "sprint"),
+            "prompt": instance.prompt,
+            "params": instance.params,
+            "budgets": {"steps": instance.budgets.steps, "wall_clock_minutes": instance.budgets.wall_clock_minutes},
+            "rubric": [item.to_dict() for item in instance.rubric],
+        },
+        "totals": {
+            "steps": int(totals.get("steps", 0)),
+            "input_tokens": int(totals.get("input_tokens", 0)),
+            "output_tokens": int(totals.get("output_tokens", 0)),
+            "wall_clock_s": float(totals.get("wall_clock_s", 0.0)),
+        },
+        "end_reason": run_record.get("end_reason"),
+        "checks": [outcome.to_dict() for outcome in outcomes],
+        "criteria": verified_criteria,
+        "deliverable": (
+            {"uri": str((run_record.get("deliverable") or {}).get("artifact_uri", "")), "content": deliverable_content}
+            if deliverable_content is not None
+            else None
+        ),
+        "transcript": _transcript_events(transcript_text),
+    }
+
     agent = submission.get("agent", {})
     return {
         "run_id": str(submission.get("run_id")),
@@ -178,6 +249,7 @@ def verify_and_replay(bundle: dict[str, Any], *, tasks_root: str | Path, index: 
         "transcript_sha256": digest,
         "claimed_total": float(claim["total"]),
         "replayed_total": verified_total,
+        "detail": detail,
     }
 
 
