@@ -31,6 +31,7 @@ if [ ! -d /opt/longrun-bench/.git ]; then
   rm -rf /opt/longrun-bench.tmp
 fi
 cd /opt/longrun-bench
+git config --global --add safe.directory /opt/longrun-bench || true
 
 # Production secrets live here (Google OAuth client id/secret). Create
 # once; never commit this file.
@@ -39,12 +40,15 @@ cd /opt/longrun-bench
 cp deploy/oracle/longrun-leaderboard.service /etc/systemd/system/
 cp deploy/oracle/longrun-backup.service /etc/systemd/system/
 cp deploy/oracle/longrun-backup.timer /etc/systemd/system/
+cp deploy/oracle/longrun-update.service /etc/systemd/system/
+cp deploy/oracle/longrun-update.timer /etc/systemd/system/
 sed "s/YOUR_DOMAIN/${DOMAIN}/" deploy/oracle/Caddyfile > /etc/caddy/Caddyfile
 
 chown -R longrun:longrun /opt/longrun-bench
 systemctl daemon-reload
 systemctl enable --now longrun-leaderboard.service
 systemctl enable --now longrun-backup.timer
+systemctl enable --now longrun-update.timer
 systemctl reload caddy || systemctl restart caddy
 
 echo "Installed. Health: curl -s http://127.0.0.1:8787/api/health"

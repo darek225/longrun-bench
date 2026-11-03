@@ -1,0 +1,10 @@
+[Unit]
+Description=LongRun Bench: pull latest main and restart the leaderboard on change
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/longrun-bench
+ExecStart=/usr/bin/bash -c 'git fetch --quiet origin main && if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then git reset --hard --quiet origin/main && chown -R longrun:longrun /opt/longrun-bench && systemctl restart longrun-leaderboard.service; fi'
