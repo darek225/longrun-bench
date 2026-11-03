@@ -96,9 +96,27 @@ def _split_history(history: list[dict[str, Any]]) -> tuple[str, list[dict[str, A
 
 
 class OpenAICompatAdapter:
-    """Any OpenAI-style endpoint: OpenAI, DeepSeek, xAI, Together, local servers."""
+    """Any OpenAI-style endpoint: OpenAI, DeepSeek, xAI, Together, local servers.
+
+    OpenAI's function-name pattern (^[a-zA-Z0-9_-]+$) forbids the harness's
+    canonical dotted tool names (shell.exec, code.nav, ...), so this adapter
+    translates names to an underscored wire form in both directions. The
+    driver and transcripts always keep the canonical dotted names; only the
+    wire encoding changes.
+    """
 
     name = "openai_compat"
+
+    @staticmethod
+    def _wire_name(canonical: str) -> str:
+        return canonical.replace(".", "_")
+
+    @staticmethod
+    def _canonical_name(wire: str) -> str:
+        for canonical in TOOL_SCHEMAS:
+            if OpenAICompatAdapter._wire_name(canonical) == wire:
+                return canonical
+        return wire
 
     def __init__(
         self,
@@ -146,7 +164,7 @@ class OpenAICompatAdapter:
                             {
                                 "id": call_id,
                                 "type": "function",
-                                "function": {"name": call["name"], "arguments": json.dumps(call.get("args", {}))},
+                                "function": {"name": self._wire_name(str(call["name"])), "arguments": json.dumps(call.get("args", {}))},
                             }
                         ],
                     }
@@ -160,7 +178,7 @@ class OpenAICompatAdapter:
 
     def _tools(self) -> list[dict[str, Any]]:
         return [
-            {"type": "function", "function": {"name": d["name"], "description": d["description"], "parameters": d["parameters"]}}
+            {"type": "function", "function": {"name": self._wire_name(d["name"]), "description": d["description"], "parameters": d["parameters"]}}
             for d in tool_definitions()
         ]
 
@@ -198,7 +216,7 @@ class OpenAICompatAdapter:
                 args = json.loads(raw_args) if isinstance(raw_args, str) else dict(raw_args)
             except json.JSONDecodeError:
                 args = {"_malformed_arguments": raw_args}
-            calls.append({"name": function.get("name", ""), "args": args})
+            calls.append({"name": self._canonical_name(str(function.get("name", ""))), "args": args})
         usage = payload.get("usage", {})
         return AdapterResponse(
             text=str(message.get("content") or ""),

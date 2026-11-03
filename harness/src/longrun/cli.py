@@ -296,7 +296,7 @@ def cmd_run(args: argparse.Namespace) -> int:
     pricing = load_pricing()
     estimate = estimate_cost_range(model=args.model, step_budget=instance.budgets.steps, pricing=pricing, price_override=price_override)
     out_dir = Path(args.out)
-    agent = {"name": args.agent_name, "model": args.model, "profile": "standard"}
+    agent = {"name": args.agent_name, "model": getattr(args, "model_label", None) or args.model, "profile": "standard"}
     print(
         f"Task: {instance.task_id} ({manifest.category}, level {manifest.level}) "
         f"Budgets: {instance.budgets.steps} steps, {instance.budgets.wall_clock_minutes} min. "
@@ -594,6 +594,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--price-out", type=float, help="output price per Mtok (overrides pricing.json)")
     run.add_argument("--out", required=True)
     run.add_argument("--agent-name", default="longrun-runner")
+    run.add_argument("--model-label", default=None, help="board display label for the model (defaults to --model); use it to disclose gateway routing, e.g. 'gpt-4o-mini (via Experiential Labs API)'")
     run.add_argument("--session-steps", type=int, help="cap steps for this session; the run pauses and can be resumed (Ultra, plan 09 §4)")
     run.add_argument("--resume", action="store_true", help="resume the session-mode run in --out from its session.json snapshot")
     run.set_defaults(func=cmd_run)
