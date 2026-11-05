@@ -174,4 +174,21 @@ CREATE TABLE upload_tokens (
   revoked_at TIMESTAMPTZ
 );
 
+-- Deployment config set through the admin bootstrap (docs/ACCOUNT_FEATURES_SPEC.md):
+-- Google OAuth client + reset mailer. Values are secrets; only set/unset
+-- status is ever exposed by the API.
+CREATE TABLE site_settings (
+  key        TEXT PRIMARY KEY,
+  value      TEXT NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE password_resets (
+  token_hash TEXT PRIMARY KEY,     -- sha256 of the token; the token travels only in the emailed link
+  user_id    TEXT NOT NULL REFERENCES users(id),
+  expires_at TIMESTAMPTZ NOT NULL,
+  used_at    TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- The app role gets no UPDATE or DELETE grants on scores (corrections append).

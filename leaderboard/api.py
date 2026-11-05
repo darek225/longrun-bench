@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
-from . import auth, enterprise, orders, trust
+from . import auth, enterprise, mailer, orders, trust
 from .ingest import IngestError, ingest_submission
 from .store import Store
 
@@ -261,21 +261,35 @@ def make_handler(store: Store, tasks_root: Path) -> type[BaseHTTPRequestHandler]
                         self._send_json(401, {"error": "sign in to view upload tokens"})
                     else:
                         self._send_json(200, {"tokens": auth.list_upload_tokens(store, user["id"])})
+                elif parts == ["api", "auth", "config"]:
+                    self._send_json(
+                        200,
+                        {
+                            "google_enabled": auth.google_configured(store),
+                            "password_reset_enabled": mailer.mail_configured(store),
+                        },
+                    )
+                elif parts == ["api", "admin", "settings"]:
+                    user = self._current_user()
+                    if user is None:
+                        self._send_json(401, {"error": "sign in to view settings"})
+                    else:
+                        self._send_json(200, {"settings": auth.settings_status(store)})
                 elif parts == ["api", "auth", "google", "start"]:
-                    if not auth.google_configured():
-                        self._send_json(501, {"error": "google sign-in is not configured on this deployment (set LONGRUN_GOOGLE_CLIENT_ID and LONGRUN_GOOGLE_CLIENT_SECRET)"})
+                    if not auth.google_configured(store):
+                        self._send_json(501, {"error": "google sign-in is not configured on this deployment"})
                     else:
                         state = secrets.token_urlsafe(24)
                         redirect_uri = f"{self._base_url()}/api/auth/google/callback"
                         headers = {"Set-Cookie": f"{auth.GOOGLE_STATE_COOKIE}={state}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600"}
-                        self._redirect(auth.google_auth_url(redirect_uri=redirect_uri, state=state), headers)
+                        self._redirect(auth.google_auth_url(store, redirect_uri=redirect_uri, state=state), headers)
                 elif parts == ["api", "auth", "google", "callback"]:
                     state_cookie = self._cookie(auth.GOOGLE_STATE_COOKIE)
                     if not query.get("code") or not state_cookie or query.get("state") != state_cookie:
                         self._send_json(400, {"error": "invalid google sign-in callback (state mismatch or missing code)"})
                     else:
                         redirect_uri = f"{self._base_url()}/api/auth/google/callback"
-                        identity = auth.exchange_google_code(code=str(query["code"]), redirect_uri=redirect_uri)
+                        identity = auth.exchange_google_code(store, code=str(query["code"]), redirect_uri=redirect_uri)
                         user = auth.upsert_google_user(
                             store, sub=identity["sub"], email=identity["email"], display_name=identity["display_name"]
                         )
@@ -333,6 +347,38 @@ def make_handler(store: Store, tasks_root: Path) -> type[BaseHTTPRequestHandler]
                 elif parts == ["api", "auth", "logout"]:
                     auth.delete_session(store, self._cookie(auth.SESSION_COOKIE))
                     self._send_json(200, {"ok": True}, self._session_cookie_header("", clear=True))
+                elif parts == ["api", "auth", "forgot-password"]:
+                    # Identical answer whether or not the email exists:
+                    # this endpoint must not reveal which emails have
+                    # accounts. Mail failures are swallowed for the same
+                    # reason; delivery is verified by the ops runbook.
+                    body = self._body()
+                    created = auth.create_password_reset(store, email=str(body.get("email", "")))
+                    if created is not None:
+                        reset_user, reset_token = created
+                        reset_url = f"{self._base_url()}/#/reset-password?token={reset_token}"
+                        try:
+                            mailer.send_password_reset_email(store, to=reset_user["email"], reset_url=reset_url)
+                        except Exception:
+                            pass
+                    self._send_json(200, {"ok": True})
+                elif parts == ["api", "auth", "reset-password"]:
+                    body = self._body()
+                    user = auth.reset_password(
+                        store,
+                        token=str(body.get("token", "")),
+                        new_password=str(body.get("password", "")),
+                    )
+                    token = auth.create_session(store, user["id"])
+                    self._send_json(200, {"user": user}, self._session_cookie_header(token))
+                elif parts == ["api", "admin", "settings"]:
+                    user = self._current_user()
+                    if user is None:
+                        self._send_json(401, {"error": "sign in to change settings"})
+                    else:
+                        body = self._body()
+                        status = auth.update_settings(store, user=user, values=dict(body.get("settings", {})))
+                        self._send_json(200, {"settings": status})
                 elif parts == ["api", "auth", "tokens"]:
                     user = self._session_user()
                     if user is None:

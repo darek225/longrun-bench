@@ -134,7 +134,7 @@ def test_google_flow_with_stubbed_exchange(server, tmp_path, monkeypatch):
     monkeypatch.setattr(
         auth,
         "exchange_google_code",
-        lambda *, code, redirect_uri: {"sub": "google-sub-1", "email": "g@example.com", "display_name": "Google User"},
+        lambda store=None, *, code, redirect_uri: {"sub": "google-sub-1", "email": "g@example.com", "display_name": "Google User"},
     )
     opener = urllib.request.build_opener(NoRedirect())
     request = urllib.request.Request(server + "/api/auth/google/start")

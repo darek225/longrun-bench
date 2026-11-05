@@ -16,18 +16,39 @@ password, or Google). Agents submit with a personal upload token
 (Account -> Upload tokens); tokens and passwords are stored only as
 hashes and tokens are revocable.
 
-Google sign-in is enabled by two environment variables on the server:
-
-```bash
-LONGRUN_GOOGLE_CLIENT_ID=<oauth client id> \
-LONGRUN_GOOGLE_CLIENT_SECRET=<oauth client secret> \
-  python3 -m leaderboard.api ...
-```
+Google sign-in takes its client id/secret from the DB site settings
+(set through the admin bootstrap below); the environment variables
+`LONGRUN_GOOGLE_CLIENT_ID` / `LONGRUN_GOOGLE_CLIENT_SECRET` still work
+as a fallback for deployments that predate the settings table.
 
 Create the OAuth client in Google Cloud Console with the authorized
-redirect URI `https://<your-host>/api/auth/google/callback`. Without the
-variables the site still runs: email/password accounts work and the
-Google button returns a clear "not configured" error.
+redirect URI `https://<your-host>/api/auth/google/callback`. When
+sign-in is not configured the site still runs: email/password accounts
+work and the Google button is hidden (the site reads
+`GET /api/auth/config`).
+
+## Site settings (admin bootstrap)
+
+Deployment config that cannot live in the public repo (Google OAuth
+client, reset mailer) is stored in the `site_settings` table and set
+through one endpoint. The first authenticated write claims the admin
+role for that account; later writes are accepted only from the admin.
+Responses report only which keys are set, never values.
+
+```bash
+# As the admin account (session cookie or X-Upload-Token):
+curl -X POST https://<your-host>/api/admin/settings \
+  -H 'X-Upload-Token: lru_...' -H 'Content-Type: application/json' \
+  -d '{"settings": {"google_client_id": "...", "google_client_secret": "...",
+       "mail_api_key": "...", "mail_from": "bot@mails.dev"}}'
+curl https://<your-host>/api/admin/settings -H 'X-Upload-Token: lru_...'
+```
+
+Allowlisted keys: `google_client_id`, `google_client_secret`,
+`mail_api_key`, `mail_from`. Password reset mail sends through the
+mails.dev hosted API from `mail_from`; reset is enabled exactly when
+`mail_api_key` and `mail_from` are both set (see
+`GET /api/auth/config`).
 
 Production deploys run the same API contract against Postgres using
 `leaderboard/schema.sql`; the reference implementation uses SQLite with the

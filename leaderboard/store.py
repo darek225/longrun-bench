@@ -144,6 +144,18 @@ CREATE TABLE IF NOT EXISTS upload_tokens (
   created_at TEXT DEFAULT (datetime('now')),
   revoked_at TEXT
 );
+CREATE TABLE IF NOT EXISTS site_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,             -- deployment config (OAuth client, mailer); set via the admin bootstrap, never committed
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+CREATE TABLE IF NOT EXISTS password_resets (
+  token_hash TEXT PRIMARY KEY,     -- sha256 of the reset token; the token itself travels only in the emailed link
+  user_id TEXT NOT NULL REFERENCES users(id),
+  expires_at TEXT NOT NULL,
+  used_at TEXT,
+  created_at TEXT DEFAULT (datetime('now'))
+);
 """
 
 
@@ -176,6 +188,20 @@ def aggregate(task_runs: dict[str, list[float]]) -> dict[str, Any]:
 
 
 class Store:
+    # -- site settings (deployment config: OAuth client, reset mailer) ----
+
+    def get_setting(self, key: str) -> str | None:
+        row = self.conn.execute("SELECT value FROM site_settings WHERE key = ?", (key,)).fetchone()
+        return row["value"] if row else None
+
+    def set_setting(self, key: str, value: str) -> None:
+        self.conn.execute(
+            "INSERT INTO site_settings (key, value, updated_at) VALUES (?, ?, datetime('now')) "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = datetime('now')",
+            (key, value),
+        )
+        self.conn.commit()
+
     def __init__(self, db_path: str | Path):
         self.db_path = str(db_path)
         self.conn = sqlite3.connect(self.db_path, check_same_thread=False)

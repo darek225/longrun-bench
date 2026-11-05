@@ -426,17 +426,19 @@ async function renderPricing() {
 async function renderAccount() {
   const user = await currentUser();
   if (!user) {
+    const config = await api('/api/auth/config').catch(() => ({google_enabled: false, password_reset_enabled: false}));
     app.innerHTML = `<h2 class="page">Account</h2>
       <p class="meta">Browsing the board needs no account. Uploading your own benchmarks does.</p>
       <div class="grid c2">
         <div class="panel" style="margin: 0;">
           <h4 style="margin-top: 0;">Sign in</h4>
-          <p><a href="/api/auth/google/start"><button class="btn" type="button">Continue with Google</button></a></p>
+          ${config.google_enabled ? '<p><a href="/api/auth/google/start"><button class="btn" type="button">Continue with Google</button></a></p>' : ''}
           <form id="login-form">
             <div class="row"><input type="email" id="login-email" placeholder="Email" required></div>
             <div class="row"><input type="password" id="login-password" placeholder="Password" required></div>
             <div class="row"><button class="btn primary" type="submit">Sign in</button></div>
           </form>
+          ${config.password_reset_enabled ? '<p class="meta"><a href="#/forgot-password">Forgot your password?</a></p>' : ''}
         </div>
         <div class="panel" style="margin: 0;">
           <h4 style="margin-top: 0;">Create an account</h4>
@@ -482,6 +484,43 @@ async function renderAccount() {
   });
 }
 
+async function renderForgot() {
+  app.innerHTML = `<h2 class="page">Forgot password</h2>
+    <p class="meta">Enter your account email and we will send you a reset link. The link works once and expires in 60 minutes.</p>
+    <form id="forgot-form">
+      <div class="row"><input type="email" id="forgot-email" placeholder="Email" required></div>
+      <div class="row"><button class="btn primary" type="submit">Send reset link</button></div>
+    </form>
+    <p id="forgot-note" class="meta"></p>
+    <p id="account-error" class="error"></p>`;
+  document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await apiSend('/api/auth/forgot-password', {email: document.getElementById('forgot-email').value});
+      document.getElementById('forgot-note').textContent = 'If an account exists for that email, a reset link is on its way. Check your inbox.';
+    } catch (err) { document.getElementById('account-error').textContent = err.message; }
+  });
+}
+
+async function renderReset(params) {
+  const token = params.get('token') || '';
+  app.innerHTML = `<h2 class="page">Reset password</h2>
+    ${token ? `<form id="reset-form">
+      <div class="row"><input type="password" id="reset-password" placeholder="New password (8+ characters)" required></div>
+      <div class="row"><button class="btn primary" type="submit">Set new password</button></div>
+    </form>` : '<p class="error">This reset link is missing its token. Request a new one from the sign-in page.</p>'}
+    <p id="account-error" class="error"></p>`;
+  if (!token) return;
+  document.getElementById('reset-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await apiSend('/api/auth/reset-password', {token, password: document.getElementById('reset-password').value});
+      await refreshAccountLink();
+      location.hash = '#/account';
+    } catch (err) { document.getElementById('account-error').textContent = err.message; }
+  });
+}
+
 async function revokeToken(id) {
   await apiSend('/api/auth/tokens/' + id + '/revoke', {});
   renderAccount();
@@ -517,6 +556,8 @@ async function route() {
     else if (path === '/pricing') await renderPricing();
     else if (path === '/submit') renderSubmit();
     else if (path === '/account') await renderAccount();
+    else if (path === '/forgot-password') await renderForgot();
+    else if (path === '/reset-password') await renderReset(params);
     else app.innerHTML = '<p>Not found.</p>';
   } catch (err) {
     app.innerHTML = '<p>Failed to load: ' + err.message + '</p>';

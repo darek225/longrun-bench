@@ -198,6 +198,39 @@ def revoke_upload_token(store: Store, *, user_id: str, token_id: str) -> bool:
     return cursor.rowcount == 1
 
 
+# -- Site settings (admin bootstrap) ---------------------------------------
+#
+# Production has no write path into the host (no SSH route; the cloud
+# console cannot edit files), so deployment config that cannot live in
+# the public repo is stored in the DB and set through one endpoint.
+# The first authenticated write claims the admin role; after that only
+# the admin can change settings. Values are never returned by the API,
+# only which keys are set.
+
+SETTING_KEYS = ("google_client_id", "google_client_secret", "mail_api_key", "mail_from")
+ADMIN_SETTING_KEY = "site_admin_user_id"
+
+
+def settings_status(store: Store) -> dict[str, bool]:
+    return {key: bool(store.get_setting(key)) for key in SETTING_KEYS}
+
+
+def update_settings(store: Store, *, user: dict[str, Any], values: dict[str, Any]) -> dict[str, bool]:
+    unknown = set(values) - set(SETTING_KEYS)
+    if unknown:
+        raise AuthError(f"unknown setting keys: {', '.join(sorted(unknown))}")
+    admin_id = store.get_setting(ADMIN_SETTING_KEY)
+    if admin_id is None:
+        store.set_setting(ADMIN_SETTING_KEY, user["id"])
+    elif admin_id != user["id"]:
+        raise AuthError("only the site admin can change settings")
+    for key, value in values.items():
+        if not isinstance(value, str) or not value.strip():
+            raise AuthError(f"setting {key} must be a non-empty string")
+        store.set_setting(key, value.strip())
+    return settings_status(store)
+
+
 # -- Google sign-in ---------------------------------------------------------
 
 GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
@@ -205,13 +238,28 @@ GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USERINFO_URL = "https://openidconnect.googleapis.com/v1/userinfo"
 
 
-def google_configured() -> bool:
-    return bool(os.environ.get("LONGRUN_GOOGLE_CLIENT_ID") and os.environ.get("LONGRUN_GOOGLE_CLIENT_SECRET"))
+def google_credentials(store: Store | None = None) -> tuple[str, str] | None:
+    """Client id/secret: DB settings first (set via the admin bootstrap),
+    env fallback for deployments that predate the settings table."""
+    client_id = store.get_setting("google_client_id") if store else None
+    client_secret = store.get_setting("google_client_secret") if store else None
+    client_id = client_id or os.environ.get("LONGRUN_GOOGLE_CLIENT_ID")
+    client_secret = client_secret or os.environ.get("LONGRUN_GOOGLE_CLIENT_SECRET")
+    if client_id and client_secret:
+        return client_id, client_secret
+    return None
 
 
-def google_auth_url(*, redirect_uri: str, state: str) -> str:
+def google_configured(store: Store | None = None) -> bool:
+    return google_credentials(store) is not None
+
+
+def google_auth_url(store: Store | None = None, *, redirect_uri: str, state: str) -> str:
+    credentials = google_credentials(store)
+    if credentials is None:
+        raise AuthError("google sign-in is not configured")
     params = {
-        "client_id": os.environ["LONGRUN_GOOGLE_CLIENT_ID"],
+        "client_id": credentials[0],
         "redirect_uri": redirect_uri,
         "response_type": "code",
         "scope": "openid email profile",
@@ -222,17 +270,20 @@ def google_auth_url(*, redirect_uri: str, state: str) -> str:
     return GOOGLE_AUTH_URL + "?" + urllib.parse.urlencode(params)
 
 
-def exchange_google_code(*, code: str, redirect_uri: str) -> dict[str, Any]:
+def exchange_google_code(store: Store | None = None, *, code: str, redirect_uri: str) -> dict[str, Any]:
     """Trade an authorization code for the user's Google identity.
 
     Kept as one small function so tests can stub it: the network exchange
     is the only part of the flow that cannot run offline.
     """
+    credentials = google_credentials(store)
+    if credentials is None:
+        raise AuthError("google sign-in is not configured")
     data = urllib.parse.urlencode(
         {
             "code": code,
-            "client_id": os.environ["LONGRUN_GOOGLE_CLIENT_ID"],
-            "client_secret": os.environ["LONGRUN_GOOGLE_CLIENT_SECRET"],
+            "client_id": credentials[0],
+            "client_secret": credentials[1],
             "redirect_uri": redirect_uri,
             "grant_type": "authorization_code",
         }
@@ -249,3 +300,48 @@ def exchange_google_code(*, code: str, redirect_uri: str) -> dict[str, Any]:
     if not info.get("sub") or not info.get("email"):
         raise AuthError("google userinfo is missing sub/email")
     return {"sub": str(info["sub"]), "email": str(info["email"]), "display_name": str(info.get("name") or info["email"])}
+
+
+# -- Password reset ---------------------------------------------------------
+#
+# A reset token is random, single-use, and valid for 60 minutes; only
+# its sha256 hash is stored. Requesting a reset answers the same way
+# whether or not the email exists, so the endpoint cannot be used to
+# enumerate accounts. A successful reset revokes all of the user's
+# sessions (upload tokens survive: they are the agent's credential and
+# are revocable separately from the account page).
+
+RESET_TOKEN_MINUTES = 60
+
+
+def create_password_reset(store: Store, *, email: str) -> tuple[dict[str, Any], str] | None:
+    """(user, plaintext token) for an existing account, else None."""
+    row = store.conn.execute("SELECT * FROM users WHERE email = ?", (email.strip().lower(),)).fetchone()
+    if row is None:
+        return None
+    token = secrets.token_urlsafe(32)
+    expires = (_now() + timedelta(minutes=RESET_TOKEN_MINUTES)).isoformat()
+    store.conn.execute(
+        "INSERT INTO password_resets (token_hash, user_id, expires_at) VALUES (?, ?, ?)",
+        (_token_hash(token), row["id"], expires),
+    )
+    store.conn.commit()
+    return _user_dict(row), token
+
+
+def reset_password(store: Store, *, token: str, new_password: str) -> dict[str, Any]:
+    if len(new_password) < 8:
+        raise AuthError("password must be at least 8 characters")
+    row = store.conn.execute(
+        "SELECT pr.user_id AS user_id FROM password_resets pr "
+        "WHERE pr.token_hash = ? AND pr.used_at IS NULL AND pr.expires_at > ?",
+        (_token_hash(token), _now().isoformat()),
+    ).fetchone()
+    if row is None:
+        raise AuthError("this reset link is invalid or has expired")
+    user_id = row["user_id"]
+    store.conn.execute("UPDATE password_resets SET used_at = datetime('now') WHERE token_hash = ?", (_token_hash(token),))
+    store.conn.execute("UPDATE users SET password_hash = ? WHERE id = ?", (hash_password(new_password), user_id))
+    store.conn.execute("DELETE FROM sessions WHERE user_id = ?", (user_id,))
+    store.conn.commit()
+    return get_user(store, user_id)
