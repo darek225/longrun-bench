@@ -57,32 +57,38 @@ corrections are new rows linked by `supersedes`, never updates.
 
 ## Backup and restore
 
-The board DB is backed up to the **private** repo
-`darek225/longrun-bench-data` as GitHub release assets (same pattern as
-the Dowser data backups). The DB contains password and token hashes, so
-it must never be committed to this repo or any public place; local
-snapshots land in `backups/`, which is gitignored.
+The board DB is backed up to the **private** OCI Object Storage bucket
+`longrun-bench-backups` in Darek's tenancy. The DB contains password
+and token hashes, so it must never be committed to this repo or any
+public place; local snapshots land in `backups/`, which is gitignored.
 
 ```bash
-# Snapshot (consistent while the server runs) + upload to the data repo:
+# Snapshot (consistent while the server runs) + upload to the bucket.
+# On the instance this runs as longrun-backup.service (daily timer)
+# and authenticates as the instance itself (instance principal; the
+# dynamic group may use objects in this one bucket only):
 python3 scripts/backup-db.py --db leaderboard.db
 
 # Local snapshot only:
 python3 scripts/backup-db.py --db leaderboard.db --local-only
 
-# Restore the newest backup (sha256 verified before anything is written):
+# Restore the newest backup (sha256 verified before anything is
+# written). Runs from an operator machine with an OCI config
+# (~/.oci/config); never from the leaderboard instance:
 python3 scripts/restore-db.py --out leaderboard.db --force
 ```
 
 Each backup is a gzipped snapshot plus a manifest (sha256, size, and
-per-table row counts only: no emails, no hashes). Restore downloads the
-asset and manifest, verifies the checksum, then integrity-checks the
-database before placing it. On the production host, run the backup from
-a daily systemd timer and keep at least the last 4 weekly releases. A
+per-table row counts only: no emails, no hashes). Restore downloads
+the archive and manifest, verifies the checksum, then
+integrity-checks the database before placing it. The instance needs
+the OCI Python SDK (`pip install oci`); install.sh provisions it. A
 backup that has never been restored is a hope, not a backup: test a
 restore quarterly. Transcripts are content-addressed and hosted by
 submitters; the board stores hashes only, so there is no transcript
-blob store to back up.
+blob store to back up. (Pre-2026-11 backups went to GitHub releases on
+`darek225/longrun-bench-data`; the newest of those is 2026-10-22. The
+Oct 22 restore drill predates the transport switch.)
 
 ## Health checks
 
@@ -110,13 +116,15 @@ blob store to back up.
   (error 1010). `mailer.send_email` sends a browser UA. The forgot
   endpoint swallows mail errors by design, so verify delivery with
   the reset round-trip, not the endpoint's 200.
-- **Backups need `gh` on the instance:** `scripts/backup-db.py`
-  shells out to the GitHub CLI. It was missing on instance #4, so no
-  backup landed between 2026-10-22 and the fix (gh 2.103.3 installed
-  2026-11-07). The service also needs a GitHub credential for user
-  `longrun` scoped to `darek225/longrun-bench-data`; without it the
-  daily timer still fails. Interim cover: pull a snapshot over SSH
-  (`sqlite3` online backup of `/opt/longrun-bench/leaderboard.db`).
+- **Backups died on a missing credential path:** backups originally
+  uploaded via the GitHub CLI, which instance #4 never had (nor a
+  credential for it), so no backup landed between 2026-10-22 and
+  2026-11-07. The transport is now OCI Object Storage with
+  instance-principal auth (see the Backup section): no portable
+  credential, nothing to expire. If the daily backup service fails,
+  check `systemctl show longrun-backup.service -p Result` and that
+  the `oci` SDK imports under the backup venv
+  (`/opt/longrun-bench/.venv-backup/bin/python`).
 - **OCI Run Command is not root:** commands run as `ocarun` with no
   passwordless sudo. Real instance access is SSH as `ubuntu` (the
   instance trusts the Muse VM's `~/.ssh/id_ed25519`; from the VM

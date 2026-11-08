@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
-"""Back up the leaderboard database to the private data repo.
+"""Back up the leaderboard database to OCI Object Storage.
 
-Same pattern as the Dowser backups (Darek, 2026-10-20): the snapshot is
-a GitHub RELEASE ASSET on the private repo darek225/longrun-bench-data
-(2 GB/file cap, no git size limits), with a manifest recording sha256,
-size, and per-table row counts (counts only: the manifest never carries
-account emails or hashes). Restore with scripts/restore-db.py, which
+The snapshot (SQLite backup API: consistent while the server runs) is
+gzipped with a manifest recording sha256, size, and per-table row
+counts (counts only: the manifest never carries account emails or
+hashes), then uploaded to the private bucket `longrun-bench-backups`
+in Darek's Oracle tenancy. Restore with scripts/restore-db.py, which
 verifies the checksum before touching anything.
 
-The snapshot uses SQLite's backup API, so it is consistent even while
-the leaderboard server is running. Usage:
+Auth is the instance's own identity (instance principal): the backup
+service runs on the leaderboard instance, whose dynamic group may
+`use objects` in that one bucket. No portable credential exists, so
+nothing can expire or leak. (History: backups originally went to
+GitHub release assets via the gh CLI; that pipeline silently died
+when an instance was provisioned without gh or a credential, and a
+token would only have added an expiry cliff of the same kind.)
+
+Usage:
 
     python3 scripts/backup-db.py [--db leaderboard.db] [--local-only]
 
@@ -24,12 +31,11 @@ import hashlib
 import json
 import shutil
 import sqlite3
-import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-DATA_REPO = "darek225/longrun-bench-data"
+BUCKET = "longrun-bench-backups"
 REPO_ROOT = Path(__file__).resolve().parents[1]
 BACKUP_DIR = REPO_ROOT / "backups"
 
@@ -68,11 +74,26 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def upload_to_bucket(client, namespace: str, gz_path: Path, manifest_path: Path) -> None:
+    """Upload archive + manifest under their file names. `client` is an
+    oci.object_storage.ObjectStorageClient (real or a test double)."""
+    for path in (gz_path, manifest_path):
+        client.put_object(namespace, BUCKET, path.name, path.read_bytes())
+
+
+def instance_principal_client():
+    """Object Storage client authenticated as this instance itself."""
+    import oci
+    from oci.auth.signers import InstancePrincipalsSecurityTokenSigner
+
+    signer = InstancePrincipalsSecurityTokenSigner()
+    return oci.object_storage.ObjectStorageClient(config={}, signer=signer)
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Back up the leaderboard DB to the private data repo")
+    parser = argparse.ArgumentParser(description="Back up the leaderboard DB to OCI Object Storage")
     parser.add_argument("--db", default="leaderboard.db", help="path to the live SQLite db")
-    parser.add_argument("--local-only", action="store_true", help="write the snapshot + manifest, skip the GitHub upload")
-    parser.add_argument("--repo", default=DATA_REPO)
+    parser.add_argument("--local-only", action="store_true", help="write the snapshot + manifest, skip the upload")
     args = parser.parse_args()
 
     db_path = Path(args.db)
@@ -103,27 +124,10 @@ def main() -> int:
     if args.local_only:
         print("local only; skipping upload")
         return 0
-    tag = f"backup-{stamp[:8]}"
-    notes = (
-        f"Leaderboard DB backup {stamp}\n\n"
-        f"file: {manifest['file']}\nsha256: {manifest['sha256']}\nbytes: {manifest['bytes']}\n"
-        f"rows: {json.dumps(counts, sort_keys=True)}\n"
-    )
-    create = subprocess.run(
-        ["gh", "release", "create", tag, "--repo", args.repo, "--title", f"DB backup {stamp[:8]}", "--notes", notes],
-        capture_output=True, text=True,
-    )
-    if create.returncode != 0 and "already exists" not in (create.stderr + create.stdout):
-        print(f"release create failed: {create.stderr.strip()[:300]}", file=sys.stderr)
-        return 1
-    upload = subprocess.run(
-        ["gh", "release", "upload", tag, str(gz_path), str(manifest_path), "--repo", args.repo, "--clobber"],
-        capture_output=True, text=True,
-    )
-    if upload.returncode != 0:
-        print(f"upload failed: {upload.stderr.strip()[:300]}", file=sys.stderr)
-        return 1
-    print(f"uploaded to {args.repo} release {tag}")
+    client = instance_principal_client()
+    namespace = client.get_namespace().data
+    upload_to_bucket(client, namespace, gz_path, manifest_path)
+    print(f"uploaded to OCI bucket {BUCKET}: {gz_path.name}, {manifest_path.name}")
     return 0
 
 

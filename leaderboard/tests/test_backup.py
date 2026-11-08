@@ -49,5 +49,34 @@ def test_snapshot_round_trip_and_checksum(tmp_path):
     data[-5] ^= 0xFF
     tampered.write_bytes(bytes(data))
     assert restore_db.sha256_file(tampered) != digest
-    assert backup_db.DATA_REPO == "darek225/longrun-bench-data"
-    assert restore_db.DATA_REPO == backup_db.DATA_REPO
+    assert backup_db.BUCKET == "longrun-bench-backups"
+    assert restore_db.BUCKET == backup_db.BUCKET
+
+
+def test_upload_to_bucket_sends_archive_and_manifest(tmp_path):
+    gz_path = tmp_path / "leaderboard-20261107-010203.db.gz"
+    gz_path.write_bytes(b"archive-bytes")
+    manifest_path = tmp_path / "leaderboard-20261107-010203.manifest.json"
+    manifest_path.write_text("{}", encoding="utf-8")
+    calls = []
+
+    class FakeClient:
+        def put_object(self, namespace, bucket, name, body):
+            calls.append((namespace, bucket, name, body))
+
+    backup_db.upload_to_bucket(FakeClient(), "ns1", gz_path, manifest_path)
+    assert calls == [
+        ("ns1", "longrun-bench-backups", gz_path.name, b"archive-bytes"),
+        ("ns1", "longrun-bench-backups", manifest_path.name, b"{}"),
+    ]
+
+
+def test_newest_archive_name_picks_max_stamp():
+    names = [
+        "leaderboard-20261022-002507.db.gz",
+        "leaderboard-20261107-010203.db.gz",
+        "leaderboard-20261107-010203.manifest.json",
+        "unrelated.txt",
+    ]
+    assert restore_db.newest_archive_name(names) == "leaderboard-20261107-010203.db.gz"
+    assert restore_db.newest_archive_name([]) is None

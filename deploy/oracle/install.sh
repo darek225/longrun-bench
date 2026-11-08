@@ -8,7 +8,11 @@ set -euo pipefail
 DOMAIN="${1:?usage: install.sh <domain>}"
 
 apt-get update
-apt-get install -y python3 git curl debian-keyring debian-archive-keyring apt-transport-https
+apt-get install -y python3 python3-venv git curl debian-keyring debian-archive-keyring apt-transport-https
+# OCI Python SDK for the backup script, in a dedicated venv: a
+# system-wide pip install fights Debian-managed packages (urllib3),
+# and the backup service unit points at this venv's python.
+/usr/bin/python3 -m venv /opt/longrun-bench/.venv-backup && /opt/longrun-bench/.venv-backup/bin/pip install -q oci || echo "WARN: oci SDK venv install failed; backups will fail until it is installed"
 
 # Oracle Ubuntu images ship host iptables rules that drop inbound
 # traffic except SSH, regardless of the security list. Open the web

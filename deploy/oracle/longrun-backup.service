@@ -1,5 +1,5 @@
 [Unit]
-Description=LongRun Bench DB backup to private data repo
+Description=LongRun Bench DB backup to OCI Object Storage
 After=network-online.target
 
 [Service]
@@ -7,4 +7,4 @@ Type=oneshot
 User=longrun
 Group=longrun
 WorkingDirectory=/opt/longrun-bench
-ExecStart=/usr/bin/python3 scripts/backup-db.py --db /opt/longrun-bench/leaderboard.db
+ExecStart=/opt/longrun-bench/.venv-backup/bin/python scripts/backup-db.py --db /opt/longrun-bench/leaderboard.db
