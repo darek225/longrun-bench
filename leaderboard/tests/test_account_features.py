@@ -245,3 +245,39 @@ def test_reset_token_expiry_and_unknown_token(db_store):
         auth.reset_password(db_store, token="not-a-token", new_password="brand-new-password")
     assert auth.create_password_reset(db_store, email="ghost@example.com") is None
     assert user["email"] == "exp@example.com"
+
+
+def test_google_start_uses_forwarded_host_behind_proxy(server, monkeypatch):
+    """Behind the Vercel rewrite, Host is the origin IP; the OAuth
+    redirect_uri must be built from X-Forwarded-Host/Proto or Google
+    rejects the flow as non-compliant (observed live 2026-11-07)."""
+    monkeypatch.delenv("LONGRUN_GOOGLE_CLIENT_ID", raising=False)
+    monkeypatch.delenv("LONGRUN_GOOGLE_CLIENT_SECRET", raising=False)
+    cookie, _ = _register(server)
+    status, _, _ = _request(
+        server,
+        "/api/admin/settings",
+        data={"settings": {"google_client_id": "db-cid", "google_client_secret": "db-secret"}},
+        headers={"Cookie": cookie},
+    )
+    assert status == 200
+
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, *args, **kwargs):
+            return None
+
+    opener = urllib.request.build_opener(NoRedirect())
+    req = urllib.request.Request(
+        server + "/api/auth/google/start",
+        headers={"X-Forwarded-Host": "longrun-bench.vercel.app", "X-Forwarded-Proto": "https"},
+    )
+    try:
+        opener.open(req, timeout=10)
+        raise AssertionError("expected redirect")
+    except urllib.error.HTTPError as exc:
+        assert exc.code == 302
+        location = exc.headers["Location"]
+    from urllib.parse import parse_qs, urlparse
+
+    params = parse_qs(urlparse(location).query)
+    assert params["redirect_uri"] == ["https://longrun-bench.vercel.app/api/auth/google/callback"]

@@ -142,7 +142,12 @@ def make_handler(store: Store, tasks_root: Path) -> type[BaseHTTPRequestHandler]
 
         def _base_url(self) -> str:
             proto = self.headers.get("X-Forwarded-Proto", "http")
-            host = self.headers.get("Host", "127.0.0.1")
+            # Behind the Vercel rewrite the Host header is the origin
+            # (raw instance IP); X-Forwarded-Host carries the public
+            # host the user actually visited. OAuth redirect URIs and
+            # emailed links must use the public one, or Google rejects
+            # the flow and reset links point at a bare IP.
+            host = self.headers.get("X-Forwarded-Host") or self.headers.get("Host", "127.0.0.1")
             return f"{proto}://{host}"
 
         def _cookie(self, name: str) -> str | None:
