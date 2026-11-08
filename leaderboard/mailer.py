@@ -35,7 +35,14 @@ def send_email(store: Store, *, to: str, subject: str, text: str) -> dict[str, A
         MAILS_API_SEND_URL,
         data=payload,
         method="POST",
-        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            # mails.dev sits behind Cloudflare, which rejects the
+            # default Python-urllib user agent with 403 (error 1010);
+            # observed live 2026-11-07. A browser UA sends fine.
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+        },
     )
     with urllib.request.urlopen(request, timeout=30) as response:
         body = response.read().decode("utf-8")

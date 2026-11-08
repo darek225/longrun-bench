@@ -318,3 +318,32 @@ def test_public_url_env_overrides_proxy_headers(server, monkeypatch):
 
     params = parse_qs(urlparse(location).query)
     assert params["redirect_uri"] == ["https://longrun-bench.vercel.app/api/auth/google/callback"]
+
+
+def test_send_email_sets_browser_user_agent(db_store, monkeypatch):
+    """mails.dev/Cloudflare 403s the default urllib UA (error 1010,
+    observed live 2026-11-07); send_email must send a browser UA."""
+    db_store.set_setting("mail_api_key", "test-key")
+    db_store.set_setting("mail_from", "richpiana@mails.dev")
+    captured = {}
+
+    class FakeResponse:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def read(self):
+            return b"{}"
+
+    def fake_urlopen(request, timeout=None):
+        captured["ua"] = request.get_header("User-agent")
+        captured["auth"] = request.get_header("Authorization")
+        return FakeResponse()
+
+    monkeypatch.setattr(mailer.urllib.request, "urlopen", fake_urlopen)
+    mailer.send_email(db_store, to="x@example.com", subject="s", text="t")
+    assert captured["auth"] == "Bearer test-key"
+    assert captured["ua"] and "Mozilla" in captured["ua"]
+    assert "Python-urllib" not in captured["ua"]
