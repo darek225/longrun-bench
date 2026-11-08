@@ -141,12 +141,17 @@ def make_handler(store: Store, tasks_root: Path) -> type[BaseHTTPRequestHandler]
             self.end_headers()
 
         def _base_url(self) -> str:
+            # An explicit public URL wins over every header: on the
+            # Oracle deployment the request path crosses two proxies
+            # (Vercel rewrite, then Caddy), and Caddy rewrites
+            # X-Forwarded-Host to the immediate Host (the origin IP),
+            # which made Google reject the OAuth redirect_uri live.
+            public = os.environ.get("LONGRUN_PUBLIC_URL", "").strip()
+            if public:
+                return public.rstrip("/")
             proto = self.headers.get("X-Forwarded-Proto", "http")
-            # Behind the Vercel rewrite the Host header is the origin
-            # (raw instance IP); X-Forwarded-Host carries the public
-            # host the user actually visited. OAuth redirect URIs and
-            # emailed links must use the public one, or Google rejects
-            # the flow and reset links point at a bare IP.
+            # Behind a single proxy that preserves it, X-Forwarded-Host
+            # carries the public host the user actually visited.
             host = self.headers.get("X-Forwarded-Host") or self.headers.get("Host", "127.0.0.1")
             return f"{proto}://{host}"
 

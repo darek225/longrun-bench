@@ -36,6 +36,10 @@ git config --global --add safe.directory /opt/longrun-bench || true
 # Production secrets live here (Google OAuth client id/secret). Create
 # once; never commit this file.
 [ -f .env.production ] || { touch .env.production; chmod 600 .env.production; }
+# The app's public base URL for OAuth redirect URIs and emailed links.
+# Header inference cannot survive the Vercel -> Caddy proxy chain
+# (Caddy rewrites X-Forwarded-Host to the origin), so pin it here.
+grep -q '^LONGRUN_PUBLIC_URL=' .env.production || echo "LONGRUN_PUBLIC_URL=https://${DOMAIN}" >> .env.production
 
 cp deploy/oracle/longrun-leaderboard.service /etc/systemd/system/
 cp deploy/oracle/longrun-backup.service /etc/systemd/system/
