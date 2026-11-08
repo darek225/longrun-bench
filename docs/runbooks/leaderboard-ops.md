@@ -90,3 +90,38 @@ blob store to back up.
 - `GET /api/tasks` should return the full task count (85 at task set 0.1.0).
 - Board empty after a deploy: check you pointed `--tasks-root` and `--db` at
   the production paths, not fresh defaults.
+
+## Production failure modes (learned 2026-11-06/07)
+
+- **Auto-deploy silently dead:** `longrun-update.service` exited 128
+  every 10 minutes because root's git refused the `longrun`-owned
+  repo ("dubious ownership"). Fix on the instance:
+  `git config --global --add safe.directory /opt/longrun-bench` as
+  root. Check with `systemctl show longrun-update.service -p Result
+  -p ExecMainStatus` and `git -C /opt/longrun-bench rev-parse HEAD`.
+- **OAuth redirect_uri must be the public URL:** the request path
+  crosses Vercel (rewrite) and Caddy, and Caddy rewrites
+  `X-Forwarded-Host` to the origin IP, so header inference cannot
+  work. `LONGRUN_PUBLIC_URL=https://longrun-bench.vercel.app` is
+  pinned in `/opt/longrun-bench/.env.production` (install.sh writes
+  it from the deploy domain); `_base_url` prefers it.
+- **Reset mail 403s without a browser UA:** mails.dev is behind
+  Cloudflare, which rejects the default Python-urllib user agent
+  (error 1010). `mailer.send_email` sends a browser UA. The forgot
+  endpoint swallows mail errors by design, so verify delivery with
+  the reset round-trip, not the endpoint's 200.
+- **Backups need `gh` on the instance:** `scripts/backup-db.py`
+  shells out to the GitHub CLI. It was missing on instance #4, so no
+  backup landed between 2026-10-22 and the fix (gh 2.103.3 installed
+  2026-11-07). The service also needs a GitHub credential for user
+  `longrun` scoped to `darek225/longrun-bench-data`; without it the
+  daily timer still fails. Interim cover: pull a snapshot over SSH
+  (`sqlite3` online backup of `/opt/longrun-bench/leaderboard.db`).
+- **OCI Run Command is not root:** commands run as `ocarun` with no
+  passwordless sudo. Real instance access is SSH as `ubuntu` (the
+  instance trusts the Muse VM's `~/.ssh/id_ed25519`; from the VM
+  that route needs the egress destination approved by Darek).
+  Instance metadata (incl. authorized keys) is readable from a run
+  command via `http://169.254.169.254/opc/v2/instance/metadata/`
+  with header `Authorization: Bearer Oracle` (the v1 path without
+  the header returns error text).
