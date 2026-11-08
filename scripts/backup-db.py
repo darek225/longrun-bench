@@ -10,8 +10,11 @@ verifies the checksum before touching anything.
 
 Auth is the instance's own identity (instance principal): the backup
 service runs on the leaderboard instance, whose dynamic group may
-`use objects` in that one bucket. No portable credential exists, so
-nothing can expire or leak. (History: backups originally went to
+`manage objects` in that one bucket (manage, not use: in OCI,
+creating a NEW object requires OBJECT_CREATE, which only the manage
+verb grants; use covers read + overwrite only). No portable
+credential exists, so nothing can expire or leak. (History: backups
+originally went to
 GitHub release assets via the gh CLI; that pipeline silently died
 when an instance was provisioned without gh or a credential, and a
 token would only have added an expiry cliff of the same kind.)

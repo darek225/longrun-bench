@@ -66,7 +66,8 @@ public place; local snapshots land in `backups/`, which is gitignored.
 # Snapshot (consistent while the server runs) + upload to the bucket.
 # On the instance this runs as longrun-backup.service (daily timer)
 # and authenticates as the instance itself (instance principal; the
-# dynamic group may use objects in this one bucket only):
+# dynamic group may manage objects in this one bucket only;
+# manage, not use: creating a new object needs OBJECT_CREATE):
 python3 scripts/backup-db.py --db leaderboard.db
 
 # Local snapshot only:
